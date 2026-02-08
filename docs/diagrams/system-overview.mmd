@@ -1,0 +1,30 @@
+flowchart LR
+    User((User))
+
+    subgraph PaultApp["Pault macOS App"]
+        Main["Main Window"]
+        Menu["Menu Bar Popover"]
+        Hotkey["Hotkey Launcher"]
+        Prefs["Preferences"]
+        Inspector["Inspector Panel"]
+    end
+
+    Store[("SwiftData Store")]
+    Clipboard[("macOS Clipboard")]
+    FrontApp["Frontmost App"]
+
+    User --> Main
+    User --> Menu
+    User --> Hotkey
+
+    Main <--> Store
+    Menu <--> Store
+    Hotkey <--> Store
+
+    Main --> Clipboard
+    Menu --> Clipboard
+    Hotkey --> Clipboard
+
+    Clipboard --> FrontApp
+    Prefs --> PaultApp
+    Inspector --> Main

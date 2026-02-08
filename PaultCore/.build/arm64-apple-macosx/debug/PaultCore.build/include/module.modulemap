@@ -1,0 +1,3 @@
+module PaultCore {
+    header "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/include/PaultCore-Swift.h"
+}

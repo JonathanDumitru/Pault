@@ -1,0 +1,8 @@
+flowchart TD
+    PasteAction["User selects Paste action"] --> Check{"Accessibility / Input Monitoring granted?"}
+    Check -- "No" --> Prompt["macOS permission prompt"]
+    Prompt --> Grant["User grants access"]
+    Grant --> Paste["Simulate \u2318V via CGEvent"]
+    Check -- "Yes" --> Paste
+
+    CopyAction["User selects Copy action"] --> Clipboard["Write to NSPasteboard"]

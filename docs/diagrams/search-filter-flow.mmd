@@ -1,0 +1,8 @@
+flowchart TD
+    subgraph Sidebar["Sidebar Filters"]
+        S1["Select filter"] --> S2["Apply filter"] --> S3["Apply search"] --> S4["Render list"]
+    end
+
+    subgraph MenuBar["Menu Bar / Hotkey"]
+        M1["Type search query"] --> M2["Filter favorites / archived if applicable"] --> M3["Render list"]
+    end

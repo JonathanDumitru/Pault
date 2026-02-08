@@ -1,0 +1,12 @@
+{
+  "": {
+    "swift-dependencies": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCorePackageTests.build/master.swiftdeps"
+  },
+  "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCorePackageTests.derived/runner.swift": {
+    "dependencies": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCorePackageTests.build/runner.d",
+    "object": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCorePackageTests.build/runner.swift.o",
+    "swiftmodule": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCorePackageTests.build/runner~partial.swiftmodule",
+    "swift-dependencies": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCorePackageTests.build/runner.swiftdeps",
+    "diagnostics": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCorePackageTests.build/runner.dia"
+  }
+}

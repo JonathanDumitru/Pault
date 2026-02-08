@@ -1,0 +1,68 @@
+{
+  "": {
+    "swift-dependencies": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/master.swiftdeps"
+  },
+  "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/Category.swift": {
+    "dependencies": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Category.d",
+    "object": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Category.swift.o",
+    "swiftmodule": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Category~partial.swiftmodule",
+    "swift-dependencies": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Category.swiftdeps",
+    "diagnostics": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Category.dia"
+  },
+  "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/Prompt.swift": {
+    "dependencies": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Prompt.d",
+    "object": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Prompt.swift.o",
+    "swiftmodule": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Prompt~partial.swiftmodule",
+    "swift-dependencies": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Prompt.swiftdeps",
+    "diagnostics": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Prompt.dia"
+  },
+  "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/PromptVersion.swift": {
+    "dependencies": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/PromptVersion.d",
+    "object": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/PromptVersion.swift.o",
+    "swiftmodule": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/PromptVersion~partial.swiftmodule",
+    "swift-dependencies": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/PromptVersion.swiftdeps",
+    "diagnostics": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/PromptVersion.dia"
+  },
+  "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/Tag.swift": {
+    "dependencies": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Tag.d",
+    "object": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Tag.swift.o",
+    "swiftmodule": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Tag~partial.swiftmodule",
+    "swift-dependencies": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Tag.swiftdeps",
+    "diagnostics": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Tag.dia"
+  },
+  "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/UsageLog.swift": {
+    "dependencies": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/UsageLog.d",
+    "object": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/UsageLog.swift.o",
+    "swiftmodule": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/UsageLog~partial.swiftmodule",
+    "swift-dependencies": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/UsageLog.swiftdeps",
+    "diagnostics": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/UsageLog.dia"
+  },
+  "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/Variable.swift": {
+    "dependencies": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Variable.d",
+    "object": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Variable.swift.o",
+    "swiftmodule": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Variable~partial.swiftmodule",
+    "swift-dependencies": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Variable.swiftdeps",
+    "diagnostics": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Variable.dia"
+  },
+  "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/Workflow.swift": {
+    "dependencies": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Workflow.d",
+    "object": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Workflow.swift.o",
+    "swiftmodule": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Workflow~partial.swiftmodule",
+    "swift-dependencies": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Workflow.swiftdeps",
+    "diagnostics": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Workflow.dia"
+  },
+  "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/WorkflowStep.swift": {
+    "dependencies": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/WorkflowStep.d",
+    "object": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/WorkflowStep.swift.o",
+    "swiftmodule": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/WorkflowStep~partial.swiftmodule",
+    "swift-dependencies": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/WorkflowStep.swiftdeps",
+    "diagnostics": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/WorkflowStep.dia"
+  },
+  "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/PaultCore.swift": {
+    "dependencies": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/PaultCore.d",
+    "object": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/PaultCore.swift.o",
+    "swiftmodule": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/PaultCore~partial.swiftmodule",
+    "swift-dependencies": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/PaultCore.swiftdeps",
+    "diagnostics": "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/PaultCore.dia"
+  }
+}

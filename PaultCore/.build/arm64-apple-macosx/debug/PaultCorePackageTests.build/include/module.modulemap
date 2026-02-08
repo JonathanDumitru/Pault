@@ -1,0 +1,3 @@
+module PaultCorePackageTests {
+    header "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCorePackageTests.build/include/PaultCorePackageTests-Swift.h"
+}

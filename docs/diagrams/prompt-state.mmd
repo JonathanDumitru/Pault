@@ -1,0 +1,9 @@
+stateDiagram-v2
+    [*] --> Active
+    Active --> Active: Edit / Save
+    Active --> Favorited: Toggle favorite on
+    Favorited --> Active: Toggle favorite off
+    Active --> Archived: Archive
+    Archived --> Active: Unarchive
+    Active --> Deleted: Delete
+    Archived --> Deleted: Delete

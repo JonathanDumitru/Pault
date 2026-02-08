@@ -1,0 +1,26 @@
+flowchart LR
+    User((User))
+
+    subgraph Main["Main Window"]
+        M1["Create / Edit"]
+        M2["Tags / Favorites / Archive"]
+        M3["Filters + Search"]
+        M4["Copy"]
+    end
+
+    subgraph Menu["Menu Bar Popover"]
+        B1["Search"]
+        B2["Copy / Paste"]
+        B3["New Prompt"]
+        B4["Favorite / Archive / Delete"]
+    end
+
+    subgraph Hotkey["Hotkey Launcher"]
+        H1["Global Search"]
+        H2["Copy / Paste"]
+        H3["Quick Actions"]
+    end
+
+    User --> Main
+    User --> Menu
+    User --> Hotkey

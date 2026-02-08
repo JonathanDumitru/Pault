@@ -1,0 +1,14 @@
+classDiagram
+    class Prompt {
+        +UUID id
+        +String title
+        +String content
+    }
+
+    class Tag {
+        +UUID id
+        +String name
+        +String color
+    }
+
+    Prompt "0..*" -- "0..*" Tag : tags

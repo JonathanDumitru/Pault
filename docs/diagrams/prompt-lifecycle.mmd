@@ -1,0 +1,20 @@
+sequenceDiagram
+    participant U as User
+    participant MW as Main Window
+    participant SD as SwiftData Store
+    participant MB as Menu Bar
+    participant HK as Hotkey Launcher
+    participant CB as Clipboard
+
+    U->>MW: Create or edit prompt
+    MW->>SD: Debounced save (updatedAt)
+
+    U->>MB: Open menu bar
+    MB->>SD: Query prompts
+
+    U->>HK: Press ⌘⇧P
+    HK->>SD: Query prompts
+
+    U->>HK: Copy or paste action
+    HK->>CB: Write clipboard (sets lastUsedAt)
+    CB-->>U: Clipboard available

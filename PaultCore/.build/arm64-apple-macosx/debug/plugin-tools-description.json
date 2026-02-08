@@ -1,0 +1,790 @@
+{
+  "builtTestProducts" : [
+    {
+      "binaryPath" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCorePackageTests.xctest/Contents/MacOS/PaultCorePackageTests",
+      "packagePath" : "/Users/dev/Documents/Software/macOS/PaultCore",
+      "productName" : "PaultCorePackageTests"
+    }
+  ],
+  "copyCommands" : {
+
+  },
+  "explicitTargetDependencyImportCheckingMode" : {
+    "none" : {
+
+    }
+  },
+  "generatedSourceTargetSet" : [
+
+  ],
+  "pluginDescriptions" : [
+
+  ],
+  "swiftCommands" : {
+    "C.PaultCore-arm64-apple-macosx26.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/sources",
+      "importPath" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/Category.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/Prompt.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/PromptVersion.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/Tag.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/UsageLog.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/Variable.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/Workflow.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/WorkflowStep.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/PaultCore.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "PaultCore",
+      "moduleOutputPath" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/Modules/PaultCore.swiftmodule",
+      "objects" : [
+        "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Category.swift.o",
+        "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Prompt.swift.o",
+        "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/PromptVersion.swift.o",
+        "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Tag.swift.o",
+        "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/UsageLog.swift.o",
+        "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Variable.swift.o",
+        "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Workflow.swift.o",
+        "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/WorkflowStep.swift.o",
+        "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/PaultCore.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx14.0",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j11",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/include/PaultCore-Swift.h",
+        "-swift-version",
+        "5",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "paultcore"
+      ],
+      "outputFileMapPath" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Category.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Prompt.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/PromptVersion.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Tag.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/UsageLog.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Variable.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Workflow.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/WorkflowStep.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/PaultCore.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/Modules/PaultCore.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/Category.swift",
+        "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/Prompt.swift",
+        "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/PromptVersion.swift",
+        "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/Tag.swift",
+        "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/UsageLog.swift",
+        "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/Variable.swift",
+        "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/Workflow.swift",
+        "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/WorkflowStep.swift",
+        "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/PaultCore.swift"
+      ],
+      "tempsPath" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.PaultCorePackageTests-arm64-apple-macosx26.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCorePackageTests.build/sources",
+      "importPath" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCorePackageTests.derived/runner.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/Modules/PaultCoreTests.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCorePackageTests.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "PaultCorePackageTests",
+      "moduleOutputPath" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/Modules/PaultCorePackageTests.swiftmodule",
+      "objects" : [
+        "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCorePackageTests.build/runner.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx14.0",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-Xfrontend",
+        "-enable-cross-import-overlays",
+        "-j11",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCorePackageTests.build/include/PaultCorePackageTests-Swift.h",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "paultcore"
+      ],
+      "outputFileMapPath" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCorePackageTests.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCorePackageTests.build/runner.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/Modules/PaultCorePackageTests.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCorePackageTests.derived/runner.swift"
+      ],
+      "tempsPath" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCorePackageTests.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.PaultCoreTests-arm64-apple-macosx26.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCoreTests.build/sources",
+      "importPath" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/Tests/PaultCoreTests/PaultCoreTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/Modules/PaultCore.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCoreTests.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "PaultCoreTests",
+      "moduleOutputPath" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/Modules/PaultCoreTests.swiftmodule",
+      "objects" : [
+        "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCoreTests.build/PaultCoreTests.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx14.0",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-Xfrontend",
+        "-enable-cross-import-overlays",
+        "-j11",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-swift-version",
+        "5",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "paultcore"
+      ],
+      "outputFileMapPath" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCoreTests.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCoreTests.build/PaultCoreTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/Modules/PaultCoreTests.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/dev/Documents/Software/macOS/PaultCore/Tests/PaultCoreTests/PaultCoreTests.swift"
+      ],
+      "tempsPath" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCoreTests.build",
+      "wholeModuleOptimization" : false
+    }
+  },
+  "swiftFrontendCommands" : {
+
+  },
+  "swiftTargetScanArgs" : {
+    "PaultCore" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "PaultCore",
+      "-package-name",
+      "paultcore",
+      "-c",
+      "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/Category.swift",
+      "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/Prompt.swift",
+      "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/PromptVersion.swift",
+      "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/Tag.swift",
+      "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/UsageLog.swift",
+      "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/Variable.swift",
+      "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/Workflow.swift",
+      "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/WorkflowStep.swift",
+      "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/PaultCore.swift",
+      "-I",
+      "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx14.0",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j11",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/include/PaultCore-Swift.h",
+      "-swift-version",
+      "5",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "paultcore",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "PaultCorePackageTests" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "PaultCorePackageTests",
+      "-package-name",
+      "paultcore",
+      "-c",
+      "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCorePackageTests.derived/runner.swift",
+      "-I",
+      "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx14.0",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-Xfrontend",
+      "-enable-cross-import-overlays",
+      "-j11",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCorePackageTests.build/include/PaultCorePackageTests-Swift.h",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "paultcore",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "PaultCoreTests" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "PaultCoreTests",
+      "-package-name",
+      "paultcore",
+      "-c",
+      "/Users/dev/Documents/Software/macOS/PaultCore/Tests/PaultCoreTests/PaultCoreTests.swift",
+      "-I",
+      "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx14.0",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-Xfrontend",
+      "-enable-cross-import-overlays",
+      "-j11",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-swift-version",
+      "5",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "paultcore",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ]
+  },
+  "targetDependencyMap" : {
+    "PaultCore" : [
+
+    ],
+    "PaultCorePackageTests" : [
+      "PaultCoreTests",
+      "PaultCore"
+    ],
+    "PaultCoreTests" : [
+      "PaultCore"
+    ]
+  },
+  "testDiscoveryCommands" : {
+
+  },
+  "testEntryPointCommands" : {
+    "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCorePackageTests.derived/runner.swift" : {
+      "inputs" : [
+
+      ],
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCorePackageTests.derived/runner.swift"
+        }
+      ]
+    }
+  },
+  "traitConfiguration" : {
+    "default" : {
+
+    }
+  },
+  "writeCommands" : {
+    "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/Category.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/Prompt.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/PromptVersion.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/Tag.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/UsageLog.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/Variable.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/Workflow.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/Models/WorkflowStep.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/Sources/PaultCore/PaultCore.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/sources"
+    },
+    "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCorePackageTests.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCorePackageTests.derived/runner.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCorePackageTests.build/sources"
+    },
+    "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCorePackageTests.product/Objects.LinkFileList" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<link-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Category.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/PaultCore.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Prompt.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/PromptVersion.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Tag.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/UsageLog.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Variable.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/Workflow.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCore.build/WorkflowStep.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCorePackageTests.build/runner.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCoreTests.build/PaultCoreTests.swift.o"
+        }
+      ],
+      "outputFilePath" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCorePackageTests.product/Objects.LinkFileList"
+    },
+    "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCoreTests.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/dev/Documents/Software/macOS/PaultCore/Tests/PaultCoreTests/PaultCoreTests.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/PaultCoreTests.build/sources"
+    },
+    "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt" : {
+      "alwaysOutOfDate" : true,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<swift-get-version>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+        }
+      ],
+      "outputFilePath" : "/Users/dev/Documents/Software/macOS/PaultCore/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+    }
+  }
+}

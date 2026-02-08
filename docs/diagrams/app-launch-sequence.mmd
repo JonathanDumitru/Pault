@@ -1,0 +1,12 @@
+sequenceDiagram
+    participant App as PaultApp
+    participant MC as ModelContainer
+    participant AD as AppDelegate
+    participant MB as Menu Bar
+    participant HK as Hotkey Manager
+
+    App->>MC: Create SwiftData container
+    App->>AD: Assign model container
+    App->>AD: applicationDidFinishLaunching
+    AD->>MB: Setup status item + popover
+    AD->>HK: Register global hotkey

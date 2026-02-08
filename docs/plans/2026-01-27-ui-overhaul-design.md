@@ -1,5 +1,7 @@
 # Pault UI Overhaul Design
 
+> **Status: COMPLETED** — All design goals implemented. See `2026-01-27-ui-overhaul-implementation.md` for the task-level plan.
+
 ## Overview
 
 A full visual overhaul to give Pault a native macOS feel with modern patterns: auto-hiding sidebar, tag-based organization, always-editable content, and a collapsible inspector panel.

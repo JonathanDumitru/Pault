@@ -1,0 +1,12 @@
+sequenceDiagram
+    participant U as User
+    participant PV as PromptDetailView
+    participant DB as Debounce Task
+    participant MC as ModelContext
+    participant SD as SwiftData Store
+
+    U->>PV: Edit title/content
+    PV->>DB: Schedule debounced save
+    DB->>PV: Update updatedAt
+    PV->>MC: Save context
+    MC->>SD: Persist changes

@@ -1,0 +1,4 @@
+flowchart TD
+    Start["App launch"] --> Try["Create SwiftData ModelContainer"]
+    Try -->|Success| Persistent["Use persistent store"]
+    Try -->|Failure| Log["Log error"] --> Memory["Fallback to in-memory store"]
