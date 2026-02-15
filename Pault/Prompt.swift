@@ -13,6 +13,7 @@ final class Prompt {
     var id: UUID
     var title: String
     var content: String
+    var attributedContent: Data?
     var isFavorite: Bool
     var isArchived: Bool
     @Relationship(deleteRule: .nullify) var tags: [Tag]
@@ -22,10 +23,11 @@ final class Prompt {
     var updatedAt: Date
     var lastUsedAt: Date?
 
-    init(id: UUID = UUID(), title: String, content: String, isFavorite: Bool = false, isArchived: Bool = false, createdAt: Date = Date(), updatedAt: Date = Date(), tags: [Tag] = [], templateVariables: [TemplateVariable] = [], attachments: [Attachment] = [], lastUsedAt: Date? = nil) {
+    init(id: UUID = UUID(), title: String, content: String, attributedContent: Data? = nil, isFavorite: Bool = false, isArchived: Bool = false, createdAt: Date = Date(), updatedAt: Date = Date(), tags: [Tag] = [], templateVariables: [TemplateVariable] = [], attachments: [Attachment] = [], lastUsedAt: Date? = nil) {
         self.id = id
         self.title = title
         self.content = content
+        self.attributedContent = attributedContent
         self.isFavorite = isFavorite
         self.isArchived = isArchived
         self.createdAt = createdAt
