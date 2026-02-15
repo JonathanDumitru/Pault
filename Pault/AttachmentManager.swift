@@ -166,7 +166,11 @@ enum AttachmentManager {
     /// Delete all embedded files for a prompt from disk.
     static func deleteFiles(for promptID: UUID) {
         let dir = directory(for: promptID)
-        try? FileManager.default.removeItem(at: dir)
+        do {
+            try FileManager.default.removeItem(at: dir)
+        } catch {
+            logger.error("deleteFiles: Failed to remove directory for prompt \(promptID) — \(error.localizedDescription)")
+        }
     }
 
     /// Delete a single embedded attachment file from disk.
@@ -176,7 +180,11 @@ enum AttachmentManager {
         else { return }
 
         let url = attachmentsBaseDirectory.appendingPathComponent(relativePath)
-        try? FileManager.default.removeItem(at: url)
+        do {
+            try FileManager.default.removeItem(at: url)
+        } catch {
+            logger.error("deleteFile: Failed to remove '\(attachment.filename)' — \(error.localizedDescription)")
+        }
     }
 
     // MARK: - Thumbnails

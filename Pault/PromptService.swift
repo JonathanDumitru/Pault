@@ -65,11 +65,14 @@ final class PromptService {
         pasteboard.setString(resolved, forType: .string)
 
         // If rich content exists, also provide RTFD
-        if let rtfdData = prompt.attributedContent,
-           let attrString = try? NSAttributedString(data: rtfdData, options: [.documentType: NSAttributedString.DocumentType.rtfd], documentAttributes: nil) {
-            let mutable = NSMutableAttributedString(attributedString: attrString)
-            if let rtfdOutput = try? mutable.data(from: NSRange(location: 0, length: mutable.length), documentAttributes: [.documentType: NSAttributedString.DocumentType.rtfd]) {
+        if let rtfdData = prompt.attributedContent {
+            do {
+                let attrString = try NSAttributedString(data: rtfdData, options: [.documentType: NSAttributedString.DocumentType.rtfd], documentAttributes: nil)
+                let mutable = NSMutableAttributedString(attributedString: attrString)
+                let rtfdOutput = try mutable.data(from: NSRange(location: 0, length: mutable.length), documentAttributes: [.documentType: NSAttributedString.DocumentType.rtfd])
                 pasteboard.setData(rtfdOutput, forType: .rtfd)
+            } catch {
+                serviceLogger.error("copyToClipboard: Failed to serialize RTFD — \(error.localizedDescription)")
             }
         }
 
