@@ -8,6 +8,9 @@
 
 import SwiftUI
 import AppKit
+import os
+
+private let richTextLogger = Logger(subsystem: "com.pault.app", category: "RichTextEditor")
 
 struct RichTextEditor: NSViewRepresentable {
     @Binding var attributedContent: Data?
@@ -88,10 +91,61 @@ struct RichTextEditor: NSViewRepresentable {
         var parent: RichTextEditor
         var isEditing = false
         weak var textView: NSTextView?
+        private var imageObserver: NSObjectProtocol?
 
         init(parent: RichTextEditor) {
             self.parent = parent
             super.init()
+
+            imageObserver = NotificationCenter.default.addObserver(
+                forName: .insertInlineImage,
+                object: nil,
+                queue: .main
+            ) { [weak self] notification in
+                self?.handleInsertInlineImage(notification)
+            }
+        }
+
+        deinit {
+            if let observer = imageObserver {
+                NotificationCenter.default.removeObserver(observer)
+            }
+        }
+
+        private func handleInsertInlineImage(_ notification: Notification) {
+            guard let textView,
+                  let image = notification.userInfo?["image"] as? NSImage else {
+                richTextLogger.warning("insertInlineImage: Missing textView or image")
+                return
+            }
+
+            // Scale image to fit within editor width
+            let maxWidth = textView.textContainer?.containerSize.width ?? 400
+            let scale = min(1.0, (maxWidth - 20) / image.size.width)
+            let scaledSize = NSSize(
+                width: image.size.width * scale,
+                height: image.size.height * scale
+            )
+
+            let scaledImage = NSImage(size: scaledSize)
+            scaledImage.lockFocus()
+            image.draw(in: NSRect(origin: .zero, size: scaledSize))
+            scaledImage.unlockFocus()
+
+            let attachment = NSTextAttachment()
+            let cell = NSTextAttachmentCell(imageCell: scaledImage)
+            attachment.attachmentCell = cell
+
+            let attrString = NSAttributedString(attachment: attachment)
+
+            let insertionPoint = textView.selectedRange().location
+            textView.textStorage?.insert(attrString, at: insertionPoint)
+
+            // Move cursor past the inserted image
+            textView.setSelectedRange(NSRange(location: insertionPoint + 1, length: 0))
+
+            syncContent()
+            richTextLogger.info("Inserted inline image")
         }
 
         func textDidBeginEditing(_ notification: Notification) {
@@ -113,10 +167,14 @@ struct RichTextEditor: NSViewRepresentable {
             parent.plainContent = textView.string
 
             let fullRange = NSRange(location: 0, length: textView.textStorage?.length ?? 0)
-            parent.attributedContent = try? textView.textStorage?.data(
-                from: fullRange,
-                documentAttributes: [.documentType: NSAttributedString.DocumentType.rtfd]
-            )
+            do {
+                parent.attributedContent = try textView.textStorage?.data(
+                    from: fullRange,
+                    documentAttributes: [.documentType: NSAttributedString.DocumentType.rtfd]
+                )
+            } catch {
+                richTextLogger.error("syncContent: Failed to serialize RTFD — \(error.localizedDescription)")
+            }
         }
     }
 }
