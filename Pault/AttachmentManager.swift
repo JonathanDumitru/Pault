@@ -15,10 +15,12 @@ enum AttachmentManager {
     static let embeddedSizeThreshold: Int64 = 10 * 1024 * 1024
 
     static var attachmentsBaseDirectory: URL {
-        let appSupport = FileManager.default.urls(
+        guard let appSupport = FileManager.default.urls(
             for: .applicationSupportDirectory,
             in: .userDomainMask
-        ).first!
+        ).first else {
+            fatalError("Application Support directory unavailable — cannot manage attachments.")
+        }
         return appSupport.appendingPathComponent("Pault/Attachments", isDirectory: true)
     }
 
