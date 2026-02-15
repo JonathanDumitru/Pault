@@ -6,6 +6,9 @@
 import SwiftUI
 import SwiftData
 import UniformTypeIdentifiers
+import os
+
+private let attachmentsLogger = Logger(subsystem: "com.pault.app", category: "AttachmentsStrip")
 
 struct AttachmentsStripView: View {
     @Environment(\.modelContext) private var modelContext
@@ -99,6 +102,9 @@ struct AttachmentsStripView: View {
             if AttachmentManager.isImage(attachment.mediaType) {
                 let resolvedURL = AttachmentManager.resolveURL(for: attachment) ?? url
                 attachment.thumbnailData = AttachmentManager.generateThumbnail(for: resolvedURL)
+                if attachment.thumbnailData == nil {
+                    attachmentsLogger.warning("Failed to generate thumbnail for '\(attachment.filename)'")
+                }
             }
 
             modelContext.insert(attachment)
@@ -106,7 +112,7 @@ struct AttachmentsStripView: View {
             prompt.updatedAt = Date()
             try modelContext.save()
         } catch {
-            // Log error silently — could show alert in future
+            attachmentsLogger.error("Failed to add attachment '\(url.lastPathComponent)': \(error.localizedDescription)")
         }
     }
 
@@ -127,7 +133,11 @@ struct AttachmentsStripView: View {
         prompt.attachments.removeAll { $0.id == attachment.id }
         modelContext.delete(attachment)
         prompt.updatedAt = Date()
-        try? modelContext.save()
+        do {
+            try modelContext.save()
+        } catch {
+            attachmentsLogger.error("deleteAttachment: Failed to save — \(error.localizedDescription)")
+        }
     }
 
     private func openAttachment(_ attachment: Attachment) {
