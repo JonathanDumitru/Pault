@@ -40,6 +40,7 @@ struct AttachmentsStripView: View {
                 }
                 .buttonStyle(.plain)
                 .help("Add attachment")
+                .accessibilityLabel("Add attachment")
             }
 
             if !sortedAttachments.isEmpty {
@@ -47,6 +48,8 @@ struct AttachmentsStripView: View {
                     HStack(spacing: 8) {
                         ForEach(sortedAttachments) { attachment in
                             AttachmentThumbnailView(attachment: attachment)
+                                .accessibilityLabel(attachment.filename)
+                                .accessibilityHint("Right-click for actions")
                                 .contextMenu {
                                     Button("Open") { openAttachment(attachment) }
                                     Button("Quick Look") { quickLookAttachment(attachment) }
@@ -59,6 +62,17 @@ struct AttachmentsStripView: View {
                         }
                     }
                 }
+            } else {
+                VStack(spacing: 4) {
+                    Image(systemName: "paperclip")
+                        .font(.caption)
+                        .foregroundStyle(.tertiary)
+                    Text("Drop files here or click + to add")
+                        .font(.caption)
+                        .foregroundStyle(.tertiary)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 8)
             }
         }
         .padding(.horizontal, 16)

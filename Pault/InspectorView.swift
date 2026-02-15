@@ -30,6 +30,8 @@ struct InspectorView: View {
                         TagPillView(name: tag.name, color: tag.color, onRemove: {
                             removeTag(tag)
                         })
+                        .accessibilityLabel("Tag: \(tag.name)")
+                        .accessibilityHint("Double-click to remove")
                     }
 
                     Button(action: { showingTagPicker.toggle() }) {

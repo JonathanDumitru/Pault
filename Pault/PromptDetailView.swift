@@ -80,6 +80,7 @@ struct PromptDetailView: View {
             .buttonStyle(.plain)
             .keyboardShortcut("i", modifiers: .command)
             .help("Toggle Inspector (⌘I)")
+            .accessibilityLabel(showInspector ? "Hide inspector" : "Show inspector")
         }
         .onChange(of: prompt.isFavorite) { _, _ in
             debouncedSave()

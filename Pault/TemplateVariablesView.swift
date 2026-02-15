@@ -57,6 +57,7 @@ struct TemplateVariablesView: View {
                         .buttonStyle(.plain)
                         .font(.caption)
                         .foregroundStyle(.secondary)
+                        .accessibilityLabel("Clear all variable values")
                     }
                 }
 
@@ -69,6 +70,7 @@ struct TemplateVariablesView: View {
                                 .foregroundStyle(.secondary)
                                 .frame(minWidth: 80, alignment: .trailing)
                                 .padding(.top, 6)
+                                .accessibilityLabel("Variable: \(variable.name)")
 
                             ExpandingTextEditor(
                                 text: Binding(
