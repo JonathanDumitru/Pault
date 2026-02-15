@@ -37,7 +37,7 @@ struct RichTextEditor: NSViewRepresentable {
         textView.delegate = context.coordinator
         textView.autoresizingMask = [.width]
 
-        textView.registerForDraggedTypes([.fileURL, .png, .tiff])
+        textView.registerForDraggedTypes([.fileURL, .URL, .png, .tiff])
 
         if let textContainer = textView.textContainer {
             textContainer.widthTracksTextView = true
@@ -188,22 +188,19 @@ final class RichEditorTextView: NSTextView {
     override func performDragOperation(_ sender: any NSDraggingInfo) -> Bool {
         if let onImageDrop {
             let pasteboard = sender.draggingPasteboard
-            let imageTypes: [NSPasteboard.PasteboardType] = [.fileURL]
-
-            for type in imageTypes where pasteboard.canReadItem(withDataConformingToTypes: [type.rawValue]) {
-                if let urls = pasteboard.readObjects(forClasses: [NSURL.self]) as? [URL] {
-                    for url in urls where isImageURL(url) {
-                        onImageDrop(url)
-                    }
+            if let urls = pasteboard.readObjects(forClasses: [NSURL.self]) as? [URL] {
+                for url in urls where isImageURL(url) {
+                    onImageDrop(url)
                 }
             }
         }
 
+        // Delegate all remaining handling (including non-image content) to NSTextView
         return super.performDragOperation(sender)
     }
 
     private func isImageURL(_ url: URL) -> Bool {
-        let imageExtensions: Set<String> = ["png", "jpg", "jpeg", "tiff", "tif", "gif", "bmp", "webp"]
+        let imageExtensions: Set<String> = ["png", "jpg", "jpeg", "tiff", "tif", "gif", "bmp", "webp", "heic", "heif"]
         return imageExtensions.contains(url.pathExtension.lowercased())
     }
 }
