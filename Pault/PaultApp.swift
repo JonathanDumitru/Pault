@@ -14,6 +14,7 @@ private let logger = Logger(subsystem: "com.pault.app", category: "lifecycle")
 extension Notification.Name {
     static let createNewPrompt = Notification.Name("com.pault.createNewPrompt")
     static let promptCreated = Notification.Name("com.pault.promptCreated")
+    static let insertInlineImage = Notification.Name("com.pault.insertInlineImage")
 }
 
 @main

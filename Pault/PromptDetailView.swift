@@ -56,6 +56,9 @@ struct PromptDetailView: View {
 
                 // Template variables (shown when {{variables}} exist in content)
                 TemplateVariablesView(prompt: prompt)
+
+                // Attachments strip
+                AttachmentsStripView(prompt: prompt)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
 
