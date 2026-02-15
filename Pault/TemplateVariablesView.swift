@@ -15,6 +15,7 @@ private let variablesLogger = Logger(subsystem: "com.pault.app", category: "Temp
 struct TemplateVariablesView: View {
     @Environment(\.modelContext) private var modelContext
     @Bindable var prompt: Prompt
+    @State private var focusedVariableID: UUID?
 
     private var sortedVariables: [TemplateVariable] {
         prompt.templateVariables.sorted { $0.sortOrder < $1.sortOrder }
@@ -77,7 +78,10 @@ struct TemplateVariablesView: View {
                                         debouncedSave()
                                     }
                                 ),
-                                placeholder: "Enter \(variable.name)..."
+                                placeholder: "Enter \(variable.name)...",
+                                onTab: { advanceFocus(from: variable) },
+                                onBackTab: { retreatFocus(from: variable) },
+                                isFocused: focusedVariableID == variable.id
                             )
                             .frame(minHeight: 30)
                             .overlay(
@@ -112,6 +116,33 @@ struct TemplateVariablesView: View {
             .padding(.bottom, 16)
         }
     }
+
+    // MARK: - Tab navigation
+
+    private func advanceFocus(from current: TemplateVariable) {
+        let sorted = sortedVariables
+        guard let idx = sorted.firstIndex(where: { $0.id == current.id }) else {
+            focusedVariableID = sorted.first?.id
+            return
+        }
+        let nextIdx = sorted.index(after: idx)
+        focusedVariableID = nextIdx < sorted.endIndex ? sorted[nextIdx].id : sorted.first?.id
+    }
+
+    private func retreatFocus(from current: TemplateVariable) {
+        let sorted = sortedVariables
+        guard let idx = sorted.firstIndex(where: { $0.id == current.id }) else {
+            focusedVariableID = sorted.last?.id
+            return
+        }
+        if idx > sorted.startIndex {
+            focusedVariableID = sorted[sorted.index(before: idx)].id
+        } else {
+            focusedVariableID = sorted.last?.id
+        }
+    }
+
+    // MARK: - Persistence
 
     @State private var saveTask: Task<Void, Never>?
 

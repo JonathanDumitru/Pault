@@ -13,6 +13,9 @@ struct ExpandingTextEditor: NSViewRepresentable {
     @Binding var text: String
     var placeholder: String = ""
     var font: NSFont = .systemFont(ofSize: NSFont.systemFontSize)
+    var onTab: (() -> Void)?
+    var onBackTab: (() -> Void)?
+    var isFocused: Bool = false
 
     func makeCoordinator() -> Coordinator {
         Coordinator(text: $text, placeholder: placeholder, font: font)
@@ -25,6 +28,8 @@ struct ExpandingTextEditor: NSViewRepresentable {
         )
         context.coordinator.scrollView = scrollView
         context.coordinator.textView = scrollView.textView
+        context.coordinator.onTab = onTab
+        context.coordinator.onBackTab = onBackTab
         scrollView.textView.string = text
         context.coordinator.updatePlaceholder()
         context.coordinator.recalculateHeight()
@@ -34,6 +39,10 @@ struct ExpandingTextEditor: NSViewRepresentable {
     func updateNSView(_ scrollView: AutoExpandingScrollView, context: Context) {
         let textView = scrollView.textView
 
+        // Keep callbacks up to date (closures may capture new state)
+        context.coordinator.onTab = onTab
+        context.coordinator.onBackTab = onBackTab
+
         // Only update text if the value actually changed to avoid cursor jumps
         if textView.string != text {
             textView.string = text
@@ -41,6 +50,13 @@ struct ExpandingTextEditor: NSViewRepresentable {
         }
 
         context.coordinator.updatePlaceholder()
+
+        // Programmatic focus: make this text view first responder when requested
+        if isFocused, textView.window?.firstResponder !== textView {
+            DispatchQueue.main.async {
+                textView.window?.makeFirstResponder(textView)
+            }
+        }
     }
 
     // MARK: - Coordinator
@@ -51,6 +67,8 @@ struct ExpandingTextEditor: NSViewRepresentable {
         let font: NSFont
         weak var scrollView: AutoExpandingScrollView?
         weak var textView: NSTextView?
+        var onTab: (() -> Void)?
+        var onBackTab: (() -> Void)?
         private var heightRecalcPending = false
 
         init(text: Binding<String>, placeholder: String, font: NSFont) {
@@ -65,6 +83,19 @@ struct ExpandingTextEditor: NSViewRepresentable {
             text.wrappedValue = textView.string
             updatePlaceholder()
             scheduleHeightRecalc()
+        }
+
+        func textView(_ textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
+            switch commandSelector {
+            case #selector(NSResponder.insertTab(_:)):
+                onTab?()
+                return true  // Consume Tab (prevent literal tab insertion)
+            case #selector(NSResponder.insertBacktab(_:)):
+                onBackTab?()
+                return true  // Consume Shift+Tab
+            default:
+                return false  // Let NSTextView handle all other commands
+            }
         }
 
         private func scheduleHeightRecalc() {
