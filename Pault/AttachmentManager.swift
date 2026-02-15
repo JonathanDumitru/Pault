@@ -106,33 +106,53 @@ enum AttachmentManager {
 
     // MARK: - Resolution
 
-    /// Resolve the on-disk URL for an attachment.
-    static func resolveURL(for attachment: Attachment) -> URL? {
+    /// Execute an action with the resolved on-disk URL for an attachment.
+    /// For referenced (bookmarked) files, this correctly starts AND stops
+    /// security-scoped resource access via `defer`.
+    static func withResolvedURL(for attachment: Attachment, perform action: (URL) -> Void) {
         switch attachment.storageMode {
         case "embedded":
-            guard let relativePath = attachment.relativePath else { return nil }
-            return attachmentsBaseDirectory.appendingPathComponent(relativePath)
+            guard let relativePath = attachment.relativePath else {
+                logger.warning("withResolvedURL: No relativePath for embedded attachment '\(attachment.filename)'")
+                return
+            }
+            let url = attachmentsBaseDirectory.appendingPathComponent(relativePath)
+            action(url)
 
         case "referenced":
-            guard let bookmarkData = attachment.bookmarkData else { return nil }
+            guard let bookmarkData = attachment.bookmarkData else {
+                logger.warning("withResolvedURL: No bookmarkData for referenced attachment '\(attachment.filename)'")
+                return
+            }
             var isStale = false
-            guard let url = try? URL(
-                resolvingBookmarkData: bookmarkData,
-                options: .withSecurityScope,
-                relativeTo: nil,
-                bookmarkDataIsStale: &isStale
-            ) else {
-                return nil
+            do {
+                let url = try URL(
+                    resolvingBookmarkData: bookmarkData,
+                    options: .withSecurityScope,
+                    relativeTo: nil,
+                    bookmarkDataIsStale: &isStale
+                )
+                if isStale {
+                    logger.warning("Stale bookmark for: \(attachment.filename)")
+                }
+                let didStart = url.startAccessingSecurityScopedResource()
+                defer { if didStart { url.stopAccessingSecurityScopedResource() } }
+                action(url)
+            } catch {
+                logger.error("withResolvedURL: Failed to resolve bookmark for '\(attachment.filename)': \(error.localizedDescription)")
             }
-            if isStale {
-                logger.warning("Stale bookmark for: \(attachment.filename)")
-            }
-            _ = url.startAccessingSecurityScopedResource()
-            return url
 
         default:
-            return nil
+            logger.warning("withResolvedURL: Unknown storageMode '\(attachment.storageMode)' for '\(attachment.filename)'")
         }
+    }
+
+    /// Resolve the on-disk URL for an attachment (non-scoped, for embedded files only).
+    /// WARNING: For referenced files, prefer `withResolvedURL` to ensure proper resource cleanup.
+    static func resolveURL(for attachment: Attachment) -> URL? {
+        guard attachment.storageMode == "embedded",
+              let relativePath = attachment.relativePath else { return nil }
+        return attachmentsBaseDirectory.appendingPathComponent(relativePath)
     }
 
     // MARK: - Deletion

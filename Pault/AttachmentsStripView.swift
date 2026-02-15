@@ -100,10 +100,11 @@ struct AttachmentsStripView: View {
 
             // Generate thumbnail for images
             if AttachmentManager.isImage(attachment.mediaType) {
-                let resolvedURL = AttachmentManager.resolveURL(for: attachment) ?? url
-                attachment.thumbnailData = AttachmentManager.generateThumbnail(for: resolvedURL)
-                if attachment.thumbnailData == nil {
-                    attachmentsLogger.warning("Failed to generate thumbnail for '\(attachment.filename)'")
+                AttachmentManager.withResolvedURL(for: attachment) { resolvedURL in
+                    attachment.thumbnailData = AttachmentManager.generateThumbnail(for: resolvedURL)
+                    if attachment.thumbnailData == nil {
+                        attachmentsLogger.warning("Failed to generate thumbnail for '\(attachment.filename)'")
+                    }
                 }
             }
 
@@ -141,23 +142,25 @@ struct AttachmentsStripView: View {
     }
 
     private func openAttachment(_ attachment: Attachment) {
-        guard let url = AttachmentManager.resolveURL(for: attachment) else { return }
-        NSWorkspace.shared.open(url)
+        AttachmentManager.withResolvedURL(for: attachment) { url in
+            NSWorkspace.shared.open(url)
+        }
     }
 
     private func quickLookAttachment(_ attachment: Attachment) {
-        guard let url = AttachmentManager.resolveURL(for: attachment) else { return }
-        NSWorkspace.shared.activateFileViewerSelecting([url])
+        AttachmentManager.withResolvedURL(for: attachment) { url in
+            NSWorkspace.shared.activateFileViewerSelecting([url])
+        }
     }
 
     private func insertInline(_ attachment: Attachment) {
-        // Post notification — RichTextEditor listens and inserts the image
-        guard let url = AttachmentManager.resolveURL(for: attachment) else { return }
-        NotificationCenter.default.post(
-            name: .insertInlineImage,
-            object: nil,
-            userInfo: ["url": url]
-        )
+        AttachmentManager.withResolvedURL(for: attachment) { url in
+            NotificationCenter.default.post(
+                name: .insertInlineImage,
+                object: nil,
+                userInfo: ["url": url]
+            )
+        }
     }
 }
 
