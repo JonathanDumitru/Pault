@@ -155,10 +155,16 @@ struct AttachmentsStripView: View {
 
     private func insertInline(_ attachment: Attachment) {
         AttachmentManager.withResolvedURL(for: attachment) { url in
+            // Load image data inside the closure while security-scoped access is active.
+            // Passing the URL via notification would be unsafe — defer revokes access before the observer runs.
+            guard let image = NSImage(contentsOf: url) else {
+                attachmentsLogger.warning("insertInline: Failed to load image from '\(attachment.filename)'")
+                return
+            }
             NotificationCenter.default.post(
                 name: .insertInlineImage,
                 object: nil,
-                userInfo: ["url": url]
+                userInfo: ["image": image]
             )
         }
     }

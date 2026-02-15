@@ -109,6 +109,10 @@ enum AttachmentManager {
     /// Execute an action with the resolved on-disk URL for an attachment.
     /// For referenced (bookmarked) files, this correctly starts AND stops
     /// security-scoped resource access via `defer`.
+    ///
+    /// - Important: The action closure executes synchronously on the caller's thread.
+    ///   Do **not** capture or store the URL for asynchronous use — access is revoked
+    ///   when this function returns. Load any needed data (e.g. `NSImage`) inside the closure.
     static func withResolvedURL(for attachment: Attachment, perform action: (URL) -> Void) {
         switch attachment.storageMode {
         case "embedded":
