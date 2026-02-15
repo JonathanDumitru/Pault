@@ -68,7 +68,18 @@ enum AttachmentManager {
         let attachmentID = UUID()
         let ext = sourceURL.pathExtension
         let destURL = destDir.appendingPathComponent("\(attachmentID.uuidString).\(ext)")
-        try FileManager.default.copyItem(at: sourceURL, to: destURL)
+        // Copy to a temp file in the same directory first
+        let tempURL = destDir.appendingPathComponent(UUID().uuidString + ".tmp")
+        try FileManager.default.copyItem(at: sourceURL, to: tempURL)
+
+        // Atomic swap — destination gets the complete file or nothing
+        do {
+            _ = try FileManager.default.replaceItemAt(destURL, withItemAt: tempURL)
+        } catch {
+            // Clean up temp file if the atomic swap fails
+            try? FileManager.default.removeItem(at: tempURL)
+            throw error
+        }
 
         logger.info("Embedded file: \(filename) (\(fileSize) bytes)")
 
