@@ -168,6 +168,8 @@ enum AttachmentManager {
         let dir = directory(for: promptID)
         do {
             try FileManager.default.removeItem(at: dir)
+        } catch let error as CocoaError where error.code == .fileNoSuchFile {
+            // Directory doesn't exist — nothing to delete, not an error.
         } catch {
             logger.error("deleteFiles: Failed to remove directory for prompt \(promptID) — \(error.localizedDescription)")
         }
