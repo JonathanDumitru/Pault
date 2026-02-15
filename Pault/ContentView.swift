@@ -130,5 +130,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
-        .modelContainer(for: [Prompt.self, Tag.self, TemplateVariable.self], inMemory: true)
+        .modelContainer(for: [Prompt.self, Tag.self, TemplateVariable.self, Attachment.self], inMemory: true)
 }
