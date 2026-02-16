@@ -60,6 +60,29 @@ struct IntegrationTests {
         #expect(text == "Hello {{name}}")
     }
 
+    @Test func independentVariablesResolveOnCopy() throws {
+        let context = try makeContext()
+        let service = PromptService(modelContext: context)
+
+        let prompt = service.createPrompt(
+            title: "Meeting",
+            content: "{{name}} met {{name}} at {{place}}"
+        )
+        TemplateEngine.syncVariables(for: prompt, in: context)
+
+        #expect(prompt.templateVariables.count == 3)
+
+        let sorted = prompt.templateVariables.sorted { $0.sortOrder < $1.sortOrder }
+        sorted[0].defaultValue = "Alice"   // first {{name}}
+        sorted[1].defaultValue = "Bob"     // second {{name}}
+        sorted[2].defaultValue = "the park" // {{place}}
+
+        service.copyToClipboard(prompt)
+
+        let text = NSPasteboard.general.string(forType: .string)
+        #expect(text == "Alice met Bob at the park")
+    }
+
     // MARK: - Cascade Deletes
 
     @Test func deletePromptCascadesTemplateVariables() throws {

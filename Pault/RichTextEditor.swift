@@ -16,6 +16,7 @@ struct RichTextEditor: NSViewRepresentable {
     @Binding var attributedContent: Data?
     @Binding var plainContent: String
     var onImageDrop: ((URL) -> Void)?
+    var isEditable: Bool = true
 
     func makeCoordinator() -> Coordinator {
         Coordinator(parent: self)
@@ -36,8 +37,12 @@ struct RichTextEditor: NSViewRepresentable {
         textView.textColor = .textColor
         textView.delegate = context.coordinator
         textView.autoresizingMask = [.width]
+        textView.isEditable = isEditable
+        textView.isSelectable = true
 
-        textView.registerForDraggedTypes([.fileURL, .URL, .png, .tiff])
+        if isEditable {
+            textView.registerForDraggedTypes([.fileURL, .URL, .png, .tiff])
+        }
 
         if let textContainer = textView.textContainer {
             textContainer.widthTracksTextView = true
@@ -97,12 +102,14 @@ struct RichTextEditor: NSViewRepresentable {
             self.parent = parent
             super.init()
 
-            imageObserver = NotificationCenter.default.addObserver(
-                forName: .insertInlineImage,
-                object: nil,
-                queue: .main
-            ) { [weak self] notification in
-                self?.handleInsertInlineImage(notification)
+            if parent.isEditable {
+                imageObserver = NotificationCenter.default.addObserver(
+                    forName: .insertInlineImage,
+                    object: nil,
+                    queue: .main
+                ) { [weak self] notification in
+                    self?.handleInsertInlineImage(notification)
+                }
             }
         }
 

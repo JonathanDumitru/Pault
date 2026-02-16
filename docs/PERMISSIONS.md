@@ -1,6 +1,6 @@
 # Permissions and system prompts
 
-## Accessibility / Input Monitoring
+## Accessibility
 Pault uses simulated key events (`CGEvent`) to paste prompt content into the frontmost app. macOS requires Accessibility permission to allow this behavior.
 
 **Automatic prompting:** The app checks permission using `AXIsProcessTrustedWithOptions` (via `AccessibilityHelper.swift`) on the first paste attempt. If permission has not been granted, macOS will display the system Accessibility permission dialog automatically. No manual setup is needed for most users.

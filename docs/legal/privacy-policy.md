@@ -23,7 +23,6 @@ Prompt library data is stored on-device using local app storage on macOS. Data r
 
 Pault may request macOS permissions for:
 - Accessibility: used for optional paste automation into the active app.
-- Input Monitoring: may be required by macOS in some configurations for global hotkey and simulated paste behavior.
 
 Pault only uses these permissions to enable user-initiated features.
 
@@ -48,4 +47,3 @@ We may update this policy from time to time. If material changes are made, we wi
 For privacy questions, contact:
 
 `privacy@pault.app`
-

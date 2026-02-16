@@ -71,12 +71,26 @@ struct PaultApp: App {
             NewPromptView()
         }
         .windowResizability(.contentMinSize)
-        .defaultSize(width: 600, height: 500)
+        .defaultSize(width: 700, height: 620)
+        .modelContainer(sharedModelContainer)
+
+        WindowGroup("Edit Prompt", for: UUID.self) { $promptID in
+            if let promptID {
+                EditPromptView(promptID: promptID)
+            }
+        }
+        .windowResizability(.contentMinSize)
+        .defaultSize(width: 700, height: 620)
         .modelContainer(sharedModelContainer)
     }
 
     init() {
         // Pass model container to AppDelegate synchronously to avoid race condition
         appDelegate.modelContainer = sharedModelContainer
+
+        // One-time migration: "paste" action removed in 2.5B — fall back to "copy"
+        if UserDefaults.standard.string(forKey: "defaultAction") == "paste" {
+            UserDefaults.standard.set("copy", forKey: "defaultAction")
+        }
     }
 }

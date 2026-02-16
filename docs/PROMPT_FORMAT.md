@@ -15,6 +15,10 @@ JSON dictionary with keys:
 - `createdAt` (TimeInterval, seconds since Unix epoch)
 - `updatedAt` (TimeInterval, seconds since Unix epoch)
 - `tags` ([String], optional tag names)
+- `templateVariables` (optional array), each with:
+  - `name` (String)
+  - `defaultValue` (String)
+  - `sortOrder` (Int)
 
 ## Encryption (proposed)
 - AES-GCM with a key derived from `SHA-256(password)`.

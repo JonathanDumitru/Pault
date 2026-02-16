@@ -80,12 +80,6 @@ final class PromptService {
         save("copyToClipboard")
     }
 
-    func pasteToFrontApp(_ prompt: Prompt, delay: Double) {
-        copyToClipboard(prompt)
-        let delayInSeconds = delay / 1000.0
-        _ = AccessibilityHelper.pasteToFrontApp(delay: delayInSeconds)
-    }
-
     // MARK: - Tag Operations
 
     func addTag(_ tag: Tag, to prompt: Prompt) {

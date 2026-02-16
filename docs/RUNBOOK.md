@@ -26,6 +26,6 @@ defaults delete Jonathan-Hines-Dumitru.Pault
 - Look for SwiftData load errors or hotkey registration failures.
 
 ## Verify core features
-- Main window: create, edit, tag, favorite, archive.
+- Main window: create, edit, template variables, tag, favorite, archive.
 - Menu bar popover: search, copy, paste, and create.
 - Hotkey launcher: ⌘⇧P opens and performs copy/paste actions.

@@ -184,7 +184,7 @@ struct AttachmentsStripView: View {
     }
 }
 
-private struct AttachmentThumbnailView: View {
+struct AttachmentThumbnailView: View {
     let attachment: Attachment
 
     var body: some View {

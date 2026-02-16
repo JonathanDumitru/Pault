@@ -1,7 +1,7 @@
 # Deployment and operations
 
 ## System requirements
-- macOS 14.0+ (SwiftData required).
+- macOS 15.0+.
 
 ## Packaging and distribution
 - The repository builds as a standard macOS app in Xcode.
@@ -17,4 +17,4 @@
 
 ## Operational notes
 - Global hotkey: ⌘⇧P is registered at launch and is not currently configurable.
-- If hotkey registration fails, the app logs a message to standard output.
+- If hotkey registration fails, the app writes an error through Apple unified logging.

@@ -16,14 +16,14 @@ struct PromptTagTests {
 
         prompt.tags = [tag1, tag2]
 
-        #expect(prompt.tags?.count == 2)
-        #expect(prompt.tags?.contains(where: { $0.name == "work" }) == true)
-        #expect(prompt.tags?.contains(where: { $0.name == "email" }) == true)
+        #expect(prompt.tags.count == 2)
+        #expect(prompt.tags.contains(where: { $0.name == "work" }))
+        #expect(prompt.tags.contains(where: { $0.name == "email" }))
     }
 
     @Test func promptStartsWithNoTags() async throws {
         let prompt = Prompt(title: "Test", content: "Content")
 
-        #expect(prompt.tags == nil || prompt.tags?.isEmpty == true)
+        #expect(prompt.tags.isEmpty)
     }
 }

@@ -14,6 +14,7 @@ enum SidebarFilter: Hashable {
 }
 
 struct SidebarView: View {
+    @Environment(\.openWindow) private var openWindow
     @Query(sort: [SortDescriptor(\Prompt.updatedAt, order: .reverse)]) private var allPrompts: [Prompt]
     @Query(sort: [SortDescriptor(\Tag.name, order: .forward)]) private var allTags: [Tag]
 
@@ -157,7 +158,11 @@ struct SidebarView: View {
                         }
                         .tag(prompt)
                         .accessibilityLabel(prompt.title.isEmpty ? "Untitled prompt" : prompt.title)
+                        .onTapGesture(count: 2) {
+                            openWindow(value: prompt.id)
+                        }
                         .contextMenu {
+                            Button("Edit", systemImage: "pencil") { openWindow(value: prompt.id) }
                             Button("Copy", systemImage: "doc.on.doc") { onCopy?(prompt) }
                             Button(prompt.isFavorite ? "Unfavorite" : "Favorite", systemImage: "star") { onToggleFavorite?(prompt) }
                             Button(prompt.isArchived ? "Unarchive" : "Archive", systemImage: "archivebox") { onToggleArchive?(prompt) }

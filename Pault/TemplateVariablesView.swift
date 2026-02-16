@@ -37,67 +37,97 @@ struct TemplateVariablesView: View {
         prompt.templateVariables.contains { !$0.defaultValue.isEmpty }
     }
 
+    private var filledCount: Int {
+        prompt.templateVariables.filter { !$0.defaultValue.isEmpty }.count
+    }
+
+    /// Names that appear more than once, so we know when to add occurrence labels.
+    private var duplicatedNames: Set<String> {
+        var counts: [String: Int] = [:]
+        for v in prompt.templateVariables { counts[v.name, default: 0] += 1 }
+        return Set(counts.filter { $0.value > 1 }.keys)
+    }
+
+    /// Display label for a variable: "name" if unique, "name [1]" / "name [2]" if duplicated.
+    private func displayLabel(for variable: TemplateVariable) -> String {
+        if duplicatedNames.contains(variable.name) {
+            return "\(variable.name) [\(variable.occurrenceIndex + 1)]"
+        }
+        return variable.name
+    }
+
     var body: some View {
         if hasVariables {
             VStack(alignment: .leading, spacing: 12) {
                 Divider()
 
-                // Header
-                HStack {
-                    Label("Variables", systemImage: "curlybraces")
+                VStack(alignment: .leading, spacing: 12) {
+                    // Header with filled count
+                    HStack {
+                        Label(
+                            "Variables (\(filledCount)/\(prompt.templateVariables.count))",
+                            systemImage: "curlybraces"
+                        )
                         .font(.headline)
                         .foregroundStyle(.secondary)
 
-                    Spacer()
+                        Spacer()
 
-                    if anyFilled {
-                        Button("Clear") {
-                            clearAllValues()
-                        }
-                        .buttonStyle(.plain)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .accessibilityLabel("Clear all variable values")
-                    }
-                }
-
-                // Variable fields
-                Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 8) {
-                    ForEach(sortedVariables) { variable in
-                        GridRow {
-                            Text(variable.name)
-                                .font(.body.monospaced())
-                                .foregroundStyle(.secondary)
-                                .frame(minWidth: 80, alignment: .trailing)
-                                .padding(.top, 6)
-                                .accessibilityLabel("Variable: \(variable.name)")
-
-                            ExpandingTextEditor(
-                                text: Binding(
-                                    get: { variable.defaultValue },
-                                    set: { newValue in
-                                        variable.defaultValue = newValue
-                                        debouncedSave()
-                                    }
-                                ),
-                                placeholder: "Enter \(variable.name)...",
-                                onTab: { advanceFocus(from: variable) },
-                                onBackTab: { retreatFocus(from: variable) },
-                                isFocused: focusedVariableID == variable.id
-                            )
-                            .frame(minHeight: 30)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 6)
-                                    .stroke(Color.secondary.opacity(0.3), lineWidth: 1)
-                            )
+                        if anyFilled {
+                            Button("Clear") {
+                                clearAllValues()
+                            }
+                            .buttonStyle(.plain)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .accessibilityLabel("Clear all variable values")
                         }
                     }
+
+                    // Variable fields
+                    Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 8) {
+                        ForEach(sortedVariables) { variable in
+                            GridRow {
+                                Text(displayLabel(for: variable))
+                                    .font(.caption.monospaced())
+                                    .fontWeight(.medium)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                                    .background(Color.accentColor.opacity(0.15))
+                                    .foregroundStyle(Color.accentColor)
+                                    .clipShape(Capsule())
+                                    .frame(minWidth: 80, alignment: .trailing)
+                                    .padding(.top, 6)
+                                    .accessibilityLabel("Variable: \(displayLabel(for: variable))")
+
+                                ExpandingTextEditor(
+                                    text: Binding(
+                                        get: { variable.defaultValue },
+                                        set: { newValue in
+                                            variable.defaultValue = newValue
+                                            debouncedSave()
+                                        }
+                                    ),
+                                    placeholder: "Enter \(displayLabel(for: variable))...",
+                                    onTab: { advanceFocus(from: variable) },
+                                    onBackTab: { retreatFocus(from: variable) },
+                                    isFocused: focusedVariableID == variable.id
+                                )
+                                .frame(minHeight: 30)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 6)
+                                        .stroke(Color.accentColor.opacity(0.3), lineWidth: 1)
+                                )
+                            }
+                        }
+                    }
                 }
+                .padding(12)
+                .background(Color.secondary.opacity(0.06))
+                .clipShape(RoundedRectangle(cornerRadius: 8))
 
                 // Preview
                 if anyFilled {
-                    Divider()
-
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Preview")
                             .font(.headline)
@@ -110,8 +140,11 @@ struct TemplateVariablesView: View {
                             .padding(10)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .background(Color.secondary.opacity(0.06))
-                            .clipShape(RoundedRectangle(cornerRadius: 6))
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
                     }
+                    .padding(12)
+                    .background(Color.secondary.opacity(0.06))
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
             }
             .padding(.horizontal, 16)

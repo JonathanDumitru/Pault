@@ -1,5 +1,5 @@
 flowchart TD
-    PasteAction["User selects Paste action"] --> Check{"Accessibility / Input Monitoring granted?"}
+    PasteAction["User selects Paste action"] --> Check{"Accessibility granted?"}
     Check -- "No" --> Prompt["macOS permission prompt"]
     Prompt --> Grant["User grants access"]
     Grant --> Paste["Simulate \u2318V via CGEvent"]

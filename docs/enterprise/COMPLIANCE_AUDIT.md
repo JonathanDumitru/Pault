@@ -4,7 +4,7 @@ This checklist captures the current behavior of the macOS app target and points 
 
 ## Data residency
 - Data is stored locally in the app sandbox using SwiftData.
-- Evidence: `Pault/PaultApp.swift`, `Pault/Prompt.swift`, `Pault/Tag.swift`.
+- Evidence: `Pault/PaultApp.swift`, `Pault/Prompt.swift`, `Pault/Tag.swift`, `Pault/TemplateVariable.swift`.
 
 ## Network egress
 - No network frameworks or HTTP clients are referenced in the app target.
@@ -22,7 +22,7 @@ This checklist captures the current behavior of the macOS app target and points 
 
 ## Permissions
 - Hotkey uses Carbon event manager (no prompt expected).
-- Paste simulation uses `CGEvent` and may require Accessibility/Input Monitoring permission.
+- Paste simulation uses `CGEvent` and requires Accessibility permission.
 - Evidence: `Pault/GlobalHotkeyManager.swift`, `Pault/HotkeyLauncherView.swift`.
 
 ## Retention and deletion
@@ -31,8 +31,8 @@ This checklist captures the current behavior of the macOS app target and points 
 - Evidence: `Pault/ContentView.swift`, `Pault/MenuBarContentView.swift`.
 
 ## Logging
-- Errors are printed to standard output; no remote logging.
-- Evidence: `Pault/PaultApp.swift`, `Pault/GlobalHotkeyManager.swift`.
+- Errors are logged through Apple unified logging (`os.Logger`); no remote logging.
+- Evidence: `Pault/PaultApp.swift`, `Pault/GlobalHotkeyManager.swift`, `Pault/PromptService.swift`.
 
 ## Backup and restore
 - No built-in export/import.

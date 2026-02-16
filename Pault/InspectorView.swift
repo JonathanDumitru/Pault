@@ -53,7 +53,7 @@ struct InspectorView: View {
                                 createAndAddTag(name: name, color: color)
                             }
                         )
-                        .frame(width: 200, height: 300)
+                        .frame(width: 260, height: 380)
                     }
                 }
             }

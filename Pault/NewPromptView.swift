@@ -22,6 +22,14 @@ struct NewPromptView: View {
         TemplateEngine.extractVariableNames(from: content)
     }
 
+    /// How many times each variable name appears in the content.
+    private var variableOccurrenceCounts: [String: Int] {
+        let occurrences = TemplateEngine.extractAllOccurrences(from: content)
+        var counts: [String: Int] = [:]
+        for occ in occurrences { counts[occ.name, default: 0] += 1 }
+        return counts
+    }
+
     private var canCreate: Bool {
         !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             || !content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -77,7 +85,7 @@ struct NewPromptView: View {
                                 createAndAddTag(name: name, color: color)
                             }
                         )
-                        .frame(width: 200, height: 300)
+                        .frame(width: 260, height: 380)
                     }
                 }
             }
@@ -91,13 +99,21 @@ struct NewPromptView: View {
 
                     FlowLayout(spacing: 4) {
                         ForEach(detectedVariables, id: \.self) { name in
-                            Text("{{\(name)}}")
-                                .font(.caption)
-                                .fontDesign(.monospaced)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 4)
-                                .background(Color.secondary.opacity(0.15))
-                                .clipShape(Capsule())
+                            HStack(spacing: 2) {
+                                Text("{{\(name)}}")
+                                    .font(.caption)
+                                    .fontDesign(.monospaced)
+
+                                if let count = variableOccurrenceCounts[name], count > 1 {
+                                    Text("×\(count)")
+                                        .font(.caption2)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.secondary.opacity(0.15))
+                            .clipShape(Capsule())
                         }
                     }
                 }
@@ -124,7 +140,7 @@ struct NewPromptView: View {
             }
         }
         .padding(20)
-        .frame(minWidth: 500, minHeight: 400)
+        .frame(minWidth: 600, minHeight: 500)
     }
 
     private func addTag(_ tag: Tag) {

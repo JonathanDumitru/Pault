@@ -4,7 +4,7 @@ This document tracks compatibility decisions for the planned `.prompt` file form
 
 ## Version 1 (proposed)
 - No explicit `version` field (initial draft).
-- JSON keys: `id`, `title`, `content`, `isFavorite`, `isArchived`, `createdAt`, `updatedAt`, `tags`.
+- JSON keys: `id`, `title`, `content`, `isFavorite`, `isArchived`, `createdAt`, `updatedAt`, `tags`, `templateVariables`.
 - AES-GCM encryption with `SHA-256(password)` key derivation.
 
 ## Planned changes

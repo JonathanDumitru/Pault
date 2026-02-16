@@ -45,7 +45,7 @@ struct ContentView: View {
             .navigationSplitViewColumnWidth(min: 220, ideal: 260, max: 320)
         } detail: {
             if let prompt = selectedPrompt {
-                PromptDetailView(prompt: prompt, showInspector: $showInspector)
+                PromptPreviewView(prompt: prompt, showInspector: $showInspector)
                     .id(prompt.id)
             } else {
                 EmptyDetailView()
@@ -60,6 +60,13 @@ struct ContentView: View {
                 .keyboardShortcut("c", modifiers: .command)
                 .disabled(selectedPrompt == nil)
                 .help("Copy Prompt Content (⌘C)")
+
+                Button(action: editSelectedPrompt) {
+                    Image(systemName: "pencil")
+                }
+                .keyboardShortcut("e", modifiers: .command)
+                .disabled(selectedPrompt == nil)
+                .help("Edit Prompt (⌘E)")
 
                 Button(action: { openWindow(id: "new-prompt") }) {
                     Image(systemName: "plus")
@@ -119,6 +126,11 @@ struct ContentView: View {
             selectedPrompt = nil
         }
         service.deletePrompt(prompt)
+    }
+
+    private func editSelectedPrompt() {
+        guard let prompt = selectedPrompt else { return }
+        openWindow(value: prompt.id)
     }
 
     private func copySelectedPrompt() {

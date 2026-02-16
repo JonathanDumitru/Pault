@@ -6,7 +6,7 @@
 - If it still fails, check Console for logs from the Pault process about hotkey registration failures.
 
 ## Paste action does nothing
-- Paste actions simulate ⌘V using `CGEvent` and may require Accessibility or Input Monitoring permission.
+- Paste actions simulate ⌘V using `CGEvent` and require Accessibility permission.
 - Open **System Settings > Privacy & Security** and grant access to Pault.
 - Ensure the target app is frontmost when you run the paste action.
 
@@ -20,5 +20,9 @@
 
 ## Changes are not saved between launches
 - If SwiftData fails to load the persistent store, Pault falls back to an in-memory store.
-- Look for the message "SwiftData ModelContainer load failed" in Console logs.
+- Look for messages like "SwiftData persistent store failed" in Console logs.
 - If this happens, back up the container directory and reinstall or reset the app data.
+
+## Copied text still contains `{{variable}}`
+- Unfilled template variables are intentionally left unresolved on copy/paste.
+- Open the prompt in the main window and set values in the **Variables** section.
