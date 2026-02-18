@@ -143,6 +143,10 @@ struct SidebarView: View {
                             Text("Press ⌘N to create one")
                                 .font(.caption)
                                 .foregroundStyle(.tertiary)
+                        } else if selectedFilter == .recent {
+                            Text("Copy a prompt to see it here.")
+                                .font(.caption)
+                                .foregroundStyle(.tertiary)
                         }
                         Spacer()
                     }
@@ -157,6 +161,7 @@ struct SidebarView: View {
                             selectedFilter = .tag(tag)
                         }
                         .tag(prompt)
+                        .help("Double-click to edit")
                         .accessibilityLabel(prompt.title.isEmpty ? "Untitled prompt" : prompt.title)
                         .onTapGesture(count: 2) {
                             openWindow(value: prompt.id)

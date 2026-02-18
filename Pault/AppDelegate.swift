@@ -32,14 +32,59 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         if let button = statusItem?.button {
             button.image = NSImage(systemSymbolName: "text.bubble", accessibilityDescription: "Pault")
-            button.action = #selector(togglePopover)
+            button.action = #selector(statusBarButtonClicked)
             button.target = self
+            button.sendAction(on: [.leftMouseUp, .rightMouseUp])
         }
 
         popover = NSPopover()
         popover?.contentSize = NSSize(width: 320, height: 480)
         popover?.behavior = .transient
         popover?.animates = true
+    }
+
+    @objc private func statusBarButtonClicked(_ sender: NSStatusBarButton) {
+        if NSApp.currentEvent?.type == .rightMouseUp {
+            showContextMenu()
+        } else {
+            togglePopover()
+        }
+    }
+
+    private func showContextMenu() {
+        let menu = NSMenu()
+
+        let openItem = NSMenuItem(title: "Open Pault", action: #selector(openMainWindow), keyEquivalent: "")
+        openItem.target = self
+        menu.addItem(openItem)
+
+        menu.addItem(.separator())
+
+        let prefsItem = NSMenuItem(title: "Preferences…", action: Selector(("showSettingsWindow:")), keyEquivalent: ",")
+        menu.addItem(prefsItem)
+
+        let aboutItem = NSMenuItem(title: "About Pault", action: #selector(openAboutWindow), keyEquivalent: "")
+        aboutItem.target = self
+        menu.addItem(aboutItem)
+
+        menu.addItem(.separator())
+
+        let quitItem = NSMenuItem(title: "Quit Pault", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
+        menu.addItem(quitItem)
+
+        // Temporarily assign menu so performClick shows it, then clear so left-click still works
+        statusItem?.menu = menu
+        statusItem?.button?.performClick(nil)
+        statusItem?.menu = nil
+    }
+
+    @objc private func openMainWindow() {
+        NSApp.activate(ignoringOtherApps: true)
+        NSApp.windows.first(where: { $0.identifier?.rawValue == "main" || $0.title.isEmpty == false && !$0.isKind(of: NSPanel.self) })?.makeKeyAndOrderFront(nil)
+    }
+
+    @objc private func openAboutWindow() {
+        NotificationCenter.default.post(name: .openAboutWindow, object: nil)
     }
 
     private func setupGlobalHotkey() {

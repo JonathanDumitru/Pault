@@ -15,13 +15,27 @@ extension Notification.Name {
     static let createNewPrompt = Notification.Name("com.pault.createNewPrompt")
     static let promptCreated = Notification.Name("com.pault.promptCreated")
     static let insertInlineImage = Notification.Name("com.pault.insertInlineImage")
+    static let openAboutWindow = Notification.Name("com.pault.openAboutWindow")
 }
 
 @main
 struct PaultApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    @Environment(\.openWindow) private var openWindow
+    @AppStorage("accentColorPreference") private var accentColorPreference: String = "blue"
 
     @State private var showDataError: Bool = false
+
+    private var accentColor: Color {
+        switch accentColorPreference {
+        case "purple": return .purple
+        case "pink":   return .pink
+        case "red":    return .red
+        case "orange": return .orange
+        case "green":  return .green
+        default:       return .blue
+        }
+    }
 
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
@@ -50,6 +64,10 @@ struct PaultApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .tint(accentColor)
+                .onReceive(NotificationCenter.default.publisher(for: .openAboutWindow)) { _ in
+                    openWindow(id: "about")
+                }
         }
         .windowResizability(.contentSize)
         .defaultSize(width: 900, height: 600)
@@ -61,11 +79,23 @@ struct PaultApp: App {
                 }
                 .keyboardShortcut("n", modifiers: .command)
             }
+            CommandGroup(replacing: .appInfo) {
+                Button("About Pault") {
+                    openWindow(id: "about")
+                }
+            }
         }
 
         Settings {
             PreferencesView()
         }
+        .modelContainer(sharedModelContainer)
+
+        Window("About Pault", id: "about") {
+            AboutView()
+        }
+        .windowResizability(.contentSize)
+        .defaultSize(width: 400, height: 280)
 
         Window("New Prompt", id: "new-prompt") {
             NewPromptView()

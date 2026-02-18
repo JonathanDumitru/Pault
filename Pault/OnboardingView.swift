@@ -26,7 +26,7 @@ struct OnboardingView: View {
             icon: "keyboard",
             title: "Built for Speed",
             subtitle: "Keyboard-first workflow",
-            description: "Press ⌘⇧P to search, ⌘1-9 to select, and Return to copy or paste instantly. Star your favorites for quick access."
+            description: "Press ⌘⇧P to search, ⌘1-9 to select, and Return to copy to your clipboard instantly. Star your favorites for quick access."
         )
     ]
 
