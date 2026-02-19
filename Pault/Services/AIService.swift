@@ -145,7 +145,17 @@ actor AIService {
         Do not include prompts in multiple collections. Every prompt must appear exactly once.
         """
         let response = try await complete(system: system, user: titleList, config: config)
-        guard let data = response.data(using: .utf8),
+        // Strip optional markdown code fences (LLMs often add ```json … ``` even when asked not to)
+        var cleaned = response.trimmingCharacters(in: .whitespacesAndNewlines)
+        if cleaned.hasPrefix("```") {
+            cleaned = cleaned.drop(while: { $0 != "\n" }).dropFirst()
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            if cleaned.hasSuffix("```") {
+                cleaned = String(cleaned.dropLast(3))
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+            }
+        }
+        guard let data = cleaned.data(using: .utf8),
               let suggestions = try? JSONDecoder().decode([CollectionSuggestion].self, from: data) else {
             throw AIError.parseError(response.data(using: .utf8) ?? Data())
         }
