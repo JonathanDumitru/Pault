@@ -281,6 +281,8 @@ private struct MenuBarPromptRow: View {
                     Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                         .font(.caption)
                         .foregroundStyle(.tertiary)
+                        .accessibilityLabel(isExpanded ? "Collapse" : "Expand")
+                        .accessibilityHint("Double tap to \(isExpanded ? "collapse" : "expand") prompt actions")
                 }
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
@@ -303,6 +305,7 @@ private struct MenuBarPromptRow: View {
                                 .font(.caption)
                         }
                         .buttonStyle(.bordered)
+                        .accessibilityHint("Copies prompt text to clipboard")
 
                         Spacer()
 
@@ -310,9 +313,11 @@ private struct MenuBarPromptRow: View {
                             Button(action: onToggleFavorite) {
                                 Label(prompt.isFavorite ? "Unfavorite" : "Favorite", systemImage: "star")
                             }
+                            .accessibilityHint(prompt.isFavorite ? "Removes from favorites" : "Adds to favorites")
                             Button(action: onArchive) {
                                 Label(prompt.isArchived ? "Unarchive" : "Archive", systemImage: "archivebox")
                             }
+                            .accessibilityHint(prompt.isArchived ? "Unarchives this prompt" : "Archives this prompt")
                             Divider()
                             Button(role: .destructive, action: onDelete) {
                                 Label("Delete", systemImage: "trash")
