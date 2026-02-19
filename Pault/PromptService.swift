@@ -173,6 +173,27 @@ final class PromptService {
         return result
     }
 
+    func filterPrompts(_ prompts: [Prompt], collection: SmartCollection) -> [Prompt] {
+        switch collection.ruleType {
+        case .aiCurated:
+            let ids = Set(collection.promptIDs)
+            return prompts.filter { ids.contains($0.id) }
+        case .savedFilter:
+            guard let filter = collection.filter else { return [] }
+            var result = prompts.filter { !$0.isArchived }
+            if filter.onlyFavorites { result = result.filter(\.isFavorite) }
+            if let days = filter.recentDays {
+                let cutoff = Calendar.current.date(byAdding: .day, value: -days, to: Date()) ?? Date()
+                result = result.filter { ($0.lastUsedAt ?? .distantPast) >= cutoff }
+            }
+            if !filter.tagIDs.isEmpty {
+                let ids = Set(filter.tagIDs)
+                result = result.filter { $0.tags.contains(where: { ids.contains($0.id) }) }
+            }
+            return result
+        }
+    }
+
     // MARK: - Versioning
 
     func saveSnapshot(for prompt: Prompt, changeNote: String? = nil, limit: Int = 50) {
