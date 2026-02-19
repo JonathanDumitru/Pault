@@ -1,7 +1,6 @@
 // PaultCLI/Commands/ListCommand.swift
 import Foundation
 import ArgumentParser
-import SwiftData
 
 struct ListCommand: ParsableCommand {
     static let configuration = CommandConfiguration(
@@ -13,7 +12,7 @@ struct ListCommand: ParsableCommand {
     var tag: String?
 
     @Flag(name: .shortAndLong, help: "Show only favorites")
-    var favorites = false
+    var favorite = false
 
     @Flag(name: .long, help: "Output as JSON")
     var json = false
@@ -21,8 +20,8 @@ struct ListCommand: ParsableCommand {
     func run() throws {
         let store = try PaultStore()
         var prompts = store.prompts.filter { !$0.isArchived }
-        if let tag { prompts = prompts.filter { $0.tags.contains(where: { $0.name == tag }) } }
-        if favorites { prompts = prompts.filter(\.isFavorite) }
+        if let tag { prompts = prompts.filter { $0.tags.contains(where: { $0.name.localizedCaseInsensitiveCompare(tag) == .orderedSame }) } }
+        if favorite { prompts = prompts.filter(\.isFavorite) }
 
         if json {
             let output = prompts.map { ["id": $0.id.uuidString, "title": $0.title] }

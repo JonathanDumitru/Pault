@@ -3,6 +3,11 @@ import Foundation
 import ArgumentParser
 import Security
 
+private struct RuntimeError: LocalizedError {
+    let errorDescription: String?
+    init(_ message: String) { errorDescription = message }
+}
+
 struct RunCommand: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "run",
@@ -104,11 +109,11 @@ struct RunCommand: AsyncParsableCommand {
         let (data, response) = try await URLSession.shared.data(for: request)
         guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
             let code = (response as? HTTPURLResponse)?.statusCode ?? -1
-            throw ValidationError("HTTP \(code) from \(provider) API.")
+            throw RuntimeError("HTTP \(code) from \(provider) API.")
         }
 
         guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
-            throw ValidationError("Could not parse response from \(provider) API.")
+            throw RuntimeError("Could not parse response from \(provider) API.")
         }
 
         switch provider {
@@ -128,6 +133,6 @@ struct RunCommand: AsyncParsableCommand {
                 return text
             }
         }
-        throw ValidationError("Unexpected response format from \(provider) API.")
+        throw RuntimeError("Unexpected response format from \(provider) API.")
     }
 }

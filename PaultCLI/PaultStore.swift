@@ -11,11 +11,11 @@ final class PaultStore {
         let schema = Schema([Prompt.self, Tag.self, TemplateVariable.self,
                              Attachment.self, PromptRun.self, CopyEvent.self,
                              PromptVersion.self, SmartCollection.self])
-        // Explicit URL required in CLI context: standalone binaries have no bundle identifier,
-        // so SwiftData's default store resolution would create a different file than the app uses.
-        // The app (bundle ID com.pault.app) stores its database at this path.
-        let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-        let storeURL = appSupport.appendingPathComponent("com.pault.app/default.store")
+        // Explicit URL required in CLI context: the app (bundle ID Jonathan-Hines-Dumitru.Pault)
+        // is sandboxed, so its SwiftData store lives inside its container directory, not the
+        // standard ~/Library/Application Support/ path that a CLI binary would resolve.
+        let storeURL = FileManager.default.homeDirectoryForCurrentUser
+            .appendingPathComponent("Library/Containers/Jonathan-Hines-Dumitru.Pault/Data/Library/Application Support/default.store")
         let config = ModelConfiguration(schema: schema, url: storeURL, isStoredInMemoryOnly: false)
         container = try ModelContainer(for: schema, configurations: [config])
         context = ModelContext(container)
