@@ -49,7 +49,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         popover = NSPopover()
-        popover?.contentSize = NSSize(width: 320, height: 480)
+        popover?.contentSize = NSSize(width: AppConstants.Windows.menuBarDefault.width,
+                                      height: AppConstants.Windows.menuBarDefault.height)
         popover?.behavior = .transient
         popover?.animates = true
     }

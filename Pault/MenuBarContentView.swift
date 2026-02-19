@@ -140,7 +140,8 @@ struct MenuBarContentView: View {
             .padding(10)
         }
         .copyToast(isShowing: $showCopyToast)
-        .frame(width: 320, height: 480)
+        .frame(width: AppConstants.Windows.menuBarDefault.width,
+               height: AppConstants.Windows.menuBarDefault.height)
         .sheet(isPresented: $isCreatingNew) {
             NewPromptSheet(isPresented: $isCreatingNew)
         }

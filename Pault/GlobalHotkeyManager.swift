@@ -88,5 +88,6 @@ class GlobalHotkeyManager {
 }
 
 extension GlobalHotkeyManager {
-    static let keyCodeP: UInt32 = 0x23
+    /// Default hotkey key code (P key). Alias for AppConstants.Hotkey.defaultKeyCode.
+    static var keyCodeP: UInt32 { AppConstants.Hotkey.defaultKeyCode }
 }

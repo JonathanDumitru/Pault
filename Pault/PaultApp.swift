@@ -72,7 +72,7 @@ struct PaultApp: App {
                 }
         }
         .windowResizability(.contentSize)
-        .defaultSize(width: 900, height: 600)
+        .defaultSize(AppConstants.Windows.mainDefault)
         .modelContainer(sharedModelContainer)
         .commands {
             CommandGroup(replacing: .newItem) {
@@ -97,13 +97,13 @@ struct PaultApp: App {
             AboutView()
         }
         .windowResizability(.contentSize)
-        .defaultSize(width: 400, height: 280)
+        .defaultSize(AppConstants.Windows.aboutDefault)
 
         Window("New Prompt", id: "new-prompt") {
             NewPromptView()
         }
         .windowResizability(.contentMinSize)
-        .defaultSize(width: 700, height: 620)
+        .defaultSize(AppConstants.Windows.promptDefault)
         .modelContainer(sharedModelContainer)
 
         WindowGroup("Edit Prompt", for: UUID.self) { $promptID in
@@ -112,7 +112,7 @@ struct PaultApp: App {
             }
         }
         .windowResizability(.contentMinSize)
-        .defaultSize(width: 700, height: 620)
+        .defaultSize(AppConstants.Windows.promptDefault)
         .modelContainer(sharedModelContainer)
     }
 

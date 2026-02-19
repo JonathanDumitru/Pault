@@ -44,7 +44,8 @@ struct PreferencesView: View {
                     Label("AI", systemImage: "sparkles")
                 }
         }
-        .frame(width: 460, height: 360)
+        .frame(width: AppConstants.Windows.prefsDefault.width,
+               height: AppConstants.Windows.prefsDefault.height)
     }
 
     private var generalTab: some View {
@@ -84,10 +85,10 @@ struct PreferencesView: View {
             }
 
             Button("Reset to Default (⌘⇧P)") {
-                UserDefaults.standard.set(Int(0x23), forKey: "hotkeyKeyCode")
-                UserDefaults.standard.set(Int(cmdKey | shiftKey), forKey: "hotkeyModifiers")
+                UserDefaults.standard.set(Int(AppConstants.Hotkey.defaultKeyCode), forKey: "hotkeyKeyCode")
+                UserDefaults.standard.set(Int(AppConstants.Hotkey.defaultModifiers), forKey: "hotkeyModifiers")
                 globalHotkey = "⌘⇧P"
-                GlobalHotkeyManager.shared.register(keyCode: 0x23, modifiers: UInt32(cmdKey | shiftKey)) {
+                GlobalHotkeyManager.shared.register(keyCode: AppConstants.Hotkey.defaultKeyCode, modifiers: AppConstants.Hotkey.defaultModifiers) {
                     NotificationCenter.default.post(name: .toggleLauncher, object: nil)
                 }
             }
