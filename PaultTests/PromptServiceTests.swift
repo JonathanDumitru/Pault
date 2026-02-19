@@ -13,7 +13,7 @@ struct PromptServiceTests {
 
     private func makeContext() throws -> ModelContext {
         let container = try ModelContainer(
-            for: Prompt.self, TemplateVariable.self, Pault.Tag.self, Attachment.self,
+            for: Prompt.self, TemplateVariable.self, Pault.Tag.self, Attachment.self, CopyEvent.self,
             configurations: ModelConfiguration(isStoredInMemoryOnly: true)
         )
         return ModelContext(container)
@@ -230,7 +230,36 @@ struct PromptServiceTests {
         #expect(prompt.lastUsedAt != nil)
     }
 
-    // MARK: - filterPrompts
+
+    @Test func copyToClipboard_insertsCopyEvent() throws {
+        let context = try makeContext()
+        let service = PromptService(modelContext: context)
+
+        let prompt = service.createPrompt(title: "Test", content: "Hello")
+        service.copyToClipboard(prompt)
+
+        let descriptor = FetchDescriptor<CopyEvent>()
+        let events = try context.fetch(descriptor)
+        #expect(events.count == 1)
+        #expect(events.first?.promptID == prompt.id)
+    }
+
+    @Test func copyToClipboard_multipleCopies_recordsEachEvent() throws {
+        let context = try makeContext()
+        let service = PromptService(modelContext: context)
+
+        let prompt = service.createPrompt(title: "Test", content: "Hello")
+        service.copyToClipboard(prompt)
+        service.copyToClipboard(prompt)
+        service.copyToClipboard(prompt)
+
+        let descriptor = FetchDescriptor<CopyEvent>()
+        let events = try context.fetch(descriptor)
+        #expect(events.count == 3)
+        #expect(events.allSatisfy { $0.promptID == prompt.id })
+    }
+
+        // MARK: - filterPrompts
 
     @Test func filterExcludesArchivedByDefault() throws {
         let context = try makeContext()
