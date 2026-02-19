@@ -16,6 +16,7 @@ extension Notification.Name {
     static let promptCreated = Notification.Name("com.pault.promptCreated")
     static let insertInlineImage = Notification.Name("com.pault.insertInlineImage")
     static let openAboutWindow = Notification.Name("com.pault.openAboutWindow")
+    static let toggleLauncher = Notification.Name("com.pault.toggleLauncher")
 }
 
 @main

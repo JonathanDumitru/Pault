@@ -11,6 +11,11 @@ import os
 
 private let appDelegateLogger = Logger(subsystem: "com.pault.app", category: "AppDelegate")
 
+private extension Int {
+    /// Returns nil if zero (used to detect un-set UserDefaults integers).
+    var nonZero: Int? { self == 0 ? nil : self }
+}
+
 class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem?
     private var popover: NSPopover?
@@ -25,6 +30,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         setupMenuBar()
         setupGlobalHotkey()
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleToggleLauncher),
+            name: .toggleLauncher,
+            object: nil
+        )
     }
 
     private func setupMenuBar() {
@@ -88,12 +99,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func setupGlobalHotkey() {
-        let modifiers = UInt32(cmdKey | shiftKey)
-        let keyCode: UInt32 = 0x23 // P key
+        let storedKeyCode = UserDefaults.standard.integer(forKey: "hotkeyKeyCode")
+        let storedModifiers = UserDefaults.standard.integer(forKey: "hotkeyModifiers")
+        let keyCode = UInt32(storedKeyCode.nonZero ?? Int(GlobalHotkeyManager.keyCodeP))
+        let modifiers = UInt32(storedModifiers.nonZero ?? Int(cmdKey | shiftKey))
 
         GlobalHotkeyManager.shared.register(keyCode: keyCode, modifiers: modifiers) { [weak self] in
             self?.toggleLauncher()
         }
+    }
+
+    @objc private func handleToggleLauncher() {
+        toggleLauncher()
     }
 
     private func updatePopoverContent() {

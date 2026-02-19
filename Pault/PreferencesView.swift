@@ -6,6 +6,7 @@
 import SwiftUI
 import SwiftData
 import ServiceManagement
+import Carbon
 import os
 
 private let prefsLogger = Logger(subsystem: "com.pault.app", category: "preferences")
@@ -37,8 +38,13 @@ struct PreferencesView: View {
                 .tabItem {
                     Label("Data", systemImage: "externaldrive")
                 }
+
+            AISettingsTab()
+                .tabItem {
+                    Label("AI", systemImage: "sparkles")
+                }
         }
-        .frame(width: 450, height: 320)
+        .frame(width: 460, height: 360)
     }
 
     private var generalTab: some View {
@@ -66,16 +72,28 @@ struct PreferencesView: View {
             HStack {
                 Text("Global hotkey")
                 Spacer()
-                Text(globalHotkey)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(Color.secondary.opacity(0.2))
-                    .clipShape(RoundedRectangle(cornerRadius: 6))
+                KeyRecorderView(displayString: $globalHotkey) { keyCode, modifiers in
+                    UserDefaults.standard.set(Int(keyCode), forKey: "hotkeyKeyCode")
+                    UserDefaults.standard.set(Int(modifiers), forKey: "hotkeyModifiers")
+                    globalHotkey = KeyRecorderView.makeDisplayString(keyCode: keyCode, modifiers: modifiers)
+                    GlobalHotkeyManager.shared.register(keyCode: keyCode, modifiers: modifiers) {
+                        NotificationCenter.default.post(name: .toggleLauncher, object: nil)
+                    }
+                }
+                .frame(width: 120, height: 28)
             }
 
-            Text("Press ⌘⇧P from anywhere to open the quick launcher.")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+            Button("Reset to Default (⌘⇧P)") {
+                UserDefaults.standard.set(Int(0x23), forKey: "hotkeyKeyCode")
+                UserDefaults.standard.set(Int(cmdKey | shiftKey), forKey: "hotkeyModifiers")
+                globalHotkey = "⌘⇧P"
+                GlobalHotkeyManager.shared.register(keyCode: 0x23, modifiers: UInt32(cmdKey | shiftKey)) {
+                    NotificationCenter.default.post(name: .toggleLauncher, object: nil)
+                }
+            }
+            .buttonStyle(.plain)
+            .foregroundStyle(.secondary)
+            .font(.caption)
         }
         .padding()
     }
@@ -97,6 +115,176 @@ struct PreferencesView: View {
             NSApp.setActivationPolicy(.regular)
         } else {
             NSApp.setActivationPolicy(.accessory)
+        }
+    }
+}
+
+// MARK: - AI Settings Tab
+
+private struct AISettingsTab: View {
+    private let keychain = KeychainService()
+
+    @AppStorage("ai.model.claude") private var claudeModel: String = "claude-opus-4-6"
+    @AppStorage("ai.model.openai") private var openAIModel: String = "gpt-4o"
+    @AppStorage("ai.model.ollama") private var ollamaModel: String = "llama3"
+    @AppStorage("ai.baseURL.ollama") private var ollamaBaseURL: String = "http://localhost:11434"
+
+    @State private var claudeKey: String = ""
+    @State private var openAIKey: String = ""
+
+    @State private var claudeTestResult: TestResult? = nil
+    @State private var openAITestResult: TestResult? = nil
+    @State private var ollamaTestResult: TestResult? = nil
+
+    enum TestResult: Equatable {
+        case testing
+        case ok
+        case failed(String)
+    }
+
+    var body: some View {
+        Form {
+            // Claude
+            Section("Claude") {
+                HStack {
+                    Text("API Key")
+                    Spacer()
+                    SecureField("sk-ant-…", text: $claudeKey)
+                        .frame(width: 200)
+                        .onSubmit { saveKey(claudeKey, for: "claude") }
+                }
+                HStack {
+                    Text("Model")
+                    Spacer()
+                    TextField("claude-opus-4-6", text: $claudeModel)
+                        .frame(width: 160)
+                }
+                testConnectionRow(result: claudeTestResult) {
+                    testConnection(provider: "claude")
+                }
+            }
+
+            // OpenAI
+            Section("OpenAI") {
+                HStack {
+                    Text("API Key")
+                    Spacer()
+                    SecureField("sk-…", text: $openAIKey)
+                        .frame(width: 200)
+                        .onSubmit { saveKey(openAIKey, for: "openai") }
+                }
+                HStack {
+                    Text("Model")
+                    Spacer()
+                    TextField("gpt-4o", text: $openAIModel)
+                        .frame(width: 160)
+                }
+                testConnectionRow(result: openAITestResult) {
+                    testConnection(provider: "openai")
+                }
+            }
+
+            // Ollama
+            Section("Ollama (Local)") {
+                HStack {
+                    Text("Base URL")
+                    Spacer()
+                    TextField("http://localhost:11434", text: $ollamaBaseURL)
+                        .frame(width: 200)
+                }
+                HStack {
+                    Text("Model")
+                    Spacer()
+                    TextField("llama3", text: $ollamaModel)
+                        .frame(width: 160)
+                }
+                testConnectionRow(result: ollamaTestResult) {
+                    testConnection(provider: "ollama")
+                }
+            }
+        }
+        .padding()
+        .onAppear { loadKeys() }
+        .onChange(of: claudeKey) { _, v in saveKey(v, for: "claude") }
+        .onChange(of: openAIKey) { _, v in saveKey(v, for: "openai") }
+    }
+
+    @ViewBuilder
+    private func testConnectionRow(result: TestResult?, action: @escaping () -> Void) -> some View {
+        HStack(spacing: 8) {
+            Button("Test Connection", action: action)
+                .buttonStyle(.bordered)
+                .disabled(result == .testing)
+
+            switch result {
+            case .testing:
+                ProgressView().controlSize(.small)
+            case .ok:
+                Label("Connected", systemImage: "checkmark.circle.fill")
+                    .font(.caption)
+                    .foregroundStyle(.green)
+            case .failed(let msg):
+                Label(msg, systemImage: "xmark.circle.fill")
+                    .font(.caption)
+                    .foregroundStyle(.red)
+                    .lineLimit(1)
+            case nil:
+                EmptyView()
+            }
+        }
+    }
+
+    private func loadKeys() {
+        claudeKey = (try? keychain.load(key: "ai.apikey.claude")) ?? ""
+        openAIKey = (try? keychain.load(key: "ai.apikey.openai")) ?? ""
+    }
+
+    private func saveKey(_ value: String, for provider: String) {
+        guard !value.isEmpty else { return }
+        try? keychain.save(key: "ai.apikey.\(provider)", value: value)
+    }
+
+    private func testConnection(provider: String) {
+        let config: AIConfig
+        switch provider {
+        case "claude":
+            claudeTestResult = .testing
+            config = AIConfig(provider: .claude, model: claudeModel)
+        case "openai":
+            openAITestResult = .testing
+            config = AIConfig(provider: .openai, model: openAIModel)
+        default:
+            ollamaTestResult = .testing
+            config = AIConfig(provider: .ollama, model: ollamaModel, baseURL: ollamaBaseURL)
+        }
+
+        Task {
+            do {
+                _ = try await withThrowingTaskGroup(of: String.self) { group in
+                    group.addTask {
+                        try await AIService.shared.improve(prompt: "Hello", config: config)
+                    }
+                    group.addTask {
+                        try await Task.sleep(for: .seconds(5))
+                        throw AIError.missingAPIKey // timeout sentinel
+                    }
+                    let result = try await group.next()!
+                    group.cancelAll()
+                    return result
+                }
+                await setTestResult(.ok, for: provider)
+            } catch {
+                await setTestResult(.failed(error.localizedDescription), for: provider)
+            }
+        }
+    }
+
+    @MainActor
+    private func setTestResult(_ result: TestResult, for provider: String) {
+        switch provider {
+        case "claude":  claudeTestResult = result
+        case "openai":  openAITestResult = result
+        default:        ollamaTestResult = result
         }
     }
 }
@@ -126,21 +314,9 @@ private struct AppearanceTab: View {
                     Text("Large").tag("large")
                 }
                 .pickerStyle(.segmented)
-                .disabled(true)
-
-                Text("Coming in a future update.")
-                    .font(.caption)
-                    .foregroundStyle(.tertiary)
             }
 
-            VStack(alignment: .leading, spacing: 4) {
-                Toggle("Compact mode", isOn: $useCompactMode)
-                    .disabled(true)
-
-                Text("Coming in a future update.")
-                    .font(.caption)
-                    .foregroundStyle(.tertiary)
-            }
+            Toggle("Compact mode", isOn: $useCompactMode)
 
             VStack(alignment: .leading, spacing: 8) {
                 Text("Accent color")
