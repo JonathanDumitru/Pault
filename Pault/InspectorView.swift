@@ -17,6 +17,7 @@ struct InspectorView: View {
 
     enum InspectorTab: String, CaseIterable {
         case info = "Info"
+        case stats = "Stats"
         case history = "History"
     }
 
@@ -41,11 +42,17 @@ struct InspectorView: View {
             switch selectedTab {
             case .info:
                 infoContent
+            case .stats:
+                if ProStatusManager.shared.isProUnlocked {
+                    PromptStatsView(prompt: prompt)
+                } else {
+                    proGateView(feature: "Stats")
+                }
             case .history:
                 if ProStatusManager.shared.isProUnlocked {
                     RunHistoryView(prompt: prompt)
                 } else {
-                    proGateView
+                    proGateView(feature: "Run History")
                 }
             }
         }
@@ -155,10 +162,10 @@ struct InspectorView: View {
         .padding()
     }
 
-    private var proGateView: some View {
+    private func proGateView(feature: String) -> some View {
         VStack(spacing: 12) {
             ProBadge()
-            Text("Run History is a Pro feature")
+            Text("\(feature) is a Pro feature")
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
