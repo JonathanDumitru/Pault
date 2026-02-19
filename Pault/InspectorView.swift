@@ -13,11 +13,47 @@ struct InspectorView: View {
     @Bindable var prompt: Prompt
     @State private var newTagName: String = ""
     @State private var showingTagPicker: Bool = false
+    @State private var selectedTab: InspectorTab = .info
+
+    enum InspectorTab: String, CaseIterable {
+        case info = "Info"
+        case history = "History"
+    }
 
     private let tagColors = TagColors.all
     private var service: PromptService { PromptService(modelContext: modelContext) }
 
     var body: some View {
+        VStack(spacing: 0) {
+            // Tab picker
+            Picker("", selection: $selectedTab) {
+                ForEach(InspectorTab.allCases, id: \.self) { tab in
+                    Text(tab.rawValue).tag(tab)
+                }
+            }
+            .pickerStyle(.segmented)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+
+            Divider()
+
+            // Tab content
+            switch selectedTab {
+            case .info:
+                infoContent
+            case .history:
+                if ProStatusManager.shared.isProUnlocked {
+                    RunHistoryView(prompt: prompt)
+                } else {
+                    proGateView
+                }
+            }
+        }
+        .frame(width: 220)
+        .background(.regularMaterial)
+    }
+
+    private var infoContent: some View {
         VStack(alignment: .leading, spacing: 16) {
             // Tags section
             VStack(alignment: .leading, spacing: 8) {
@@ -117,8 +153,18 @@ struct InspectorView: View {
             Spacer()
         }
         .padding()
-        .frame(width: 220)
-        .background(.regularMaterial)
+    }
+
+    private var proGateView: some View {
+        VStack(spacing: 12) {
+            ProBadge()
+            Text("Run History is a Pro feature")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding()
     }
 
     private func addTag(_ tag: Tag) {
