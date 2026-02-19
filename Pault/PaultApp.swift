@@ -45,6 +45,7 @@ struct PaultApp: App {
             TemplateVariable.self,
             Attachment.self,
             PromptRun.self,
+            CopyEvent.self,
         ])
         let persistentConfig = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
