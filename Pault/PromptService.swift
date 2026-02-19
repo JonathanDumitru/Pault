@@ -173,6 +173,36 @@ final class PromptService {
         return result
     }
 
+    // MARK: - Versioning
+
+    func saveSnapshot(for prompt: Prompt, changeNote: String? = nil, limit: Int = 50) {
+        let version = PromptVersion(
+            prompt: prompt,
+            title: prompt.title,
+            content: prompt.content,
+            changeNote: changeNote
+        )
+        modelContext.insert(version)
+
+        // Prune: keep only the most recent `limit` versions for this prompt.
+        // NOTE: Optional relationship traversal in #Predicate is unreliable;
+        // fetch all and filter in memory.
+        let promptID = prompt.id
+        let descriptor = FetchDescriptor<PromptVersion>(
+            sortBy: [SortDescriptor(\.savedAt, order: .forward)]
+        )
+        guard let allVersions = try? modelContext.fetch(descriptor) else { return }
+        let promptVersions = allVersions.filter { $0.prompt?.id == promptID }
+
+        if promptVersions.count > limit {
+            let toDelete = promptVersions.prefix(promptVersions.count - limit)
+            for v in toDelete {
+                modelContext.delete(v)
+            }
+        }
+        save("saveSnapshot")
+    }
+
     // MARK: - Persistence
 
     private func save(_ caller: String) {
