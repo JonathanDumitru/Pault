@@ -49,11 +49,7 @@ struct InspectorView: View {
                     proGateView(feature: "Stats")
                 }
             case .history:
-                if ProStatusManager.shared.isProUnlocked {
-                    RunHistoryView(prompt: prompt)
-                } else {
-                    proGateView(feature: "Run History")
-                }
+                PromptVersionHistoryView(prompt: prompt)
             }
         }
         .frame(width: 220)

@@ -19,6 +19,7 @@ final class Prompt {
     @Relationship(deleteRule: .nullify) var tags: [Tag]
     @Relationship(deleteRule: .cascade, inverse: \TemplateVariable.prompt) var templateVariables: [TemplateVariable]
     @Relationship(deleteRule: .cascade, inverse: \Attachment.prompt) var attachments: [Attachment]
+    @Relationship(deleteRule: .cascade, inverse: \PromptVersion.prompt) var versions: [PromptVersion] = []
     var createdAt: Date
     var updatedAt: Date
     var lastUsedAt: Date?
