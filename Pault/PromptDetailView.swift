@@ -22,6 +22,9 @@ struct PromptDetailView: View {
     @Binding var showInspector: Bool
     @State private var saveTask: Task<Void, Never>?
     @State private var syncTask: Task<Void, Never>?
+    @State private var showResponsePanel: Bool = false
+    @State private var showPaywall: Bool = false
+    @State private var responseConfig: AIConfig = AIConfig.defaults[.claude] ?? AIConfig(provider: .claude, model: "claude-opus-4-6")
 
     var body: some View {
         HStack(spacing: 0) {
@@ -59,6 +62,12 @@ struct PromptDetailView: View {
 
                 // Attachments strip
                 AttachmentsStripView(prompt: prompt)
+
+                // Streaming response panel (shown when run is active)
+                if showResponsePanel {
+                    ResponsePanel(prompt: prompt, config: responseConfig)
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
 
@@ -70,17 +79,34 @@ struct PromptDetailView: View {
             }
         }
         .animation(.easeInOut(duration: 0.2), value: showInspector)
+        .animation(.easeInOut(duration: 0.2), value: showResponsePanel)
         .overlay(alignment: .bottomTrailing) {
-            Button(action: { showInspector.toggle() }) {
-                Image(systemName: "info.circle")
-                    .font(.title2)
-                    .foregroundStyle(showInspector ? .blue : .secondary)
-                    .padding(12)
+            HStack(spacing: 0) {
+                // Run button (Pro)
+                Button(action: {
+                    guard ProStatusManager.shared.isProUnlocked else { showPaywall = true; return }
+                    showResponsePanel.toggle()
+                }) {
+                    Image(systemName: showResponsePanel ? "play.circle.fill" : "play.circle")
+                        .font(.title2)
+                        .foregroundStyle(showResponsePanel ? .blue : .secondary)
+                        .padding(12)
+                }
+                .buttonStyle(.plain)
+                .help("Run prompt (Pro)")
+
+                // Inspector toggle
+                Button(action: { showInspector.toggle() }) {
+                    Image(systemName: "info.circle")
+                        .font(.title2)
+                        .foregroundStyle(showInspector ? .blue : .secondary)
+                        .padding(12)
+                }
+                .buttonStyle(.plain)
+                .keyboardShortcut("i", modifiers: .command)
+                .help("Toggle Inspector (⌘I)")
+                .accessibilityLabel(showInspector ? "Hide inspector" : "Show inspector")
             }
-            .buttonStyle(.plain)
-            .keyboardShortcut("i", modifiers: .command)
-            .help("Toggle Inspector (⌘I)")
-            .accessibilityLabel(showInspector ? "Hide inspector" : "Show inspector")
         }
         .onChange(of: prompt.isFavorite) { _, _ in
             debouncedSave()
@@ -90,6 +116,9 @@ struct PromptDetailView: View {
         }
         .onChange(of: prompt.tags) { _, _ in
             debouncedSave()
+        }
+        .sheet(isPresented: $showPaywall) {
+            PaywallView(featureName: "API Runner", featureDescription: "Run prompts directly against any LLM without leaving Pault.", featureIcon: "play.circle.fill")
         }
     }
 
