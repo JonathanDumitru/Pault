@@ -22,6 +22,7 @@ final class Prompt {
     var createdAt: Date
     var updatedAt: Date
     var lastUsedAt: Date?
+    var variantB: String?    // A/B testing: alternate prompt content; nil = no variant active
 
     init(id: UUID = UUID(), title: String, content: String, attributedContent: Data? = nil, isFavorite: Bool = false, isArchived: Bool = false, createdAt: Date = Date(), updatedAt: Date = Date(), tags: [Tag] = [], templateVariables: [TemplateVariable] = [], attachments: [Attachment] = [], lastUsedAt: Date? = nil) {
         self.id = id
