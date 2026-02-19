@@ -27,13 +27,13 @@ struct PromptStatsView: View {
                     label: "Runs",
                     value: "\(service.runCount(for: prompt))"
                 )
-                if let last = service.lastCopied(promptID: prompt.id) {
-                    statRow(
-                        icon: "clock",
-                        label: "Last Copied",
-                        value: last.formatted(date: .abbreviated, time: .shortened)
-                    )
-                }
+                statRow(
+                    icon: "clock",
+                    label: "Last Copied",
+                    value: service.lastCopied(promptID: prompt.id).map {
+                        $0.formatted(date: .abbreviated, time: .shortened)
+                    } ?? "Never"
+                )
                 statRow(
                     icon: "clock.badge.checkmark",
                     label: "Last Used",
@@ -49,9 +49,10 @@ struct PromptStatsView: View {
                     .foregroundStyle(.secondary)
 
                 let daily = service.dailyCopies(for: prompt.id, days: 30)
-                let maxCount = daily.map(\.count).max() ?? 1
+                let visible = Array(daily.suffix(14))
+                let maxCount = visible.map(\.count).max() ?? 1
                 HStack(alignment: .bottom, spacing: 2) {
-                    ForEach(daily.suffix(14), id: \.date) { entry in
+                    ForEach(visible, id: \.date) { entry in
                         Rectangle()
                             .fill(entry.count > 0 ? Color.accentColor : Color.secondary.opacity(0.2))
                             .frame(width: 8, height: maxCount > 0 ? CGFloat(entry.count) / CGFloat(maxCount) * 40 + 2 : 2)
