@@ -30,6 +30,7 @@ struct PromptDetailView: View {
     @State private var abRunA: PromptRun? = nil
     @State private var abRunB: PromptRun? = nil
     @State private var isRunningAB: Bool = false
+    @State private var showAIPanel: Bool = false
 
     var body: some View {
         HStack(spacing: 0) {
@@ -71,6 +72,12 @@ struct PromptDetailView: View {
                 // Attachments strip
                 AttachmentsStripView(prompt: prompt)
 
+                // AI Assist panel (shown when sparkles button is active)
+                if showAIPanel {
+                    AIAssistPanel(prompt: prompt, config: responseConfig)
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
+
                 // Streaming response panel (shown when run is active)
                 if showResponsePanel {
                     ResponsePanel(prompt: prompt, config: responseConfig)
@@ -88,6 +95,7 @@ struct PromptDetailView: View {
         }
         .animation(.easeInOut(duration: 0.2), value: showInspector)
         .animation(.easeInOut(duration: 0.2), value: showResponsePanel)
+        .animation(.easeInOut(duration: 0.2), value: showAIPanel)
         .overlay(alignment: .bottomTrailing) {
             HStack(spacing: 0) {
                 // A/B variant A|B picker (only when variantB exists)
@@ -124,6 +132,19 @@ struct PromptDetailView: View {
                 }
                 .buttonStyle(.plain)
                 .help(prompt.variantB != nil ? "A/B mode active — run test to compare" : "Create variant B for A/B testing (Pro)")
+
+                // AI Assist button (Pro)
+                Button(action: {
+                    guard ProStatusManager.shared.isProUnlocked else { showPaywall = true; return }
+                    showAIPanel.toggle()
+                }) {
+                    Image(systemName: "sparkles")
+                        .font(.title2)
+                        .foregroundStyle(showAIPanel ? .blue : .secondary)
+                        .padding(12)
+                }
+                .buttonStyle(.plain)
+                .help("AI Assist (Pro)")
 
                 // Run button (Pro)
                 Button(action: {
