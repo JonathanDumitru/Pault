@@ -55,6 +55,18 @@ final class AnalyticsService {
         return runs.filter { $0.prompt?.id == id }.count
     }
 
+    /// Returns run counts for all prompts in one fetch (O(1) table scans).
+    func allRunCounts() -> [UUID: Int] {
+        let descriptor = FetchDescriptor<PromptRun>()
+        guard let runs = try? modelContext.fetch(descriptor) else { return [:] }
+        var counts: [UUID: Int] = [:]
+        for run in runs {
+            guard let id = run.prompt?.id else { continue }
+            counts[id, default: 0] += 1
+        }
+        return counts
+    }
+
     // MARK: - Aggregate
 
     func topPromptIDsByUsage(limit: Int = 20) -> [UUID] {

@@ -25,6 +25,7 @@ struct ContentView: View {
     @State private var showCopyToast: Bool = false
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding: Bool = false
     @State private var showOnboarding: Bool = false
+    @State private var showingAnalytics: Bool = false
 
     private var service: PromptService { PromptService(modelContext: modelContext) }
 
@@ -72,6 +73,15 @@ struct ContentView: View {
                     Image(systemName: "plus")
                 }
                 .help("New Prompt (⌘N)")
+
+                if ProStatusManager.shared.isProUnlocked {
+                    Button {
+                        showingAnalytics = true
+                    } label: {
+                        Image(systemName: "chart.bar")
+                    }
+                    .help("Analytics")
+                }
             }
         }
         .copyToast(isShowing: $showCopyToast)
@@ -111,6 +121,9 @@ struct ContentView: View {
             if !newValue {
                 hasCompletedOnboarding = true
             }
+        }
+        .sheet(isPresented: $showingAnalytics) {
+            AnalyticsView()
         }
         .onReceive(NotificationCenter.default.publisher(for: .createNewPrompt)) { _ in
             openWindow(id: "new-prompt")
