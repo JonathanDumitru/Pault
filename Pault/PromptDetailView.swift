@@ -258,12 +258,7 @@ struct PromptDetailView: View {
             guard !Task.isCancelled else { return }
             await MainActor.run {
                 prompt.updatedAt = Date()
-                service.saveSnapshot(for: prompt)
-                do {
-                    try modelContext.save()
-                } catch {
-                    detailLogger.error("debouncedSave: Failed — \(error.localizedDescription)")
-                }
+                service.saveSnapshot(for: prompt)  // internally calls modelContext.save()
             }
         }
     }
