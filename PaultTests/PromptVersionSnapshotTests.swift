@@ -77,12 +77,24 @@ struct PromptVersionSnapshotTests {
         let service = PromptService(modelContext: context)
 
         let prompt = service.createPrompt(title: "P", content: "v0")
+        let base = Date(timeIntervalSince1970: 1_000_000)
 
-        // Save 5 snapshots with a limit of 3; the oldest 2 should be pruned
-        for i in 1...5 {
-            prompt.content = "v\(i)"
-            service.saveSnapshot(for: prompt, limit: 3)
+        // Pre-insert 4 versions with distinct, ordered savedAt values to avoid
+        // ties when sorted by savedAt (tight loops can produce identical Date() ticks).
+        for i in 1...4 {
+            let v = PromptVersion(
+                prompt: prompt,
+                title: "P",
+                content: "v\(i)",
+                savedAt: base.addingTimeInterval(Double(i)),
+                changeNote: nil
+            )
+            context.insert(v)
         }
+
+        // saveSnapshot adds v5 and prunes to keep only the 3 most recent
+        prompt.content = "v5"
+        service.saveSnapshot(for: prompt, limit: 3)
 
         let descriptor = FetchDescriptor<PromptVersion>(
             sortBy: [SortDescriptor(\.savedAt, order: .forward)]
@@ -90,13 +102,12 @@ struct PromptVersionSnapshotTests {
         let versions = try context.fetch(descriptor)
         #expect(versions.count == 3)
 
-        // The surviving versions should be the last 3 (v3, v4, v5)
         let contents = versions.map(\.content)
+        #expect(!contents.contains("v1"))
+        #expect(!contents.contains("v2"))
         #expect(contents.contains("v3"))
         #expect(contents.contains("v4"))
         #expect(contents.contains("v5"))
-        #expect(!contents.contains("v1"))
-        #expect(!contents.contains("v2"))
     }
 
     // MARK: - saveSnapshot_keepsExactLimitVersions

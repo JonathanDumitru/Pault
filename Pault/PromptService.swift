@@ -182,6 +182,8 @@ final class PromptService {
             content: prompt.content,
             changeNote: changeNote
         )
+        // Insert BEFORE fetching so the new version is included in the count,
+        // ensuring the pruning condition and prefix calculation are correct.
         modelContext.insert(version)
 
         // Prune: keep only the most recent `limit` versions for this prompt.
