@@ -7,7 +7,7 @@ import SwiftUI
 import SwiftData
 
 struct PromptVersionHistoryView: View {
-    let prompt: Prompt
+    @Bindable var prompt: Prompt
     @State private var selectedVersion: PromptVersion?
 
     private var versions: [PromptVersion] {
