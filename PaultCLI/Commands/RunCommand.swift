@@ -3,7 +3,7 @@ import Foundation
 import ArgumentParser
 import Security
 
-struct RunCommand: ParsableCommand {
+struct RunCommand: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "run",
         abstract: "Run a prompt against the configured LLM (Pro)"
@@ -15,11 +15,19 @@ struct RunCommand: ParsableCommand {
     @Option(name: .customLong("var"), parsing: .upToNextOption, help: "Variable bindings: key=value")
     var variables: [String] = []
 
-    func run() throws {
-        // Keychain service and account key format verified from KeychainService.swift and AIService.swift:
-        // service = "com.pault.app", account = "ai.apikey.<provider>"
-        guard let apiKey = loadKeychainValue(key: "ai.apikey.claude") ??
-                           loadKeychainValue(key: "ai.apikey.openai") else {
+    // Keychain service and account key format from KeychainService.swift / AIService.swift:
+    // service = "com.pault.app", account = "ai.apikey.<provider.rawValue>"
+    private static let providers: [(name: String, apiKey: String)] = [
+        ("claude", "ai.apikey.claude"),
+        ("openai", "ai.apikey.openai"),
+        ("ollama", "ai.apikey.ollama"),
+    ]
+
+    func run() async throws {
+        guard let (providerName, apiKey) = Self.providers.compactMap({ p -> (String, String)? in
+            guard let key = loadKeychainValue(key: p.apiKey) else { return nil }
+            return (p.name, key)
+        }).first else {
             throw ValidationError("No API key configured. Open Pault → Preferences → AI to add one.")
         }
 
@@ -38,7 +46,7 @@ struct RunCommand: ParsableCommand {
             content = content.replacingOccurrences(of: "{{\(key)}}", with: value)
         }
 
-        let result = runPromptSync(content: content, apiKey: apiKey)
+        let result = try await runPrompt(content: content, provider: providerName, apiKey: apiKey)
         print(result)
     }
 
@@ -56,34 +64,65 @@ struct RunCommand: ParsableCommand {
         return String(data: data, encoding: .utf8)
     }
 
-    private func runPromptSync(content: String, apiKey: String) -> String {
-        var output = ""
-        let semaphore = DispatchSemaphore(value: 0)
+    private func runPrompt(content: String, provider: String, apiKey: String) async throws -> String {
+        var request: URLRequest
+        let body: [String: Any]
 
-        Task {
-            var request = URLRequest(url: URL(string: "https://api.anthropic.com/v1/messages")!)
-            request.httpMethod = "POST"
+        switch provider {
+        case "claude":
+            request = URLRequest(url: URL(string: "https://api.anthropic.com/v1/messages")!)
             request.setValue(apiKey, forHTTPHeaderField: "x-api-key")
             request.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            let body: [String: Any] = [
+            body = [
                 "model": "claude-opus-4-6",
                 "max_tokens": 4096,
                 "messages": [["role": "user", "content": content]]
             ]
-            request.httpBody = try? JSONSerialization.data(withJSONObject: body)
-
-            if let (data, _) = try? await URLSession.shared.data(for: request),
-               let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-               let text = (json["content"] as? [[String: Any]])?.first?["text"] as? String {
-                output = text
-            } else {
-                output = "Error: Failed to get response from API."
-            }
-            semaphore.signal()
+        case "openai":
+            request = URLRequest(url: URL(string: "https://api.openai.com/v1/chat/completions")!)
+            request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+            body = [
+                "model": "gpt-4o",
+                "messages": [
+                    ["role": "system", "content": "You are a helpful assistant."],
+                    ["role": "user", "content": content]
+                ]
+            ]
+        default: // ollama
+            request = URLRequest(url: URL(string: "http://localhost:11434/api/chat")!)
+            body = [
+                "model": "llama3",
+                "stream": false,
+                "messages": [["role": "user", "content": content]]
+            ]
         }
 
-        semaphore.wait()
-        return output
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try JSONSerialization.data(withJSONObject: body)
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
+            let code = (response as? HTTPURLResponse)?.statusCode ?? -1
+            throw ValidationError("HTTP \(code) from \(provider) API.")
+        }
+
+        guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            throw ValidationError("Could not parse response from \(provider) API.")
+        }
+
+        switch provider {
+        case "claude":
+            if let text = (json["content"] as? [[String: Any]])?.first?["text"] as? String {
+                return text
+            }
+        default: // openai + ollama share the choices/message/content path
+            if let choices = json["choices"] as? [[String: Any]],
+               let message = choices.first?["message"] as? [String: Any],
+               let text = message["content"] as? String {
+                return text
+            }
+        }
+        throw ValidationError("Unexpected response format from \(provider) API.")
     }
 }

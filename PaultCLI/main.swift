@@ -3,7 +3,7 @@ import Foundation
 import ArgumentParser
 
 @main
-struct PaultCLI: ParsableCommand {
+struct PaultCLI: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "pault",
         abstract: "Pault prompt library — terminal access",

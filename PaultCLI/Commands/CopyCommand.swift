@@ -34,7 +34,10 @@ struct CopyCommand: ParsableCommand {
                 content = content.replacingOccurrences(of: "{{\(key)}}", with: value)
             }
         }
-        // Write to pasteboard using NSPasteboard (macOS only)
+        // NSApplication.shared must be referenced before using NSPasteboard in a CLI process;
+        // without it, the process isn't registered with the window server and the pasteboard
+        // write may not be visible to other apps after the process exits.
+        _ = NSApplication.shared
         let pasteboard = NSPasteboard.general
         pasteboard.clearContents()
         pasteboard.setString(content, forType: .string)
