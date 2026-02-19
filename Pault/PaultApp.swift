@@ -47,6 +47,7 @@ struct PaultApp: App {
             PromptRun.self,
             CopyEvent.self,
             PromptVersion.self,
+            SmartCollection.self,
         ])
         let persistentConfig = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
