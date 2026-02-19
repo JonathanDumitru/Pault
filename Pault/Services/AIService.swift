@@ -39,6 +39,12 @@ struct VariableSuggestion {
     var description: String
 }
 
+struct CollectionSuggestion: Codable {
+    var name: String
+    var icon: String         // SF Symbol name
+    var promptTitles: [String]
+}
+
 enum AIError: LocalizedError {
     case missingAPIKey
     case httpError(Int, Data)
@@ -126,6 +132,24 @@ actor AIService {
             completeness: num("completeness"),
             conciseness: num("conciseness")
         )
+    }
+
+    func clusterPrompts(titles: [String], config: AIConfig) async throws -> [CollectionSuggestion] {
+        let titleList = titles.enumerated().map { "\($0.offset + 1). \($0.element)" }.joined(separator: "\n")
+        let system = """
+        You are a prompt organization expert. Group the following prompts into 3–6 thematic collections.
+        Return ONLY a JSON array. Each object must have:
+        - "name": short collection name (2–4 words)
+        - "icon": an SF Symbol name that fits the theme (e.g. "pencil", "code", "magnifyingglass")
+        - "promptTitles": array of prompt titles from the input list that belong to this collection
+        Do not include prompts in multiple collections. Every prompt must appear exactly once.
+        """
+        let response = try await complete(system: system, user: titleList, config: config)
+        guard let data = response.data(using: .utf8),
+              let suggestions = try? JSONDecoder().decode([CollectionSuggestion].self, from: data) else {
+            throw AIError.parseError(response.data(using: .utf8) ?? Data())
+        }
+        return suggestions
     }
 
     func streamRun(prompt: String, variables: [String: String], config: AIConfig) async throws -> AsyncThrowingStream<String, Error> {
