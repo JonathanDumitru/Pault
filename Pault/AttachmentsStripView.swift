@@ -15,6 +15,8 @@ struct AttachmentsStripView: View {
     @Bindable var prompt: Prompt
 
     @State private var dragOver: Bool = false
+    @State private var showErrorToast: Bool = false
+    @State private var errorToastMessage: String = ""
 
     private var sortedAttachments: [Attachment] {
         prompt.attachments.sorted { $0.sortOrder < $1.sortOrder }
@@ -86,6 +88,7 @@ struct AttachmentsStripView: View {
                 .stroke(Color.accentColor, lineWidth: 2)
                 .padding(2) : nil
         )
+        .statusToast(isShowing: $showErrorToast, style: .error, message: errorToastMessage)
     }
 
     private func addAttachment() {
@@ -128,6 +131,10 @@ struct AttachmentsStripView: View {
             try modelContext.save()
         } catch {
             attachmentsLogger.error("Failed to add attachment '\(url.lastPathComponent)': \(error.localizedDescription)")
+            DispatchQueue.main.async {
+                errorToastMessage = "Couldn't add \"\(url.lastPathComponent)\""
+                showErrorToast = true
+            }
         }
     }
 
@@ -152,6 +159,8 @@ struct AttachmentsStripView: View {
             try modelContext.save()
         } catch {
             attachmentsLogger.error("deleteAttachment: Failed to save — \(error.localizedDescription)")
+            errorToastMessage = "Couldn't delete attachment"
+            showErrorToast = true
         }
     }
 
