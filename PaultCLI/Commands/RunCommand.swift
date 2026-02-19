@@ -116,9 +116,14 @@ struct RunCommand: AsyncParsableCommand {
             if let text = (json["content"] as? [[String: Any]])?.first?["text"] as? String {
                 return text
             }
-        default: // openai + ollama share the choices/message/content path
+        case "openai":
             if let choices = json["choices"] as? [[String: Any]],
                let message = choices.first?["message"] as? [String: Any],
+               let text = message["content"] as? String {
+                return text
+            }
+        default: // ollama non-streaming: { "message": { "role": ..., "content": ... }, "done": true }
+            if let message = json["message"] as? [String: Any],
                let text = message["content"] as? String {
                 return text
             }
