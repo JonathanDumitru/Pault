@@ -25,6 +25,11 @@ struct PromptDetailView: View {
     @State private var showResponsePanel: Bool = false
     @State private var showPaywall: Bool = false
     @State private var responseConfig: AIConfig = AIConfig.defaults[.claude] ?? AIConfig(provider: .claude, model: "claude-opus-4-6")
+    @State private var showVariantB: Bool = false
+    @State private var showABResult: Bool = false
+    @State private var abRunA: PromptRun? = nil
+    @State private var abRunB: PromptRun? = nil
+    @State private var isRunningAB: Bool = false
 
     var body: some View {
         HStack(spacing: 0) {
@@ -42,10 +47,13 @@ struct PromptDetailView: View {
                         debouncedSave()
                     }
 
-                // Content editor
+                // Content editor — switches to variantB when A/B mode is active
                 RichTextEditor(
-                    attributedContent: $prompt.attributedContent,
-                    plainContent: $prompt.content
+                    attributedContent: showVariantB ? .constant(nil) : $prompt.attributedContent,
+                    plainContent: showVariantB ? Binding(
+                        get: { prompt.variantB ?? "" },
+                        set: { prompt.variantB = $0 }
+                    ) : $prompt.content
                 )
                 .padding(.horizontal, 16)
                 .padding(.bottom, 16)
@@ -82,6 +90,41 @@ struct PromptDetailView: View {
         .animation(.easeInOut(duration: 0.2), value: showResponsePanel)
         .overlay(alignment: .bottomTrailing) {
             HStack(spacing: 0) {
+                // A/B variant A|B picker (only when variantB exists)
+                if prompt.variantB != nil {
+                    Picker("", selection: $showVariantB) {
+                        Text("A").tag(false)
+                        Text("B").tag(true)
+                    }
+                    .pickerStyle(.segmented)
+                    .frame(width: 80)
+                    .padding(8)
+
+                    // Run A/B button
+                    if !isRunningAB {
+                        Button(action: runABTest) {
+                            Label("Run A/B", systemImage: "arrow.left.arrow.right")
+                                .font(.caption)
+                        }
+                        .buttonStyle(.bordered)
+                        .padding(.trailing, 4)
+                    } else {
+                        ProgressView()
+                            .controlSize(.small)
+                            .padding(12)
+                    }
+                }
+
+                // A/B activate button
+                Button(action: activateABMode) {
+                    Image(systemName: prompt.variantB != nil ? "a.square.fill" : "a.square")
+                        .font(.title2)
+                        .foregroundStyle(prompt.variantB != nil ? .purple : .secondary)
+                        .padding(12)
+                }
+                .buttonStyle(.plain)
+                .help(prompt.variantB != nil ? "A/B mode active — run test to compare" : "Create variant B for A/B testing (Pro)")
+
                 // Run button (Pro)
                 Button(action: {
                     guard ProStatusManager.shared.isProUnlocked else { showPaywall = true; return }
@@ -120,6 +163,68 @@ struct PromptDetailView: View {
         .sheet(isPresented: $showPaywall) {
             PaywallView(featureName: "API Runner", featureDescription: "Run prompts directly against any LLM without leaving Pault.", featureIcon: "play.circle.fill")
         }
+        .sheet(isPresented: $showABResult) {
+            if let a = abRunA, let b = abRunB {
+                ABTestResultView(prompt: prompt, runA: a, runB: b)
+            }
+        }
+    }
+
+    private func activateABMode() {
+        guard ProStatusManager.shared.isProUnlocked else { showPaywall = true; return }
+        if prompt.variantB == nil {
+            prompt.variantB = prompt.content   // seed B from A
+            showVariantB = true
+        } else {
+            prompt.variantB = nil              // deactivate
+            showVariantB = false
+        }
+    }
+
+    private func runABTest() {
+        guard let variantB = prompt.variantB else { return }
+        isRunningAB = true
+        let configA = responseConfig
+        let configB = responseConfig
+        let vars: [String: String] = prompt.templateVariables.reduce(into: [:]) { $0[$1.name] = $1.defaultValue }
+        let contentA = prompt.content
+        let contentB = variantB
+        let titleSnapshot = prompt.title
+
+        Task {
+            async let outputA = collectStream(prompt: contentA, variables: vars, config: configA)
+            async let outputB = collectStream(prompt: contentB, variables: vars, config: configB)
+            let (resultA, latA) = (try? await outputA) ?? ("Error", 0)
+            let (resultB, latB) = (try? await outputB) ?? ("Error", 0)
+
+            await MainActor.run {
+                let runA = PromptRun(promptTitle: titleSnapshot, resolvedInput: contentA,
+                                     output: resultA, model: configA.model,
+                                     provider: configA.provider.rawValue, latencyMs: latA,
+                                     variantLabel: "A")
+                let runB = PromptRun(promptTitle: titleSnapshot, resolvedInput: contentB,
+                                     output: resultB, model: configB.model,
+                                     provider: configB.provider.rawValue, latencyMs: latB,
+                                     variantLabel: "B")
+                runA.prompt = prompt
+                runB.prompt = prompt
+                modelContext.insert(runA)
+                modelContext.insert(runB)
+                try? modelContext.save()
+                abRunA = runA
+                abRunB = runB
+                isRunningAB = false
+                showABResult = true
+            }
+        }
+    }
+
+    private func collectStream(prompt: String, variables: [String: String], config: AIConfig) async throws -> (String, Int) {
+        let start = Date()
+        let stream = try await AIService.shared.streamRun(prompt: prompt, variables: variables, config: config)
+        var result = ""
+        for try await token in stream { result += token }
+        return (result, Int(Date().timeIntervalSince(start) * 1000))
     }
 
     private func debouncedSave() {
