@@ -47,6 +47,7 @@ struct TagPillView: View {
                         .font(.system(size: isSmall ? 8 : 10, weight: .bold))
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel("Remove \(name) tag")
             }
         }
         .padding(.horizontal, isSmall ? 6 : 8)
@@ -58,6 +59,8 @@ struct TagPillView: View {
         .onTapGesture {
             onTap?()
         }
+        .accessibilityLabel("\(name) tag")
+        .accessibilityAddTraits(onTap != nil ? .isButton : [])
     }
 }
 
