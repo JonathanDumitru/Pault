@@ -1,4 +1,3 @@
-// Pault/Services/AIService.swift
 import Foundation
 import os
 
@@ -19,131 +18,136 @@ struct AIConfig {
     }
     var provider: Provider
     var model: String
-    var baseURL: String? // for ollama only
-
-    static let defaults: [Provider: String] = [
-        .claude: "claude-opus-4-6",
-        .openai: "gpt-4o",
-        .ollama: "llama3"
+    var baseURL: String?
+    static let defaults: [Provider: AIConfig] = [
+        .claude:  AIConfig(provider: .claude,  model: "claude-opus-4-6"),
+        .openai:  AIConfig(provider: .openai,  model: "gpt-4o"),
+        .ollama:  AIConfig(provider: .ollama,  model: "llama3", baseURL: "http://localhost:11434"),
     ]
 }
 
 struct QualityScore {
-    let clarity: Int        // 1-10
-    let specificity: Int
-    let roleDefinition: Int
-    let outputFormat: Int
-    let clarityReason: String
-    let specificityReason: String
-    let roleDefinitionReason: String
-    let outputFormatReason: String
-
-    var overall: Double {
-        Double(clarity + specificity + roleDefinition + outputFormat) / 4.0
-    }
+    var clarity: Double
+    var specificity: Double
+    var completeness: Double
+    var conciseness: Double
+    var overall: Double { (clarity + specificity + completeness + conciseness) / 4 }
 }
 
 struct VariableSuggestion {
-    let originalText: String  // text to replace
-    let suggestedName: String // suggested {{variable_name}}
-    let reason: String
+    var placeholder: String
+    var description: String
 }
 
-// MARK: - AIService Actor
+enum AIError: LocalizedError {
+    case missingAPIKey
+    case httpError(Int, Data)
+    case parseError(Data)
+
+    var errorDescription: String? {
+        switch self {
+        case .missingAPIKey: return "No API key configured for this provider."
+        case .httpError(let code, _): return "HTTP error \(code)."
+        case .parseError: return "Failed to parse the AI response."
+        }
+    }
+}
+
+// MARK: - AIService
 
 actor AIService {
     static let shared = AIService()
-
     private let keychain = KeychainService()
-    private let session: URLSession
+    private let session = URLSession.shared
 
-    init(session: URLSession = .shared) {
-        self.session = session
+    // MARK: - Public API
+
+    func improve(prompt: String, config: AIConfig) async throws -> String {
+        let system = """
+        You are an expert prompt engineer. \
+        Rewrite the prompt to be clearer, more specific, and more effective. \
+        Return ONLY the improved prompt text, no commentary.
+        """
+        return try await complete(system: system, user: prompt, config: config)
     }
 
-    // MARK: - Improve
-
-    func improve(content: String, instruction: String, config: AIConfig) async throws -> String {
-        let systemPrompt = """
-        You are an expert prompt engineer. The user will provide a prompt and an instruction.
-        Rewrite the prompt following the instruction exactly. Return ONLY the improved prompt text, no commentary.
+    func suggestVariables(prompt: String, config: AIConfig) async throws -> [VariableSuggestion] {
+        let system = """
+        Analyze the following prompt and identify literal values that should be \
+        template variables using {{placeholder}} syntax. \
+        Return ONLY a JSON array of objects with keys "placeholder" and "description". \
+        Example: [{"placeholder":"{{topic}}","description":"The main topic"}]
         """
-        let userMessage = "Instruction: \(instruction)\n\nPrompt:\n\(content)"
-        return try await complete(system: systemPrompt, user: userMessage, config: config)
-    }
-
-    // MARK: - Suggest Variables
-
-    func suggestVariables(for content: String, config: AIConfig) async throws -> [VariableSuggestion] {
-        let systemPrompt = """
-        Analyze the following prompt and identify literal values that should be template variables.
-        Return a JSON array of objects with keys: "originalText", "suggestedName", "reason".
-        Only suggest values that vary between uses. Return ONLY valid JSON.
-        """
-        let response = try await complete(system: systemPrompt, user: content, config: config)
+        let response = try await complete(system: system, user: prompt, config: config)
         let data = Data(response.utf8)
-        let raw = try JSONDecoder().decode([[String: String]].self, from: data)
+        guard let raw = try? JSONDecoder().decode([[String: String]].self, from: data) else {
+            throw AIError.parseError(data)
+        }
         return raw.compactMap { dict in
-            guard let orig = dict["originalText"],
-                  let name = dict["suggestedName"],
-                  let reason = dict["reason"] else { return nil }
-            return VariableSuggestion(originalText: orig, suggestedName: name, reason: reason)
+            guard let placeholder = dict["placeholder"],
+                  let description = dict["description"] else { return nil }
+            return VariableSuggestion(placeholder: placeholder, description: description)
         }
     }
 
-    // MARK: - Auto-tag
-
-    func autoTag(content: String, existingTags: [String], config: AIConfig) async throws -> [String] {
-        let systemPrompt = """
-        Suggest 1-3 tags for the following prompt from this list: \(existingTags.joined(separator: ", ")).
-        If no existing tag fits, suggest a new short lowercase tag.
+    func autoTag(prompt: String, config: AIConfig) async throws -> [String] {
+        let system = """
+        Suggest 1-3 short lowercase tags that best categorise the following prompt. \
         Return ONLY a JSON array of strings. Example: ["research","writing"]
         """
-        let response = try await complete(system: systemPrompt, user: content, config: config)
-        return (try? JSONDecoder().decode([String].self, from: Data(response.utf8))) ?? []
+        let response = try await complete(system: system, user: prompt, config: config)
+        let data = Data(response.utf8)
+        guard let tags = try? JSONDecoder().decode([String].self, from: data) else {
+            throw AIError.parseError(data)
+        }
+        return tags
     }
 
-    // MARK: - Quality Score
-
-    func qualityScore(for content: String, config: AIConfig) async throws -> QualityScore {
-        let systemPrompt = """
-        Rate the following prompt on four axes (1-10 each) and give one sentence of reasoning per axis.
-        Return ONLY valid JSON with keys: clarity, specificity, roleDefinition, outputFormat,
-        clarityReason, specificityReason, roleDefinitionReason, outputFormatReason.
+    func qualityScore(prompt: String, config: AIConfig) async throws -> QualityScore {
+        let system = """
+        Rate the following prompt on four axes (0-10 each): \
+        clarity, specificity, completeness, conciseness. \
+        Return ONLY valid JSON: \
+        {"clarity": <n>, "specificity": <n>, "completeness": <n>, "conciseness": <n>}
         """
-        let response = try await complete(system: systemPrompt, user: content, config: config)
+        let response = try await complete(system: system, user: prompt, config: config)
         let data = Data(response.utf8)
-        let dict = try JSONDecoder().decode([String: String].self, from: data)
+        guard let dict = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            throw AIError.parseError(data)
+        }
+        func num(_ key: String) -> Double {
+            if let d = dict[key] as? Double { return d }
+            if let i = dict[key] as? Int { return Double(i) }
+            return 5.0
+        }
         return QualityScore(
-            clarity: Int(dict["clarity"] ?? "5") ?? 5,
-            specificity: Int(dict["specificity"] ?? "5") ?? 5,
-            roleDefinition: Int(dict["roleDefinition"] ?? "5") ?? 5,
-            outputFormat: Int(dict["outputFormat"] ?? "5") ?? 5,
-            clarityReason: dict["clarityReason"] ?? "",
-            specificityReason: dict["specificityReason"] ?? "",
-            roleDefinitionReason: dict["roleDefinitionReason"] ?? "",
-            outputFormatReason: dict["outputFormatReason"] ?? ""
+            clarity: num("clarity"),
+            specificity: num("specificity"),
+            completeness: num("completeness"),
+            conciseness: num("conciseness")
         )
     }
 
-    // MARK: - Streaming Run
-
-    func streamRun(content: String, config: AIConfig) -> AsyncThrowingStream<String, Error> {
-        AsyncThrowingStream { continuation in
+    func streamRun(prompt: String, variables: [String: String], config: AIConfig) async throws -> AsyncThrowingStream<String, Error> {
+        var resolved = prompt
+        for (key, value) in variables {
+            resolved = resolved.replacingOccurrences(of: "{{\(key)}}", with: value)
+        }
+        let request = try await buildStreamRequest(user: resolved, config: config)
+        return AsyncThrowingStream { continuation in
             Task {
                 do {
-                    let request = try buildRequest(
-                        system: "You are a helpful assistant.",
-                        user: content,
-                        config: config,
-                        stream: true
-                    )
-                    let (bytes, _) = try await session.bytes(for: request)
+                    let (bytes, response) = try await self.session.bytes(for: request)
+                    if let http = response as? HTTPURLResponse, http.statusCode != 200 {
+                        continuation.finish(throwing: AIError.httpError(http.statusCode, Data()))
+                        return
+                    }
                     for try await line in bytes.lines {
-                        guard line.hasPrefix("data: "),
-                              let data = line.dropFirst(6).data(using: .utf8),
-                              let token = parseStreamToken(data: data) else { continue }
-                        if token == "[DONE]" { break }
+                        guard line.hasPrefix("data: ") else { continue }
+                        let payload = String(line.dropFirst(6))
+                        if payload == "[DONE]" { break }
+                        guard let data = payload.data(using: .utf8),
+                              let token = self.parseStreamToken(data: data, config: config) else { continue }
                         continuation.yield(token)
                     }
                     continuation.finish()
@@ -157,22 +161,23 @@ actor AIService {
     // MARK: - Private Helpers
 
     private func complete(system: String, user: String, config: AIConfig) async throws -> String {
-        let request = try buildRequest(system: system, user: user, config: config, stream: false)
+        let request = try await buildRequest(system: system, user: user, config: config)
         let (data, response) = try await session.data(for: request)
         guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
-            throw AIError.httpError((response as? HTTPURLResponse)?.statusCode ?? -1, data)
+            let code = (response as? HTTPURLResponse)?.statusCode ?? -1
+            throw AIError.httpError(code, data)
         }
         return try parseCompletionResponse(data: data, config: config)
     }
 
-    private func buildRequest(system: String, user: String, config: AIConfig, stream: Bool) throws -> URLRequest {
-        let apiKey: String
+    private func buildRequest(system: String, user: String, config: AIConfig) async throws -> URLRequest {
+        let apiKeyOrNil: String?
         do {
-            apiKey = try keychain.load(key: "ai.apikey.\(config.provider.rawValue)") ?? ""
+            apiKeyOrNil = try keychain.load(key: "ai.apikey.\(config.provider.rawValue)")
         } catch {
             throw AIError.missingAPIKey
         }
-        guard !apiKey.isEmpty else { throw AIError.missingAPIKey }
+        guard let apiKey = apiKeyOrNil, !apiKey.isEmpty else { throw AIError.missingAPIKey }
 
         let url: URL
         let body: [String: Any]
@@ -184,19 +189,26 @@ actor AIService {
                 "model": config.model,
                 "max_tokens": 2048,
                 "system": system,
-                "messages": [["role": "user", "content": user]],
-                "stream": stream
+                "messages": [["role": "user", "content": user]]
             ]
-        case .openai, .ollama:
-            let base = config.provider == .ollama ? (config.baseURL ?? "http://localhost:11434") : "https://api.openai.com"
-            url = URL(string: "\(base)/v1/chat/completions")!
+        case .openai:
+            url = URL(string: "https://api.openai.com/v1/chat/completions")!
             body = [
                 "model": config.model,
                 "messages": [
                     ["role": "system", "content": system],
                     ["role": "user", "content": user]
-                ],
-                "stream": stream
+                ]
+            ]
+        case .ollama:
+            let base = config.baseURL ?? "http://localhost:11434"
+            url = URL(string: "\(base)/api/chat")!
+            body = [
+                "model": config.model,
+                "messages": [
+                    ["role": "system", "content": system],
+                    ["role": "user", "content": user]
+                ]
             ]
         }
 
@@ -207,15 +219,29 @@ actor AIService {
         case .claude:
             request.setValue(apiKey, forHTTPHeaderField: "x-api-key")
             request.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")
-        case .openai, .ollama:
+        case .openai:
             request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        case .ollama:
+            break
         }
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
         return request
     }
 
+    private func buildStreamRequest(user: String, config: AIConfig) async throws -> URLRequest {
+        let system = "You are a helpful assistant."
+        var request = try await buildRequest(system: system, user: user, config: config)
+        if var body = request.httpBody,
+           var dict = try? JSONSerialization.jsonObject(with: body) as? [String: Any] {
+            dict["stream"] = true
+            body = (try? JSONSerialization.data(withJSONObject: dict)) ?? body
+            request.httpBody = body
+        }
+        return request
+    }
+
     private func parseCompletionResponse(data: Data, config: AIConfig) throws -> String {
-        let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+        let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
         switch config.provider {
         case .claude:
             if let content = (json?["content"] as? [[String: Any]])?.first,
@@ -228,28 +254,17 @@ actor AIService {
         throw AIError.parseError(data)
     }
 
-    private func parseStreamToken(data: Data) -> String? {
+    private func parseStreamToken(data: Data, config: AIConfig) -> String? {
         guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return nil }
-        // Claude streaming
-        if let delta = json["delta"] as? [String: Any], let text = delta["text"] as? String { return text }
-        // OpenAI streaming
-        if let choices = json["choices"] as? [[String: Any]],
-           let delta = choices.first?["delta"] as? [String: Any],
-           let text = delta["content"] as? String { return text }
-        return nil
-    }
-}
-
-enum AIError: LocalizedError {
-    case missingAPIKey
-    case httpError(Int, Data)
-    case parseError(Data)
-
-    var errorDescription: String? {
-        switch self {
-        case .missingAPIKey: return "No API key configured. Add one in Settings → AI."
-        case .httpError(let code, _): return "API request failed with status \(code)."
-        case .parseError: return "Could not parse the AI response."
+        switch config.provider {
+        case .claude:
+            if let delta = json["delta"] as? [String: Any],
+               let text = delta["text"] as? String { return text }
+        case .openai, .ollama:
+            if let choices = json["choices"] as? [[String: Any]],
+               let delta = choices.first?["delta"] as? [String: Any],
+               let text = delta["content"] as? String { return text }
         }
+        return nil
     }
 }

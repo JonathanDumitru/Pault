@@ -1,15 +1,14 @@
-// PaultTests/AIServiceTests.swift
 import XCTest
 @testable import Pault
 
 final class AIServiceTests: XCTestCase {
 
+    // Test 1: No API key stored → AIError.missingAPIKey is thrown
     func test_missingAPIKey_throwsMissingAPIKey() async throws {
-        // No API key stored, so should throw missingAPIKey
         let service = AIService()
         let config = AIConfig(provider: .openai, model: "gpt-4o")
         do {
-            _ = try await service.improve(content: "test", instruction: "improve", config: config)
+            _ = try await service.improve(prompt: "test", config: config)
             XCTFail("Expected AIError.missingAPIKey to be thrown")
         } catch AIError.missingAPIKey {
             // Expected — pass
@@ -18,23 +17,21 @@ final class AIServiceTests: XCTestCase {
         }
     }
 
+    // Test 2: QualityScore.overall computes correctly — 8 + 6 + 7 + 9 = 30 / 4 = 7.5
     func test_qualityScore_overallCalculation() {
         let score = QualityScore(
             clarity: 8,
             specificity: 6,
-            roleDefinition: 7,
-            outputFormat: 9,
-            clarityReason: "Clear",
-            specificityReason: "Specific",
-            roleDefinitionReason: "Has role",
-            outputFormatReason: "Well formatted"
+            completeness: 7,
+            conciseness: 9
         )
         XCTAssertEqual(score.overall, 7.5, accuracy: 0.001)
     }
 
+    // Test 3: AIConfig.defaults contains entries for all 3 providers
     func test_aiConfig_defaults_containAllProviders() {
-        XCTAssertNotNil(AIConfig.defaults[.claude])
-        XCTAssertNotNil(AIConfig.defaults[.openai])
-        XCTAssertNotNil(AIConfig.defaults[.ollama])
+        for provider in AIConfig.Provider.allCases {
+            XCTAssertNotNil(AIConfig.defaults[provider], "Missing default for provider: \(provider.rawValue)")
+        }
     }
 }
