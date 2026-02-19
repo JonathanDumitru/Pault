@@ -20,6 +20,9 @@ struct PromptDetailView: View {
     @Bindable var prompt: Prompt
 
     @Binding var showInspector: Bool
+
+    private var service: PromptService { PromptService(modelContext: modelContext) }
+
     @State private var saveTask: Task<Void, Never>?
     @State private var syncTask: Task<Void, Never>?
     @State private var showResponsePanel: Bool = false
@@ -255,6 +258,7 @@ struct PromptDetailView: View {
             guard !Task.isCancelled else { return }
             await MainActor.run {
                 prompt.updatedAt = Date()
+                service.saveSnapshot(for: prompt)
                 do {
                     try modelContext.save()
                 } catch {
