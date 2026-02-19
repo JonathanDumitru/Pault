@@ -82,7 +82,8 @@ struct SmartCollectionEditorView: View {
     private func createSavedFilter() {
         let tags = allTags.filter { selectedTagIDs.contains($0.id) }
         let filter = SmartCollectionFilter(tags: tags, onlyFavorites: onlyFavorites, recentDays: recentDays)
-        let collection = SmartCollection(name: name, icon: icon, filter: filter)
+        let nextOrder = (try? modelContext.fetch(FetchDescriptor<SmartCollection>()))?.map(\.sortOrder).max().map { $0 + 1 } ?? 0
+        let collection = SmartCollection(name: name, icon: icon, filter: filter, sortOrder: nextOrder)
         modelContext.insert(collection)
         try? modelContext.save()
         dismiss()

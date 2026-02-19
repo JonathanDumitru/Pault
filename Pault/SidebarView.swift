@@ -181,9 +181,6 @@ struct SidebarView: View {
                 .buttonStyle(.plain)
                 .padding(.leading, 20)
                 .padding(.bottom, 6)
-                .sheet(isPresented: $showingNewCollection) {
-                    SmartCollectionEditorView()
-                }
             }
 
             // Prompt list
@@ -251,6 +248,9 @@ struct SidebarView: View {
             }
         }
         .frame(minWidth: 220)
+        .sheet(isPresented: $showingNewCollection) {
+            SmartCollectionEditorView()
+        }
     }
 }
 
