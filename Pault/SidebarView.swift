@@ -17,6 +17,7 @@ struct SidebarView: View {
     @Environment(\.openWindow) private var openWindow
     @Query(sort: [SortDescriptor(\Prompt.updatedAt, order: .reverse)]) private var allPrompts: [Prompt]
     @Query(sort: [SortDescriptor(\Tag.name, order: .forward)]) private var allTags: [Tag]
+    @AppStorage("useCompactMode") private var useCompactMode: Bool = false
 
     @Binding var selectedPrompt: Prompt?
     @Binding var selectedFilter: SidebarFilter
@@ -161,6 +162,12 @@ struct SidebarView: View {
                             selectedFilter = .tag(tag)
                         }
                         .tag(prompt)
+                        .listRowInsets(EdgeInsets(
+                            top: useCompactMode ? 4 : 8,
+                            leading: 8,
+                            bottom: useCompactMode ? 4 : 8,
+                            trailing: 8
+                        ))
                         .help("Double-click to edit")
                         .accessibilityLabel(prompt.title.isEmpty ? "Untitled prompt" : prompt.title)
                         .onTapGesture(count: 2) {

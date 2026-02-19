@@ -18,6 +18,16 @@ struct RichTextEditor: NSViewRepresentable {
     var onImageDrop: ((URL) -> Void)?
     var isEditable: Bool = true
 
+    @AppStorage("fontSizePreference") private var fontSizePreference: String = "medium"
+
+    private var editorFontSize: CGFloat {
+        switch fontSizePreference {
+        case "small": return 13
+        case "large": return 17
+        default:      return 15
+        }
+    }
+
     func makeCoordinator() -> Coordinator {
         Coordinator(parent: self)
     }
@@ -31,7 +41,7 @@ struct RichTextEditor: NSViewRepresentable {
         textView.isVerticallyResizable = true
         textView.isHorizontallyResizable = false
         textView.textContainerInset = NSSize(width: 4, height: 8)
-        textView.font = .systemFont(ofSize: NSFont.systemFontSize)
+        textView.font = NSFont.systemFont(ofSize: editorFontSize)
         textView.backgroundColor = .clear
         textView.drawsBackground = false
         textView.textColor = .textColor
@@ -71,8 +81,12 @@ struct RichTextEditor: NSViewRepresentable {
     }
 
     func updateNSView(_ scrollView: NSScrollView, context: Context) {
-        guard !context.coordinator.isEditing else { return }
         guard let textView = scrollView.documentView as? NSTextView else { return }
+
+        // Always re-apply font size (harmless if unchanged; responds to preference changes)
+        context.coordinator.textView?.font = NSFont.systemFont(ofSize: editorFontSize)
+
+        guard !context.coordinator.isEditing else { return }
 
         if let data = attributedContent {
             loadRTFDData(data, into: textView)
