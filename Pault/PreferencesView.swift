@@ -345,7 +345,9 @@ private struct AppearanceTab: View {
                 accentColorPreference = option.key
             }
             .accessibilityLabel(option.label)
+            .accessibilityAddTraits(.isButton)
             .accessibilityAddTraits(isSelected ? [.isSelected] : [])
+            .accessibilityHint("Sets the app accent color")
     }
 }
 
@@ -362,6 +364,7 @@ private struct DataTab: View {
     @State private var importError: String? = nil
     @State private var showImportError = false
     @State private var exportSuccess = false
+    @State private var showExportError = false
 
     var body: some View {
         Form {
@@ -379,7 +382,14 @@ private struct DataTab: View {
                             DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                                 exportSuccess = false
                             }
+                        } else {
+                            showExportError = true
                         }
+                    }
+                    .alert("Export Failed", isPresented: $showExportError) {
+                        Button("OK") { }
+                    } message: {
+                        Text("The prompts could not be saved. Check that you have write permission to the selected location.")
                     }
 
                     if exportSuccess {

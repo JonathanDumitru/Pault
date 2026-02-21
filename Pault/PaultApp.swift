@@ -26,6 +26,7 @@ struct PaultApp: App {
     @AppStorage("accentColorPreference") private var accentColorPreference: String = "blue"
 
     @State private var showDataError: Bool = false
+    @State private var pendingCrashReport: String? = nil
 
     private var accentColor: Color {
         switch accentColorPreference {
@@ -72,6 +73,17 @@ struct PaultApp: App {
                 .tint(accentColor)
                 .onReceive(NotificationCenter.default.publisher(for: .openAboutWindow)) { _ in
                     openWindow(id: "about")
+                }
+                .onAppear {
+                    pendingCrashReport = CrashReportingService.pendingCrashReportText()
+                }
+                .sheet(isPresented: Binding(
+                    get: { pendingCrashReport != nil },
+                    set: { if !$0 { pendingCrashReport = nil } }
+                )) {
+                    if let report = pendingCrashReport {
+                        DiagnosticReportView(reportText: report)
+                    }
                 }
         }
         .windowResizability(.contentSize)
@@ -120,6 +132,9 @@ struct PaultApp: App {
     }
 
     init() {
+        // Install crash handlers before anything else can throw
+        CrashReportingService.install()
+
         // Pass model container to AppDelegate synchronously to avoid race condition
         appDelegate.modelContainer = sharedModelContainer
 

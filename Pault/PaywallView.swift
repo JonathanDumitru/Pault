@@ -9,6 +9,7 @@ struct PaywallView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var proStatus = ProStatusManager.shared
     @State private var isLoading = false
+    @State private var isLoadingProducts = true
     @State private var selectedProductID = "com.pault.pro.monthly"
     @State private var purchaseError: String? = nil
 
@@ -37,17 +38,33 @@ struct PaywallView: View {
             }
 
             // Product picker
-            if !proStatus.availableProducts.isEmpty {
-                Picker("Plan", selection: $selectedProductID) {
-                    ForEach(proStatus.availableProducts.filter {
-                        ProStatusManager.proProductIDs.contains($0.id)
-                    }) { product in
-                        Text("\(product.displayName) — \(product.displayPrice)").tag(product.id)
+            Group {
+                if isLoadingProducts {
+                    ProgressView()
+                        .controlSize(.regular)
+                        .frame(height: 32)
+                } else if proStatus.availableProducts.isEmpty {
+                    VStack(spacing: 8) {
+                        Text("Could not load plans.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        Button("Retry") {
+                            Task { await loadProducts() }
+                        }
+                        .font(.caption)
+                        .buttonStyle(.bordered)
                     }
+                } else {
+                    Picker("Plan", selection: $selectedProductID) {
+                        ForEach(proStatus.availableProducts) { product in
+                            Text("\(product.displayName) — \(product.displayPrice)").tag(product.id)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .frame(maxWidth: 320)
                 }
-                .pickerStyle(.segmented)
-                .frame(maxWidth: 320)
             }
+            .frame(height: 40)
 
             // CTA
             Button {
@@ -86,7 +103,13 @@ struct PaywallView: View {
         }
         .padding(32)
         .frame(width: 400, height: 440)
-        .task { await proStatus.loadProducts() }
+        .task { await loadProducts() }
+    }
+
+    private func loadProducts() async {
+        isLoadingProducts = true
+        await proStatus.loadProducts()
+        isLoadingProducts = false
     }
 
     private func purchaseSelected() async {

@@ -36,8 +36,14 @@ struct AboutView: View {
 
             Divider()
 
-            HStack(spacing: 20) {
+            HStack(spacing: 12) {
                 Link("hello@pault.app", destination: URL(string: "mailto:hello@pault.app")!)
+                    .font(.caption)
+
+                Text("·")
+                    .foregroundStyle(.tertiary)
+
+                Link("Privacy Policy", destination: URL(string: "https://pault.app/privacy")!)
                     .font(.caption)
 
                 Text("·")
@@ -49,7 +55,7 @@ struct AboutView: View {
             }
         }
         .padding(32)
-        .frame(width: 400, height: 280)
+        .frame(width: 400, height: 300)
     }
 }
 

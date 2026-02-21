@@ -16,6 +16,8 @@ struct ProBadge: View {
                 )
             )
             .clipShape(Capsule())
+            .accessibilityLabel("Pro feature")
+            .accessibilityAddTraits(.isStaticText)
     }
 }
 

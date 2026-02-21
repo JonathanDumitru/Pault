@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- App Sandbox (required for Mac App Store distribution) -->
+    <key>com.apple.security.app-sandbox</key>
+    <true/>
+
+    <!-- Outbound network connections for AI API calls (Claude, OpenAI, Ollama) -->
+    <key>com.apple.security.network.client</key>
+    <true/>
+
+    <!-- User-selected file access for prompt import/export via NSSavePanel/NSOpenPanel -->
+    <key>com.apple.security.files.user-selected.read-write</key>
+    <true/>
+
+    <!-- Accessibility API access for the global hotkey launcher paste feature -->
+    <!-- Required when posting keyboard events to other apps via CGEvent -->
+    <key>com.apple.security.temporary-exception.apple-events</key>
+    <array>
+        <string>com.apple.systemevents</string>
+    </array>
+</dict>
+</plist>

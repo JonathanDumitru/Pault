@@ -57,6 +57,11 @@ struct CopyToastModifier: ViewModifier {
                     .padding(.bottom, 16)
                     .transition(.move(edge: .bottom).combined(with: .opacity))
                     .onAppear {
+                        // Announce to VoiceOver users that the copy succeeded
+                        NSAccessibility.post(element: NSApp as AnyObject,
+                                             notification: .announcementRequested,
+                                             userInfo: [NSAccessibilityAnnouncementKey: message,
+                                                        NSAccessibilityPriorityKey: NSAccessibilityPriorityLevel.medium.rawValue])
                         DispatchQueue.main.asyncAfter(deadline: .now() + AppConstants.Timing.toastDuration) {
                             withAnimation(.easeOut(duration: 0.3)) {
                                 isShowing = false

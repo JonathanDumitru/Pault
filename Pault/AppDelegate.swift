@@ -105,8 +105,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let keyCode = UInt32(storedKeyCode.nonZero ?? Int(GlobalHotkeyManager.keyCodeP))
         let modifiers = UInt32(storedModifiers.nonZero ?? Int(cmdKey | shiftKey))
 
-        GlobalHotkeyManager.shared.register(keyCode: keyCode, modifiers: modifiers) { [weak self] in
+        let success = GlobalHotkeyManager.shared.register(keyCode: keyCode, modifiers: modifiers) { [weak self] in
             self?.toggleLauncher()
+        }
+
+        if !success {
+            appDelegateLogger.warning("Global hotkey registration failed — user will be prompted")
+            DispatchQueue.main.async {
+                let alert = NSAlert()
+                alert.messageText = "Hotkey Unavailable"
+                alert.informativeText = "Pault couldn't register the global hotkey (⌘⇧P). It may conflict with another app. You can change it in Preferences → General."
+                alert.alertStyle = .warning
+                alert.addButton(withTitle: "OK")
+                alert.runModal()
+            }
         }
     }
 

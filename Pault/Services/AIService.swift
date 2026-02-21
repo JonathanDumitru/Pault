@@ -64,7 +64,12 @@ enum AIError: LocalizedError {
 actor AIService {
     static let shared = AIService()
     private let keychain = KeychainService()
-    private let session = URLSession.shared
+    private let session: URLSession = {
+        let config = URLSessionConfiguration.default
+        config.timeoutIntervalForRequest = 30
+        config.timeoutIntervalForResource = 120
+        return URLSession(configuration: config)
+    }()
 
     // MARK: - Public API
 

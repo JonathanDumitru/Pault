@@ -1,0 +1,579 @@
+{
+  "" : {
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/Pault-primary.dia",
+    "emit-module-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/Pault-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/Pault-primary-emit-module.dia",
+    "pch" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/Pault-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/Pault-primary.swiftdeps"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/GeneratedAssetSymbols.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/GeneratedAssetSymbols.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/GeneratedAssetSymbols~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/ABTestResultView.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ABTestResultView.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ABTestResultView.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ABTestResultView.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/ABTestResultView.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ABTestResultView.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ABTestResultView.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ABTestResultView.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ABTestResultView~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/AIAssistPanel.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AIAssistPanel.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AIAssistPanel.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AIAssistPanel.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/AIAssistPanel.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AIAssistPanel.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AIAssistPanel.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AIAssistPanel.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AIAssistPanel~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/AboutView.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AboutView.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AboutView.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AboutView.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/AboutView.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AboutView.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AboutView.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AboutView.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AboutView~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/AnalyticsService.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AnalyticsService.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AnalyticsService.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AnalyticsService.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/AnalyticsService.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AnalyticsService.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AnalyticsService.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AnalyticsService.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AnalyticsService~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/AnalyticsView.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AnalyticsView.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AnalyticsView.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AnalyticsView.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/AnalyticsView.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AnalyticsView.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AnalyticsView.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AnalyticsView.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AnalyticsView~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/AppDelegate.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AppDelegate.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AppDelegate.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AppDelegate.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/AppDelegate.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AppDelegate.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AppDelegate.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AppDelegate.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AppDelegate~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/Attachment.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/Attachment.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/Attachment.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/Attachment.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/Attachment.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/Attachment.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/Attachment.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/Attachment.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/Attachment~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/AttachmentManager.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AttachmentManager.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AttachmentManager.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AttachmentManager.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/AttachmentManager.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AttachmentManager.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AttachmentManager.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AttachmentManager.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AttachmentManager~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/AttachmentsStripView.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AttachmentsStripView.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AttachmentsStripView.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AttachmentsStripView.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/AttachmentsStripView.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AttachmentsStripView.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AttachmentsStripView.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AttachmentsStripView.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AttachmentsStripView~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/Constants.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/Constants.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/Constants.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/Constants.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/Constants.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/Constants.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/Constants.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/Constants.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/Constants~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/ContentView.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ContentView.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ContentView.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ContentView.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/ContentView.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ContentView.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ContentView.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ContentView.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ContentView~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/CopyEvent.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/CopyEvent.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/CopyEvent.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/CopyEvent.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/CopyEvent.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/CopyEvent.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/CopyEvent.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/CopyEvent.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/CopyEvent~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/CopyToast.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/CopyToast.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/CopyToast.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/CopyToast.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/CopyToast.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/CopyToast.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/CopyToast.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/CopyToast.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/CopyToast~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/DiagnosticReportView.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/DiagnosticReportView.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/DiagnosticReportView.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/DiagnosticReportView.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/DiagnosticReportView.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/DiagnosticReportView.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/DiagnosticReportView.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/DiagnosticReportView.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/DiagnosticReportView~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/EditPromptView.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/EditPromptView.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/EditPromptView.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/EditPromptView.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/EditPromptView.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/EditPromptView.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/EditPromptView.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/EditPromptView.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/EditPromptView~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/ExpandingTextEditor.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ExpandingTextEditor.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ExpandingTextEditor.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ExpandingTextEditor.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/ExpandingTextEditor.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ExpandingTextEditor.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ExpandingTextEditor.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ExpandingTextEditor.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ExpandingTextEditor~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/ExportService.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ExportService.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ExportService.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ExportService.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/ExportService.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ExportService.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ExportService.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ExportService.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ExportService~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/GlobalHotkeyManager.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/GlobalHotkeyManager.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/GlobalHotkeyManager.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/GlobalHotkeyManager.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/GlobalHotkeyManager.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/GlobalHotkeyManager.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/GlobalHotkeyManager.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/GlobalHotkeyManager.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/GlobalHotkeyManager~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/HotkeyLauncherView.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/HotkeyLauncherView.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/HotkeyLauncherView.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/HotkeyLauncherView.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/HotkeyLauncherView.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/HotkeyLauncherView.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/HotkeyLauncherView.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/HotkeyLauncherView.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/HotkeyLauncherView~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/HotkeyLauncherWindow.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/HotkeyLauncherWindow.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/HotkeyLauncherWindow.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/HotkeyLauncherWindow.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/HotkeyLauncherWindow.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/HotkeyLauncherWindow.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/HotkeyLauncherWindow.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/HotkeyLauncherWindow.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/HotkeyLauncherWindow~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/InlineVariablePreview.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/InlineVariablePreview.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/InlineVariablePreview.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/InlineVariablePreview.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/InlineVariablePreview.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/InlineVariablePreview.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/InlineVariablePreview.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/InlineVariablePreview.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/InlineVariablePreview~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/InspectorView.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/InspectorView.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/InspectorView.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/InspectorView.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/InspectorView.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/InspectorView.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/InspectorView.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/InspectorView.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/InspectorView~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/KeyRecorderView.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/KeyRecorderView.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/KeyRecorderView.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/KeyRecorderView.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/KeyRecorderView.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/KeyRecorderView.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/KeyRecorderView.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/KeyRecorderView.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/KeyRecorderView~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/MenuBarContentView.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/MenuBarContentView.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/MenuBarContentView.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/MenuBarContentView.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/MenuBarContentView.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/MenuBarContentView.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/MenuBarContentView.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/MenuBarContentView.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/MenuBarContentView~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/NewPromptView.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/NewPromptView.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/NewPromptView.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/NewPromptView.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/NewPromptView.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/NewPromptView.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/NewPromptView.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/NewPromptView.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/NewPromptView~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/OnboardingView.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/OnboardingView.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/OnboardingView.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/OnboardingView.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/OnboardingView.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/OnboardingView.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/OnboardingView.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/OnboardingView.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/OnboardingView~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/PaultApp.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PaultApp.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PaultApp.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PaultApp.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/PaultApp.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PaultApp.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PaultApp.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PaultApp.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PaultApp~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/PaywallView.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PaywallView.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PaywallView.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PaywallView.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/PaywallView.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PaywallView.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PaywallView.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PaywallView.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PaywallView~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/PreferencesView.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PreferencesView.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PreferencesView.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PreferencesView.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/PreferencesView.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PreferencesView.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PreferencesView.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PreferencesView.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PreferencesView~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/ProBadge.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ProBadge.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ProBadge.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ProBadge.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/ProBadge.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ProBadge.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ProBadge.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ProBadge.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ProBadge~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/Prompt.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/Prompt.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/Prompt.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/Prompt.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/Prompt.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/Prompt.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/Prompt.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/Prompt.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/Prompt~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/PromptDetailView.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptDetailView.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptDetailView.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptDetailView.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptDetailView.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptDetailView.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptDetailView.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptDetailView.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptDetailView~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/PromptDiffView.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptDiffView.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptDiffView.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptDiffView.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptDiffView.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptDiffView.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptDiffView.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptDiffView.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptDiffView~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/PromptPreviewView.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptPreviewView.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptPreviewView.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptPreviewView.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptPreviewView.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptPreviewView.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptPreviewView.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptPreviewView.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptPreviewView~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/PromptRun.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptRun.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptRun.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptRun.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptRun.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptRun.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptRun.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptRun.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptRun~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/PromptService.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptService.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptService.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptService.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptService.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptService.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptService.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptService.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptService~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/PromptStatsView.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptStatsView.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptStatsView.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptStatsView.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptStatsView.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptStatsView.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptStatsView.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptStatsView.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptStatsView~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/PromptVersion.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptVersion.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptVersion.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptVersion.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptVersion.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptVersion.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptVersion.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptVersion.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptVersion~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/PromptVersionHistoryView.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptVersionHistoryView.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptVersionHistoryView.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptVersionHistoryView.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptVersionHistoryView.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptVersionHistoryView.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptVersionHistoryView.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptVersionHistoryView.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/PromptVersionHistoryView~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/RefinementLoopView.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/RefinementLoopView.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/RefinementLoopView.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/RefinementLoopView.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/RefinementLoopView.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/RefinementLoopView.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/RefinementLoopView.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/RefinementLoopView.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/RefinementLoopView~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/ResponsePanel.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ResponsePanel.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ResponsePanel.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ResponsePanel.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/ResponsePanel.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ResponsePanel.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ResponsePanel.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ResponsePanel.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ResponsePanel~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/RichTextEditor.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/RichTextEditor.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/RichTextEditor.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/RichTextEditor.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/RichTextEditor.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/RichTextEditor.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/RichTextEditor.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/RichTextEditor.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/RichTextEditor~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/RunHistoryView.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/RunHistoryView.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/RunHistoryView.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/RunHistoryView.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/RunHistoryView.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/RunHistoryView.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/RunHistoryView.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/RunHistoryView.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/RunHistoryView~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/Services/AIService.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AIService.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AIService.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AIService.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/AIService.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AIService.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AIService.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AIService.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/AIService~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/Services/CrashReportingService.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/CrashReportingService.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/CrashReportingService.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/CrashReportingService.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/CrashReportingService.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/CrashReportingService.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/CrashReportingService.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/CrashReportingService.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/CrashReportingService~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/Services/KeychainService.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/KeychainService.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/KeychainService.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/KeychainService.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/KeychainService.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/KeychainService.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/KeychainService.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/KeychainService.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/KeychainService~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/Services/ProStatusManager.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ProStatusManager.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ProStatusManager.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ProStatusManager.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/ProStatusManager.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ProStatusManager.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ProStatusManager.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ProStatusManager.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/ProStatusManager~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/SidebarView.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/SidebarView.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/SidebarView.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/SidebarView.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/SidebarView.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/SidebarView.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/SidebarView.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/SidebarView.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/SidebarView~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/SmartCollection.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/SmartCollection.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/SmartCollection.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/SmartCollection.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/SmartCollection.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/SmartCollection.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/SmartCollection.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/SmartCollection.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/SmartCollection~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/SmartCollectionEditorView.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/SmartCollectionEditorView.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/SmartCollectionEditorView.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/SmartCollectionEditorView.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/SmartCollectionEditorView.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/SmartCollectionEditorView.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/SmartCollectionEditorView.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/SmartCollectionEditorView.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/SmartCollectionEditorView~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/Tag.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/Tag.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/Tag.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/Tag.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/Tag.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/Tag.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/Tag.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/Tag.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/Tag~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/TagPickerPopover.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/TagPickerPopover.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/TagPickerPopover.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/TagPickerPopover.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/TagPickerPopover.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/TagPickerPopover.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/TagPickerPopover.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/TagPickerPopover.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/TagPickerPopover~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/TagPillView.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/TagPillView.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/TagPillView.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/TagPillView.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/TagPillView.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/TagPillView.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/TagPillView.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/TagPillView.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/TagPillView~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/TemplateEngine.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/TemplateEngine.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/TemplateEngine.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/TemplateEngine.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/TemplateEngine.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/TemplateEngine.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/TemplateEngine.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/TemplateEngine.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/TemplateEngine~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/TemplateVariable.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/TemplateVariable.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/TemplateVariable.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/TemplateVariable.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/TemplateVariable.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/TemplateVariable.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/TemplateVariable.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/TemplateVariable.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/TemplateVariable~partial.swiftmodule"
+  },
+  "/Users/dev/Documents/Software/macOS/Pault/Pault/TemplateVariablesView.swift" : {
+    "const-values" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/TemplateVariablesView.swiftconstvalues",
+    "dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/TemplateVariablesView.d",
+    "diagnostics" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/TemplateVariablesView.dia",
+    "index-unit-output-path" : "/Pault.build/Debug/Pault.build/Objects-normal/arm64/TemplateVariablesView.o",
+    "llvm-bc" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/TemplateVariablesView.bc",
+    "object" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/TemplateVariablesView.o",
+    "swift-dependencies" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/TemplateVariablesView.swiftdeps",
+    "swiftmodule" : "/Users/dev/Documents/Software/macOS/Pault/.DerivedData/Build/Intermediates.noindex/Pault.build/Debug/Pault.build/Objects-normal/arm64/TemplateVariablesView~partial.swiftmodule"
+  }
+}

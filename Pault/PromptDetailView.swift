@@ -34,6 +34,7 @@ struct PromptDetailView: View {
     @State private var abRunB: PromptRun? = nil
     @State private var isRunningAB: Bool = false
     @State private var showAIPanel: Bool = false
+    @State private var aiError: String? = nil
 
     var body: some View {
         HStack(spacing: 0) {
@@ -187,6 +188,14 @@ struct PromptDetailView: View {
         .sheet(isPresented: $showPaywall) {
             PaywallView(featureName: "API Runner", featureDescription: "Run prompts directly against any LLM without leaving Pault.", featureIcon: "play.circle.fill")
         }
+        .alert("AI Error", isPresented: Binding(
+            get: { aiError != nil },
+            set: { if !$0 { aiError = nil } }
+        )) {
+            Button("OK") { aiError = nil }
+        } message: {
+            if let msg = aiError { Text(msg) }
+        }
         .sheet(isPresented: $showABResult) {
             if let a = abRunA, let b = abRunB {
                 ABTestResultView(prompt: prompt, runA: a, runB: b)
@@ -218,27 +227,33 @@ struct PromptDetailView: View {
         Task {
             async let outputA = collectStream(prompt: contentA, variables: vars, config: configA)
             async let outputB = collectStream(prompt: contentB, variables: vars, config: configB)
-            let (resultA, latA) = (try? await outputA) ?? ("Error", 0)
-            let (resultB, latB) = (try? await outputB) ?? ("Error", 0)
-
-            await MainActor.run {
-                let runA = PromptRun(promptTitle: titleSnapshot, resolvedInput: contentA,
-                                     output: resultA, model: configA.model,
-                                     provider: configA.provider.rawValue, latencyMs: latA,
-                                     variantLabel: "A")
-                let runB = PromptRun(promptTitle: titleSnapshot, resolvedInput: contentB,
-                                     output: resultB, model: configB.model,
-                                     provider: configB.provider.rawValue, latencyMs: latB,
-                                     variantLabel: "B")
-                runA.prompt = prompt
-                runB.prompt = prompt
-                modelContext.insert(runA)
-                modelContext.insert(runB)
-                try? modelContext.save()
-                abRunA = runA
-                abRunB = runB
-                isRunningAB = false
-                showABResult = true
+            do {
+                let (resultA, latA) = try await outputA
+                let (resultB, latB) = try await outputB
+                await MainActor.run {
+                    let runA = PromptRun(promptTitle: titleSnapshot, resolvedInput: contentA,
+                                         output: resultA, model: configA.model,
+                                         provider: configA.provider.rawValue, latencyMs: latA,
+                                         variantLabel: "A")
+                    let runB = PromptRun(promptTitle: titleSnapshot, resolvedInput: contentB,
+                                         output: resultB, model: configB.model,
+                                         provider: configB.provider.rawValue, latencyMs: latB,
+                                         variantLabel: "B")
+                    runA.prompt = prompt
+                    runB.prompt = prompt
+                    modelContext.insert(runA)
+                    modelContext.insert(runB)
+                    try? modelContext.save()
+                    abRunA = runA
+                    abRunB = runB
+                    isRunningAB = false
+                    showABResult = true
+                }
+            } catch {
+                await MainActor.run {
+                    isRunningAB = false
+                    aiError = error.localizedDescription
+                }
             }
         }
     }

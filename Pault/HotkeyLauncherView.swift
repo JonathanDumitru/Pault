@@ -157,10 +157,19 @@ struct HotkeyLauncherView: View {
     }
 
     private func actionView(for prompt: Prompt) -> some View {
-        VStack(spacing: 16) {
+        let unfilledVariables = prompt.templateVariables.filter { $0.defaultValue.isEmpty }
+        return VStack(spacing: 16) {
             Text(prompt.title.isEmpty ? "Untitled" : prompt.title)
                 .font(.headline)
                 .lineLimit(1)
+
+            if !unfilledVariables.isEmpty {
+                Label("\(unfilledVariables.count) variable\(unfilledVariables.count == 1 ? "" : "s") unfilled — copy will include {{placeholders}}", systemImage: "exclamationmark.triangle")
+                    .font(.caption)
+                    .foregroundStyle(.orange)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: 300)
+            }
 
             HStack(spacing: 12) {
                 ActionButton(title: "Copy", shortcut: "C", icon: "doc.on.doc") {
@@ -187,11 +196,13 @@ struct HotkeyLauncherView: View {
     }
 
     private func performDefaultAction(on prompt: Prompt) {
+        let hasUnfilledVariables = prompt.templateVariables.contains { $0.defaultValue.isEmpty }
         switch defaultAction {
-        case "copy":
+        case "copy" where !hasUnfilledVariables:
             service.copyToClipboard(prompt)
             onDismiss()
-        default: // "showOptions"
+        default:
+            // "showOptions" mode, or "copy" with unfilled variables — show action sheet
             selectedPrompt = prompt
             showingActions = true
         }

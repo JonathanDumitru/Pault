@@ -93,10 +93,20 @@ struct OnboardingView: View {
                     }
                     .buttonStyle(.borderedProminent)
                 } else {
-                    Button("Get Started") {
-                        isPresented = false
+                    VStack(spacing: 10) {
+                        Button("Create My First Prompt →") {
+                            isPresented = false
+                            NotificationCenter.default.post(name: .createNewPrompt, object: nil)
+                        }
+                        .buttonStyle(.borderedProminent)
+
+                        Button("Get Started") {
+                            isPresented = false
+                        }
+                        .buttonStyle(.plain)
+                        .foregroundStyle(.secondary)
+                        .font(.subheadline)
                     }
-                    .buttonStyle(.borderedProminent)
                 }
             }
             .padding(.horizontal, 30)

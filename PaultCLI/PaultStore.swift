@@ -11,11 +11,14 @@ final class PaultStore {
         let schema = Schema([Prompt.self, Tag.self, TemplateVariable.self,
                              Attachment.self, PromptRun.self, CopyEvent.self,
                              PromptVersion.self, SmartCollection.self])
-        // Explicit URL required in CLI context: the app (bundle ID Jonathan-Hines-Dumitru.Pault)
-        // is sandboxed, so its SwiftData store lives inside its container directory, not the
-        // standard ~/Library/Application Support/ path that a CLI binary would resolve.
+        // Explicit URL required in CLI context: the app is sandboxed, so its SwiftData store
+        // lives inside the sandbox container directory rather than the standard Library path.
+        // Read the app's bundle ID from the CLI's Info.plist key "PaultAppBundleID" so this
+        // doesn't break if the bundle identifier changes. Falls back to the production default.
+        let appBundleID = Bundle.main.object(forInfoDictionaryKey: "PaultAppBundleID") as? String
+            ?? "Jonathan-Hines-Dumitru.Pault"
         let storeURL = FileManager.default.homeDirectoryForCurrentUser
-            .appendingPathComponent("Library/Containers/Jonathan-Hines-Dumitru.Pault/Data/Library/Application Support/default.store")
+            .appendingPathComponent("Library/Containers/\(appBundleID)/Data/Library/Application Support/default.store")
         let config = ModelConfiguration(schema: schema, url: storeURL, isStoredInMemoryOnly: false)
         container = try ModelContainer(for: schema, configurations: [config])
         context = ModelContext(container)

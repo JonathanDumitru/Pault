@@ -20,7 +20,8 @@ class GlobalHotkeyManager {
 
     private init() {}
 
-    func register(keyCode: UInt32, modifiers: UInt32, callback: @escaping () -> Void) {
+    @discardableResult
+    func register(keyCode: UInt32, modifiers: UInt32, callback: @escaping () -> Void) -> Bool {
         self.callback = callback
 
         unregister()
@@ -46,7 +47,7 @@ class GlobalHotkeyManager {
 
         if status != noErr {
             hotkeyLogger.error("Failed to install event handler: \(status)")
-            return
+            return false
         }
 
         let registerStatus = RegisterEventHotKey(
@@ -60,7 +61,10 @@ class GlobalHotkeyManager {
 
         if registerStatus != noErr {
             hotkeyLogger.error("Failed to register hotkey: \(registerStatus)")
+            return false
         }
+
+        return true
     }
 
     func unregister() {
