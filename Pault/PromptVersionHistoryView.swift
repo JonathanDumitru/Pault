@@ -5,6 +5,9 @@
 
 import SwiftUI
 import SwiftData
+import os
+
+private let historyLogger = Logger(subsystem: "com.pault.app", category: "VersionHistory")
 
 struct PromptVersionHistoryView: View {
     @Bindable var prompt: Prompt
@@ -134,7 +137,7 @@ struct PromptVersionHistoryView: View {
         do {
             try modelContext.save()
         } catch {
-            print("[PromptVersionHistoryView] Failed to save after deleting version: \(error)")
+            historyLogger.error("deleteVersion: Failed to save — \(error.localizedDescription)")
         }
     }
 
