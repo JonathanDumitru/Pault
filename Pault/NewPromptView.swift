@@ -15,6 +15,7 @@ struct NewPromptView: View {
     @State private var content: String = ""
     @State private var selectedTags: [Tag] = []
     @State private var showingTagPicker: Bool = false
+    @State private var showInsertVariable: Bool = false
 
     private var service: PromptService { PromptService(modelContext: modelContext) }
 
@@ -45,11 +46,40 @@ struct NewPromptView: View {
 
             Divider()
 
-            // Content
-            TextEditor(text: $content)
-                .font(.body)
+            // Content — WYSIWYG editor with variable chips
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    Text("Content")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                    Button(action: { showInsertVariable.toggle() }) {
+                        Label("Variable", systemImage: "curlybraces")
+                            .font(.caption)
+                    }
+                    .buttonStyle(.plain)
+                    .foregroundStyle(.secondary)
+                    .popover(isPresented: $showInsertVariable) {
+                        InsertVariablePopover(
+                            existingNames: detectedVariables,
+                            onInsert: { name in
+                                NotificationCenter.default.post(
+                                    name: .insertVariableChip,
+                                    object: nil,
+                                    userInfo: ["variableName": name]
+                                )
+                                showInsertVariable = false
+                            }
+                        )
+                    }
+                }
+
+                VisualPromptEditor(
+                    plainContent: $content,
+                    onInsertVariable: { showInsertVariable = true }
+                )
                 .frame(minHeight: 200)
-                .scrollContentBackground(.hidden)
+            }
 
             Divider()
 

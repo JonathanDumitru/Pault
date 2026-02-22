@@ -35,6 +35,7 @@ struct PromptDetailView: View {
     @State private var isRunningAB: Bool = false
     @State private var showAIPanel: Bool = false
     @State private var aiError: String? = nil
+    @State private var showInsertVariable: Bool = false
 
     var body: some View {
         HStack(spacing: 0) {
@@ -52,22 +53,19 @@ struct PromptDetailView: View {
                         debouncedSave()
                     }
 
-                // Content editor — switches to variantB when A/B mode is active
-                RichTextEditor(
-                    attributedContent: showVariantB ? .constant(nil) : $prompt.attributedContent,
+                // Content editor — WYSIWYG with inline variable chips
+                VisualPromptEditor(
                     plainContent: showVariantB ? Binding(
                         get: { prompt.variantB ?? "" },
                         set: { prompt.variantB = $0 }
-                    ) : $prompt.content
+                    ) : $prompt.content,
+                    onInsertVariable: { showInsertVariable = true }
                 )
                 .padding(.horizontal, 16)
                 .padding(.bottom, 16)
                 .onChange(of: prompt.content) { _, _ in
                     debouncedSave()
                     debouncedSyncVariables()
-                }
-                .onChange(of: prompt.attributedContent) { _, _ in
-                    debouncedSave()
                 }
 
                 // Template variables (shown when {{variables}} exist in content)
@@ -102,6 +100,30 @@ struct PromptDetailView: View {
         .animation(.easeInOut(duration: 0.2), value: showAIPanel)
         .overlay(alignment: .bottomTrailing) {
             HStack(spacing: 0) {
+                // Insert variable chip
+                Button(action: { showInsertVariable.toggle() }) {
+                    Image(systemName: "curlybraces")
+                        .font(.title2)
+                        .foregroundStyle(showInsertVariable ? .blue : .secondary)
+                        .padding(12)
+                }
+                .buttonStyle(.plain)
+                .help("Insert Variable ({{name}})")
+                .popover(isPresented: $showInsertVariable) {
+                    InsertVariablePopover(
+                        existingNames: TemplateEngine.extractVariableNames(from: prompt.content),
+                        onInsert: { name in
+                            NotificationCenter.default.post(
+                                name: .insertVariableChip,
+                                object: nil,
+                                userInfo: ["variableName": name]
+                            )
+                            showInsertVariable = false
+                            debouncedSyncVariables()
+                        }
+                    )
+                }
+
                 // A/B variant A|B picker (only when variantB exists)
                 if prompt.variantB != nil {
                     Picker("", selection: $showVariantB) {
