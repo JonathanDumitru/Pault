@@ -76,4 +76,59 @@ struct PromptVersionTests {
         #expect(v2.id != v3.id)
         #expect(v1.id != v3.id)
     }
+
+    // MARK: - VersionSnapshot
+
+    @Test func versionSnapshot_roundTrips() throws {
+        let snapshot = VersionSnapshot(
+            tags: [.init(name: "coding", color: "blue"), .init(name: "work", color: "green")],
+            variables: [.init(name: "topic", defaultValue: "AI", occurrenceIndex: 0)]
+        )
+        let data = try JSONEncoder().encode(snapshot)
+        let decoded = try JSONDecoder().decode(VersionSnapshot.self, from: data)
+
+        #expect(decoded.tags.count == 2)
+        #expect(decoded.tags[0].name == "coding")
+        #expect(decoded.tags[0].color == "blue")
+        #expect(decoded.variables.count == 1)
+        #expect(decoded.variables[0].name == "topic")
+        #expect(decoded.variables[0].defaultValue == "AI")
+        #expect(decoded.variables[0].occurrenceIndex == 0)
+    }
+
+    @Test func versionSnapshot_decodesWithMissingOptionals() throws {
+        // Simulates a version saved before new fields were added
+        let json = Data(#"{"tags":[],"variables":[]}"#.utf8)
+        let decoded = try JSONDecoder().decode(VersionSnapshot.self, from: json)
+        #expect(decoded.tags.isEmpty)
+        #expect(decoded.variables.isEmpty)
+    }
+
+    // MARK: - New PromptVersion fields
+
+    @Test func promptVersion_newFieldsHaveDefaults() throws {
+        let container = try makeContainer()
+        let ctx = ModelContext(container)
+        let version = PromptVersion(title: "T", content: "C")
+        ctx.insert(version)
+        try ctx.save()
+
+        #expect(version.isFavorite == false)
+        #expect(version.snapshotData == nil)
+    }
+
+    @Test func promptVersion_snapshotComputedProperty() throws {
+        let version = PromptVersion(title: "T", content: "C")
+        #expect(version.snapshot == nil) // no data yet
+
+        let snap = VersionSnapshot(
+            tags: [.init(name: "test", color: "red")],
+            variables: []
+        )
+        version.snapshot = snap
+
+        #expect(version.snapshotData != nil)
+        #expect(version.snapshot?.tags.count == 1)
+        #expect(version.snapshot?.tags[0].name == "test")
+    }
 }
