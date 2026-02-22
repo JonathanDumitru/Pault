@@ -35,6 +35,7 @@ struct PromptDetailView: View {
     @State private var isRunningAB: Bool = false
     @State private var showAIPanel: Bool = false
     @State private var aiError: String? = nil
+    @AppStorage("versionHistoryLimit") private var versionHistoryLimit: Int = 50
 
     var body: some View {
         HStack(spacing: 0) {
@@ -273,7 +274,7 @@ struct PromptDetailView: View {
             guard !Task.isCancelled else { return }
             await MainActor.run {
                 prompt.updatedAt = Date()
-                service.saveSnapshot(for: prompt)  // internally calls modelContext.save()
+                service.saveSnapshot(for: prompt, limit: versionHistoryLimit)
             }
         }
     }

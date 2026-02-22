@@ -13,6 +13,8 @@ struct PromptDiffView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
 
+    @AppStorage("versionHistoryLimit") private var versionHistoryLimit: Int = 50
+
     private var service: PromptService { PromptService(modelContext: modelContext) }
 
     private var dateString: String {
@@ -111,7 +113,7 @@ struct PromptDiffView: View {
         prompt.content = version.content
         prompt.attributedContent = nil  // clear stale RTFD so clipboard uses restored plain text
         prompt.updatedAt = Date()
-        service.saveSnapshot(for: prompt, changeNote: "Restored from \(dateString)")
+        service.saveSnapshot(for: prompt, changeNote: "Restored from \(dateString)", limit: versionHistoryLimit)
         dismiss()
     }
 }

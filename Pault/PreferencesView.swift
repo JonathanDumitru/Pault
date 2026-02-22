@@ -16,6 +16,7 @@ struct PreferencesView: View {
     @AppStorage("launchAtLogin") private var launchAtLogin: Bool = false
     @AppStorage("showDockIcon") private var showDockIcon: Bool = false
     @AppStorage("defaultAction") private var defaultAction: String = "showOptions"
+    @AppStorage("versionHistoryLimit") private var versionHistoryLimit: Int = 50
 
     var body: some View {
         TabView {
@@ -64,6 +65,8 @@ struct PreferencesView: View {
                 Text("Show options").tag("showOptions")
                 Text("Copy to clipboard").tag("copy")
             }
+
+            Stepper("Max versions per prompt: \(versionHistoryLimit)", value: $versionHistoryLimit, in: 5...200)
         }
         .padding()
     }
