@@ -70,4 +70,63 @@ struct DiffEngineTests {
         let changed = charDiffs.filter { $0.kind != .unchanged }
         #expect(!changed.isEmpty)
     }
+
+    // MARK: - Per-side character diff filtering
+
+    @Test func diff_modifiedLine_removedSideHasNoAddedCharDiffs() throws {
+        let result = DiffEngine.diff(old: "hello world", new: "hello earth")
+        let removed = result.filter { $0.kind == .removed }
+        #expect(removed.count == 1)
+
+        let removedCharDiffs = try #require(removed[0].characterDiffs)
+        let addedSegments = removedCharDiffs.filter { $0.kind == .added }
+        #expect(addedSegments.isEmpty, "Removed line should contain no .added character diffs")
+    }
+
+    @Test func diff_modifiedLine_addedSideHasNoRemovedCharDiffs() throws {
+        let result = DiffEngine.diff(old: "hello world", new: "hello earth")
+        let added = result.filter { $0.kind == .added }
+        #expect(added.count == 1)
+
+        let addedCharDiffs = try #require(added[0].characterDiffs)
+        let removedSegments = addedCharDiffs.filter { $0.kind == .removed }
+        #expect(removedSegments.isEmpty, "Added line should contain no .removed character diffs")
+    }
+
+    // MARK: - Coalescing
+
+    @Test func characterDiff_coalescesConsecutiveSameKindSegments() {
+        // "hello world" -> "hello earth" produces 18 individual character segments
+        // before coalescing; after coalescing they should be merged into far fewer
+        let charDiffs = DiffEngine.characterDiff(old: "hello world", new: "hello earth")
+
+        // Without coalescing we'd have 18 segments (one per character).
+        // Coalescing should merge consecutive same-kind segments into 3 total.
+        #expect(charDiffs.count < 18, "Coalescing should reduce segment count significantly")
+
+        // Consecutive removed characters should be merged into one segment
+        let removedSegments = charDiffs.filter { $0.kind == .removed }
+        #expect(removedSegments.count == 1, "Consecutive removed chars should be coalesced into one segment")
+
+        // Consecutive added characters should be merged into one segment
+        let addedSegments = charDiffs.filter { $0.kind == .added }
+        #expect(addedSegments.count == 1, "Consecutive added chars should be coalesced into one segment")
+
+        // Consecutive unchanged characters should be merged into one segment
+        let unchangedSegments = charDiffs.filter { $0.kind == .unchanged }
+        #expect(unchangedSegments.count == 1, "Consecutive unchanged chars should be coalesced into one segment")
+    }
+
+    @Test func characterDiff_coalescesPreservesAllText() {
+        // Verify that coalescing doesn't lose any text content
+        let charDiffs = DiffEngine.characterDiff(old: "hello world", new: "hello earth")
+
+        let removedText = charDiffs.filter { $0.kind == .removed }.map(\.text).joined()
+        let addedText = charDiffs.filter { $0.kind == .added }.map(\.text).joined()
+
+        // Both sides should have non-empty changed text
+        #expect(!removedText.isEmpty, "Should have removed text")
+        #expect(!addedText.isEmpty, "Should have added text")
+        #expect(addedText == "eath", "Added text should be 'eath'")
+    }
 }
