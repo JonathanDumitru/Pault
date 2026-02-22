@@ -23,14 +23,19 @@ struct PromptDiffView: View {
     @State private var restoreVariables = true
     @State private var restoreFavorite = true
 
+    /// Cached diff result, computed once on appear. The diff goes from the
+    /// historical version (old) to the current prompt (new), so `.removed`
+    /// means "was in this version but removed since" and `.added` means
+    /// "added since this version."
+    @State private var diffs: [DiffEngine.LineDiff] = []
+
+    /// Cached decoded snapshot to avoid repeated JSON decoding per render.
+    @State private var cachedSnapshot: VersionSnapshot?
+
     private var service: PromptService { PromptService(modelContext: modelContext) }
 
     private var dateString: String {
         version.savedAt.formatted(date: .abbreviated, time: .shortened)
-    }
-
-    private var diffs: [DiffEngine.LineDiff] {
-        DiffEngine.diff(old: version.content, new: prompt.content)
     }
 
     enum DiffMode: String, CaseIterable {
@@ -45,13 +50,13 @@ struct PromptDiffView: View {
     private var favoriteChanged: Bool { version.isFavorite != prompt.isFavorite }
 
     private var tagsChanged: Bool {
-        let versionTags = version.snapshot?.tags.map(\.name).sorted() ?? []
+        let versionTags = cachedSnapshot?.tags.map(\.name).sorted() ?? []
         let currentTags = prompt.tags.map(\.name).sorted()
         return versionTags != currentTags
     }
 
     private var variablesChanged: Bool {
-        let versionVars = version.snapshot?.variables
+        let versionVars = cachedSnapshot?.variables
             .sorted(by: { $0.occurrenceIndex < $1.occurrenceIndex })
             .map { "\($0.name)=\($0.defaultValue)" } ?? []
         let currentVars = prompt.templateVariables
@@ -74,7 +79,7 @@ struct PromptDiffView: View {
                     .font(.headline)
                 Spacer()
 
-                Picker("", selection: $diffMode) {
+                Picker("Diff mode", selection: $diffMode) {
                     ForEach(DiffMode.allCases, id: \.self) { mode in
                         Text(mode.rawValue).tag(mode)
                     }
@@ -116,6 +121,10 @@ struct PromptDiffView: View {
             .padding()
         }
         .frame(minWidth: 600, minHeight: 480)
+        .onAppear {
+            diffs = DiffEngine.diff(old: version.content, new: prompt.content)
+            cachedSnapshot = version.snapshot
+        }
         .sheet(isPresented: $showRestorePreview) {
             restorePreviewSheet
         }
@@ -168,7 +177,7 @@ struct PromptDiffView: View {
                     ScrollView {
                         LazyVStack(alignment: .leading, spacing: 0) {
                             ForEach(diffs.filter { $0.kind != .added }) { lineDiff in
-                                sideBySideLine(lineDiff: lineDiff, side: .removed)
+                                sideBySideLine(lineDiff: lineDiff)
                             }
                         }
                         .padding(.vertical, 8)
@@ -189,7 +198,7 @@ struct PromptDiffView: View {
                     ScrollView {
                         LazyVStack(alignment: .leading, spacing: 0) {
                             ForEach(diffs.filter { $0.kind != .removed }) { lineDiff in
-                                sideBySideLine(lineDiff: lineDiff, side: .added)
+                                sideBySideLine(lineDiff: lineDiff)
                             }
                         }
                         .padding(.vertical, 8)
@@ -201,7 +210,7 @@ struct PromptDiffView: View {
     }
 
     @ViewBuilder
-    private func sideBySideLine(lineDiff: DiffEngine.LineDiff, side: DiffEngine.DiffKind) -> some View {
+    private func sideBySideLine(lineDiff: DiffEngine.LineDiff) -> some View {
         HStack(spacing: 0) {
             if let charDiffs = lineDiff.characterDiffs {
                 charDiffs.reduce(Text("")) { partial, cd in
@@ -237,7 +246,7 @@ struct PromptDiffView: View {
                                 to: prompt.isFavorite ? "Yes" : "No")
                 }
                 if tagsChanged {
-                    let versionTags = version.snapshot?.tags.map(\.name).sorted() ?? []
+                    let versionTags = cachedSnapshot?.tags.map(\.name).sorted() ?? []
                     let currentTags = prompt.tags.map(\.name).sorted()
                     let added = Set(currentTags).subtracting(versionTags)
                     let removed = Set(versionTags).subtracting(currentTags)
@@ -373,7 +382,7 @@ struct PromptDiffView: View {
             prompt.attributedContent = nil
         }
         if restoreFavorite { prompt.isFavorite = version.isFavorite }
-        if restoreTags, let snap = version.snapshot {
+        if restoreTags, let snap = cachedSnapshot {
             // Remove current tags
             prompt.tags.removeAll()
             // Re-add from snapshot using createTag for dedup
@@ -382,7 +391,7 @@ struct PromptDiffView: View {
                 service.addTag(tag, to: prompt)
             }
         }
-        if restoreVariables, let snap = version.snapshot {
+        if restoreVariables, let snap = cachedSnapshot {
             // Sync variables from content first (if content was also restored)
             if restoreContent {
                 TemplateEngine.syncVariables(for: prompt, in: modelContext)

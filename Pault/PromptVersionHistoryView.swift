@@ -147,12 +147,13 @@ struct PromptVersionHistoryView: View {
     }
 
     private func openComparison() {
-        // Will be wired in Task 7/8 when PromptDiffView supports two-version comparison
+        // Opens the older selected version's diff against the current prompt.
+        // Full version-to-version comparison (without current prompt) is deferred scope.
         guard compareSelections.count == 2 else { return }
         let selected = versions.filter { compareSelections.contains($0.id) }
             .sorted { $0.savedAt < $1.savedAt }
         if let older = selected.first {
-            selectedVersion = older // For now, open the older version in diff view
+            selectedVersion = older
         }
     }
 }
