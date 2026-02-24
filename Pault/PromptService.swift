@@ -34,6 +34,16 @@ final class PromptService {
         return prompt
     }
 
+    /// Creates a new prompt pre-filled from a template and increments the template's usage count.
+    @discardableResult
+    func createPromptFromTemplate(_ template: PromptTemplate) -> Prompt {
+        let prompt = createPrompt(title: template.name, content: template.content)
+        template.usageCount += 1
+        template.updatedAt = Date()
+        save("createPromptFromTemplate")
+        return prompt
+    }
+
     func deletePrompt(_ prompt: Prompt) {
         AttachmentManager.deleteFiles(for: prompt.id)
         modelContext.delete(prompt)
