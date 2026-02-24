@@ -39,6 +39,9 @@ struct PromptDetailView: View {
     @AppStorage("coachingDismissedVariables") private var coachingDismissedVariables = false
     @AppStorage("coachingDismissedTags") private var coachingDismissedTags = false
     @AppStorage("hasDiscoveredAIAssist") private var hasDiscoveredAIAssist = false
+    @State private var showSaveAsTemplate = false
+    @State private var templateName = ""
+    @State private var templateCategory = "General"
 
     private var coachingTip: (message: String, icon: String)? {
         if prompt.content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -218,6 +221,19 @@ struct PromptDetailView: View {
                 .buttonStyle(.plain)
                 .help("Run prompt (Pro)")
 
+                // Save as Template button
+                Button(action: {
+                    templateName = prompt.title
+                    showSaveAsTemplate = true
+                }) {
+                    Image(systemName: "rectangle.stack.badge.plus")
+                        .font(.title2)
+                        .foregroundStyle(.secondary)
+                        .padding(12)
+                }
+                .buttonStyle(.plain)
+                .help("Save as Template")
+
                 // Inspector toggle
                 Button(action: { showInspector.toggle() }) {
                     Image(systemName: "info.circle")
@@ -255,6 +271,23 @@ struct PromptDetailView: View {
             if let a = abRunA, let b = abRunB {
                 ABTestResultView(prompt: prompt, runA: a, runB: b)
             }
+        }
+        .sheet(isPresented: $showSaveAsTemplate) {
+            SaveAsTemplateSheet(
+                name: $templateName,
+                category: $templateCategory,
+                onSave: {
+                    let template = PromptTemplate(
+                        name: templateName,
+                        content: prompt.content,
+                        category: templateCategory
+                    )
+                    modelContext.insert(template)
+                    try? modelContext.save()
+                    showSaveAsTemplate = false
+                },
+                onCancel: { showSaveAsTemplate = false }
+            )
         }
     }
 
@@ -352,6 +385,51 @@ struct PromptDetailView: View {
                 TemplateEngine.syncVariables(for: prompt, in: modelContext)
             }
         }
+    }
+}
+
+private struct SaveAsTemplateSheet: View {
+    @Binding var name: String
+    @Binding var category: String
+    let onSave: () -> Void
+    let onCancel: () -> Void
+
+    private let categories = ["General", "Writing", "Engineering", "Productivity", "Analysis"]
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Text("Save as Template")
+                    .font(.headline)
+                Spacer()
+                Button("Cancel", action: onCancel)
+                    .keyboardShortcut(.cancelAction)
+            }
+            .padding()
+
+            Divider()
+
+            Form {
+                TextField("Template Name", text: $name)
+                Picker("Category", selection: $category) {
+                    ForEach(categories, id: \.self) { cat in
+                        Text(cat).tag(cat)
+                    }
+                }
+            }
+            .formStyle(.grouped)
+
+            Divider()
+
+            HStack {
+                Spacer()
+                Button("Save Template", action: onSave)
+                    .buttonStyle(.borderedProminent)
+                    .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            }
+            .padding()
+        }
+        .frame(width: 360, height: 240)
     }
 }
 
