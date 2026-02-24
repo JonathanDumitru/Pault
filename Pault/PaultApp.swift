@@ -50,6 +50,7 @@ struct PaultApp: App {
             PromptVersion.self,
             SmartCollection.self,
             PromptTemplate.self,
+            CustomBlock.self,
         ])
         let persistentConfig = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
