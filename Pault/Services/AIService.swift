@@ -82,6 +82,16 @@ actor AIService {
         return try await complete(system: system, user: prompt, config: config)
     }
 
+    func generatePrompt(from description: String, config: AIConfig) async throws -> String {
+        let system = """
+        You are an expert prompt engineer. Based on the user's description, \
+        create a well-structured, reusable prompt template. \
+        Use {{variable_name}} syntax for parts the user should fill in each time. \
+        Return ONLY the prompt text, no commentary or explanation.
+        """
+        return try await complete(system: system, user: description, config: config)
+    }
+
     func suggestVariables(prompt: String, config: AIConfig) async throws -> [VariableSuggestion] {
         let system = """
         Analyze the following prompt and identify literal values that should be \
