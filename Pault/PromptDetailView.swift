@@ -36,6 +36,27 @@ struct PromptDetailView: View {
     @State private var showAIPanel: Bool = false
     @State private var aiError: String? = nil
     @AppStorage("versionHistoryLimit") private var versionHistoryLimit: Int = 50
+    @AppStorage("coachingDismissedVariables") private var coachingDismissedVariables = false
+    @AppStorage("coachingDismissedTags") private var coachingDismissedTags = false
+    @AppStorage("hasDiscoveredAIAssist") private var hasDiscoveredAIAssist = false
+
+    private var coachingTip: (message: String, icon: String)? {
+        if prompt.content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            && !coachingDismissedVariables {
+            return ("Use {{variable_name}} to create reusable placeholders", "lightbulb")
+        }
+        if !prompt.content.isEmpty
+            && prompt.templateVariables.isEmpty
+            && !coachingDismissedVariables {
+            return ("Add {{variables}} to make this prompt reusable across different contexts", "lightbulb")
+        }
+        if !prompt.templateVariables.isEmpty
+            && prompt.tags.isEmpty
+            && !coachingDismissedTags {
+            return ("Add tags to organize and find your prompts quickly", "tag")
+        }
+        return nil
+    }
 
     var body: some View {
         HStack(spacing: 0) {
@@ -52,6 +73,29 @@ struct PromptDetailView: View {
                     .onChange(of: prompt.title) { _, _ in
                         debouncedSave()
                     }
+
+                // Contextual coaching tip
+                if let tip = coachingTip {
+                    HStack(spacing: 8) {
+                        Image(systemName: tip.icon)
+                            .foregroundStyle(.blue)
+                            .font(.caption)
+                        Text(tip.message)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        Spacer()
+                        Button(action: dismissCurrentTip) {
+                            Image(systemName: "xmark")
+                                .font(.caption2)
+                                .foregroundStyle(.tertiary)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 8)
+                    .background(Color.blue.opacity(0.05))
+                    .transition(.move(edge: .top).combined(with: .opacity))
+                }
 
                 // Content editor — switches to variantB when A/B mode is active
                 RichTextEditor(
@@ -142,11 +186,21 @@ struct PromptDetailView: View {
                 Button(action: {
                     guard ProStatusManager.shared.isProUnlocked else { showPaywall = true; return }
                     showAIPanel.toggle()
+                    if !hasDiscoveredAIAssist { hasDiscoveredAIAssist = true }
                 }) {
-                    Image(systemName: "sparkles")
-                        .font(.title2)
-                        .foregroundStyle(showAIPanel ? .blue : .secondary)
-                        .padding(12)
+                    ZStack(alignment: .topTrailing) {
+                        Image(systemName: "sparkles")
+                            .font(.title2)
+                            .foregroundStyle(showAIPanel ? .blue : .secondary)
+                            .padding(12)
+
+                        if ProStatusManager.shared.isProUnlocked && !hasDiscoveredAIAssist {
+                            Circle()
+                                .fill(.blue)
+                                .frame(width: 8, height: 8)
+                                .offset(x: -4, y: 4)
+                        }
+                    }
                 }
                 .buttonStyle(.plain)
                 .help("AI Assist (Pro)")
@@ -265,6 +319,16 @@ struct PromptDetailView: View {
         var result = ""
         for try await token in stream { result += token }
         return (result, Int(Date().timeIntervalSince(start) * 1000))
+    }
+
+    private func dismissCurrentTip() {
+        withAnimation {
+            if prompt.content.isEmpty || prompt.templateVariables.isEmpty {
+                coachingDismissedVariables = true
+            } else if prompt.tags.isEmpty {
+                coachingDismissedTags = true
+            }
+        }
     }
 
     private func debouncedSave() {
