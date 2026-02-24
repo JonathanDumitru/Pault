@@ -115,13 +115,6 @@ struct PaultApp: App {
         .windowResizability(.contentSize)
         .defaultSize(AppConstants.Windows.aboutDefault)
 
-        Window("New Prompt", id: "new-prompt") {
-            NewPromptView()
-        }
-        .windowResizability(.contentMinSize)
-        .defaultSize(AppConstants.Windows.promptDefault)
-        .modelContainer(sharedModelContainer)
-
         WindowGroup("Edit Prompt", for: UUID.self) { $promptID in
             if let promptID {
                 EditPromptView(promptID: promptID)
