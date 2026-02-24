@@ -7,6 +7,7 @@ import Testing
 import SwiftData
 @testable import Pault
 
+@MainActor
 struct TemplateVariableTests {
 
     @Test func templateVariableInitializesWithDefaults() {

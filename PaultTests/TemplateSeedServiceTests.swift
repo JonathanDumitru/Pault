@@ -26,7 +26,8 @@ struct TemplateSeedServiceTests {
         let templates = try ctx.fetch(descriptor)
 
         #expect(templates.count >= 6)
-        #expect(templates.allSatisfy(\.isBuiltIn))
+        let allBuiltIn = templates.allSatisfy(\.isBuiltIn)
+        #expect(allBuiltIn)
         #expect(templates.contains(where: { $0.category == "Writing" }))
         #expect(templates.contains(where: { $0.category == "Engineering" }))
     }
