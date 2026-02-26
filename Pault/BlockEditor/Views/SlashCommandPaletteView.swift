@@ -66,6 +66,22 @@ struct SlashCommandPaletteView: View {
                             Divider().padding(.vertical, 4)
                         }
 
+                        // Templates section
+                        if state.query.isEmpty || state.query.lowercased().starts(with: "temp") {
+                            let filteredTemplates = BlockTemplate.builtIn.filter { template in
+                                state.query.isEmpty ||
+                                template.name.lowercased().contains(state.query.lowercased())
+                            }
+
+                            if !filteredTemplates.isEmpty {
+                                sectionHeader("Templates", icon: "rectangle.stack.fill", color: .purple)
+                                ForEach(filteredTemplates) { template in
+                                    templateRow(template, isSelected: false)
+                                }
+                                Divider().padding(.vertical, 4)
+                            }
+                        }
+
                         // Grouped results
                         ForEach(groupedResults, id: \.0) { category, blocks in
                             sectionHeader(category.rawValue, icon: category.icon, color: category.color)
@@ -175,6 +191,41 @@ struct SlashCommandPaletteView: View {
                 Text(ConsolidatedBlockCategory.from(legacy: block.category).rawValue)
                     .font(.caption2)
                     .foregroundStyle(.tertiary)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(isSelected ? Color.accentColor.opacity(0.15) : Color.clear)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+
+    @ViewBuilder
+    private func templateRow(_ template: BlockTemplate, isSelected: Bool) -> some View {
+        Button(action: {
+            // Insert all template blocks
+            for blockSnapshot in template.blocks {
+                if let block = blockSnapshot.toBlock() {
+                    model.addToCanvas(block)
+                }
+            }
+            state.hide()
+        }) {
+            HStack(spacing: 8) {
+                Image(systemName: "rectangle.stack.fill")
+                    .font(.caption)
+                    .foregroundStyle(.purple)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(template.name)
+                        .font(.callout)
+
+                    Text("\(template.blocks.count) blocks • ~\(template.estimatedTokens) tokens")
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
+                }
+
+                Spacer()
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
