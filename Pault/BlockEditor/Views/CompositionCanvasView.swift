@@ -143,6 +143,7 @@ struct CompositionCanvasView: View {
                         block: block,
                         index: index,
                         isSelected: model.selectedCanvasBlockID == block.id,
+                        placeholderStatus: model.placeholderStatus(for: block.id),
                         inputs: model.blockInputs[block.id] ?? [:],
                         modifiers: model.modifiersForBlock(block.id),
                         modifierInputs: { modifierID in

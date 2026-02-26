@@ -12,6 +12,7 @@ struct BlockRowView: View {
     let block: Block
     let index: Int
     let isSelected: Bool
+    let placeholderStatus: BlockPlaceholderStatus
     let inputs: [String: String]
     let modifiers: [BlockModifier]
     let modifierInputs: (UUID) -> [String: String]
@@ -76,10 +77,15 @@ struct BlockRowView: View {
                 .font(.caption)
                 .foregroundStyle(.tertiary)
 
-            // Category indicator
+            // Status indicator
             Circle()
-                .fill(block.category.color)
+                .fill(placeholderStatus.color)
                 .frame(width: 10, height: 10)
+                .overlay(
+                    Image(systemName: placeholderStatus.icon)
+                        .font(.system(size: 6))
+                        .foregroundStyle(.white)
+                )
 
             // Block title
             VStack(alignment: .leading, spacing: 2) {
@@ -329,6 +335,7 @@ private struct ModifierPickerView: View {
         block: block,
         index: 0,
         isSelected: true,
+        placeholderStatus: .complete,
         inputs: ["goal": "Test goal", "priority": "High"],
         modifiers: [],
         modifierInputs: { _ in [:] },
