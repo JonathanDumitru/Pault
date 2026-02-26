@@ -16,6 +16,31 @@ struct CompositionCanvasView: View {
     @State private var draggedBlockID: UUID?
     @FocusState private var isFocused: Bool
 
+    // Suggestion banner state
+    @State private var dismissedSuggestionHash: Int? = nil
+    @State private var showSuggestion = false
+    @AppStorage("showBlockSuggestions") private var suggestionsEnabled: Bool = true
+
+    /// Current suggestion based on canvas state
+    private var currentSuggestion: BlockSuggestion? {
+        guard suggestionsEnabled else { return nil }
+
+        let categories = model.canvasBlocks.map {
+            ConsolidatedBlockCategory.from(legacy: $0.category)
+        }
+
+        if let suggestion = BlockSuggestionEngine.suggest(canvasCategories: categories) {
+            // Don't show if user dismissed this exact suggestion
+            if suggestion.message.hashValue == dismissedSuggestionHash {
+                return nil
+            }
+            return suggestion
+        }
+
+        // Check for token warning
+        return BlockSuggestionEngine.shouldShowTokenWarning(tokenCount: model.tokenEstimate)
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             // Header
@@ -70,6 +95,16 @@ struct CompositionCanvasView: View {
                 return .handled
             }
             return .ignored
+        }
+        .onChange(of: model.canvasBlocks.count) { oldCount, newCount in
+            if newCount > oldCount {
+                // Delay showing suggestion after adding a block
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    if currentSuggestion != nil {
+                        withAnimation { showSuggestion = true }
+                    }
+                }
+            }
         }
     }
 
@@ -236,6 +271,24 @@ struct CompositionCanvasView: View {
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                         model.moveOnCanvas(from: from, to: to)
                     }
+                }
+
+                // Suggestion banner
+                if showSuggestion, let suggestion = currentSuggestion {
+                    SuggestionBannerView(
+                        suggestion: suggestion,
+                        onSelectCategory: { category in
+                            // Show slash palette filtered to this category
+                            slashState.show()
+                            slashState.query = category.rawValue.lowercased()
+                        },
+                        onDismiss: {
+                            dismissedSuggestionHash = suggestion.message.hashValue
+                            withAnimation { showSuggestion = false }
+                        }
+                    )
+                    .transition(.opacity.combined(with: .move(edge: .top)))
+                    .padding(.top, 8)
                 }
 
                 // Add block hint at bottom
