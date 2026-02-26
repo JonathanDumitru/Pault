@@ -10,7 +10,7 @@ import UniformTypeIdentifiers
 import CoreTransferable
 
 /// A block in the library or on the canvas
-struct Block: Identifiable, Hashable {
+struct Block: Identifiable, Hashable, Codable, Transferable {
     let id: UUID
     let title: String
     let category: BlockCategory
@@ -24,6 +24,15 @@ struct Block: Identifiable, Hashable {
         self.valueType = valueType
         self.snippet = snippet
     }
+
+    static var transferRepresentation: some TransferRepresentation {
+        CodableRepresentation(contentType: .block)
+    }
+}
+
+// Custom UTType for Block
+extension UTType {
+    static let block = UTType(exportedAs: "com.pault.block")
 }
 
 /// Lightweight transferable wrapper for dragging Blocks across views

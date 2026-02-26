@@ -43,6 +43,11 @@ struct PromptDetailView: View {
     @State private var templateName = ""
     @State private var templateCategory = "General"
 
+    // Block Editor state
+    @State private var showModeSwitchDialog = false
+    @State private var showBlocksToTextWarning = false
+    @State private var isParsingTextToBlocks = false
+
     private var coachingTip: (message: String, icon: String)? {
         if prompt.content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             && !coachingDismissedVariables {
@@ -62,21 +67,155 @@ struct PromptDetailView: View {
     }
 
     var body: some View {
+        VStack(spacing: 0) {
+            // Toolbar with title and mode toggle
+            promptToolbar
+
+            Divider()
+
+            // Content area - switches between text and blocks mode
+            if prompt.editingMode == .blocks {
+                BlockEditorView(prompt: prompt)
+            } else {
+                textEditorContent
+            }
+        }
+        .overlay {
+            // Parsing progress overlay
+            if isParsingTextToBlocks {
+                ZStack {
+                    Color.black.opacity(0.3)
+                        .ignoresSafeArea()
+
+                    VStack(spacing: 16) {
+                        ProgressView()
+                            .scaleEffect(1.5)
+
+                        Text("Analyzing prompt structure...")
+                            .font(.headline)
+
+                        Text("AI is parsing your text into blocks")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(32)
+                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16))
+                }
+                .transition(.opacity)
+            }
+        }
+        .animation(.easeInOut(duration: 0.2), value: prompt.editingMode)
+        .animation(.easeInOut(duration: 0.3), value: isParsingTextToBlocks)
+        .onChange(of: prompt.isFavorite) { _, _ in
+            debouncedSave()
+        }
+        .onChange(of: prompt.isArchived) { _, _ in
+            debouncedSave()
+        }
+        .onChange(of: prompt.tags) { _, _ in
+            debouncedSave()
+        }
+        .sheet(isPresented: $showPaywall) {
+            PaywallView(featureName: "API Runner", featureDescription: "Run prompts directly against any LLM without leaving Pault.", featureIcon: "play.circle.fill")
+        }
+        .alert("AI Error", isPresented: Binding(
+            get: { aiError != nil },
+            set: { if !$0 { aiError = nil } }
+        )) {
+            Button("OK") { aiError = nil }
+        } message: {
+            if let msg = aiError { Text(msg) }
+        }
+        .sheet(isPresented: $showABResult) {
+            if let a = abRunA, let b = abRunB {
+                ABTestResultView(prompt: prompt, runA: a, runB: b)
+            }
+        }
+        .sheet(isPresented: $showSaveAsTemplate) {
+            SaveAsTemplateSheet(
+                name: $templateName,
+                category: $templateCategory,
+                onSave: {
+                    let template = PromptTemplate(
+                        name: templateName,
+                        content: prompt.content,
+                        category: templateCategory
+                    )
+                    modelContext.insert(template)
+                    try? modelContext.save()
+                    showSaveAsTemplate = false
+                },
+                onCancel: { showSaveAsTemplate = false }
+            )
+        }
+        .sheet(isPresented: $showModeSwitchDialog) {
+            ModeSwitchDialogView(
+                isPresented: $showModeSwitchDialog,
+                hasExistingContent: !prompt.content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+                isPro: ProStatusManager.shared.isProUnlocked,
+                onParse: switchToBlocksWithParse,
+                onStartFresh: switchToBlocksStartFresh,
+                onShowPaywall: { showPaywall = true }
+            )
+        }
+        .sheet(isPresented: $showBlocksToTextWarning) {
+            BlocksToTextWarningView(
+                isPresented: $showBlocksToTextWarning,
+                onConfirm: switchToText
+            )
+        }
+    }
+
+    // MARK: - Toolbar
+
+    private var promptToolbar: some View {
+        HStack(spacing: 12) {
+            // Title field
+            TextField("Untitled", text: $prompt.title)
+                .font(.title2)
+                .fontWeight(.semibold)
+                .textFieldStyle(.plain)
+                .onChange(of: prompt.title) { _, _ in
+                    debouncedSave()
+                }
+
+            Spacer()
+
+            // Mode toggle: Text | Blocks
+            Picker("", selection: Binding(
+                get: { prompt.editingMode },
+                set: { newMode in handleModeChange(to: newMode) }
+            )) {
+                Label("Text", systemImage: "doc.text")
+                    .tag(EditingMode.text)
+                Label("Blocks", systemImage: "square.stack.3d.up")
+                    .tag(EditingMode.blocks)
+            }
+            .pickerStyle(.segmented)
+            .frame(width: 160)
+
+            // Sync state indicator (when in blocks mode)
+            if prompt.editingMode == .blocks, let syncState = prompt.blockSyncState {
+                HStack(spacing: 4) {
+                    Circle()
+                        .fill(syncState == .synced ? Color.green : Color.orange)
+                        .frame(width: 6, height: 6)
+                    Text(syncState == .synced ? "Synced" : "Diverged")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
+            }
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 12)
+    }
+
+    // MARK: - Text Editor Content
+
+    private var textEditorContent: some View {
         HStack(spacing: 0) {
             // Main editor
             VStack(alignment: .leading, spacing: 0) {
-                // Title field
-                TextField("Untitled", text: $prompt.title)
-                    .font(.title2)
-                    .fontWeight(.semibold)
-                    .textFieldStyle(.plain)
-                    .padding(.horizontal, 20)
-                    .padding(.top, 20)
-                    .padding(.bottom, 12)
-                    .onChange(of: prompt.title) { _, _ in
-                        debouncedSave()
-                    }
-
                 // Contextual coaching tip
                 if let tip = coachingTip {
                     HStack(spacing: 8) {
@@ -149,146 +288,153 @@ struct PromptDetailView: View {
         .animation(.easeInOut(duration: 0.2), value: showResponsePanel)
         .animation(.easeInOut(duration: 0.2), value: showAIPanel)
         .overlay(alignment: .bottomTrailing) {
-            HStack(spacing: 0) {
-                // A/B variant A|B picker (only when variantB exists)
-                if prompt.variantB != nil {
-                    Picker("", selection: $showVariantB) {
-                        Text("A").tag(false)
-                        Text("B").tag(true)
+            textEditorToolbarOverlay
+        }
+    }
+
+    // MARK: - Text Editor Toolbar Overlay
+
+    private var textEditorToolbarOverlay: some View {
+        HStack(spacing: 0) {
+            // A/B variant A|B picker (only when variantB exists)
+            if prompt.variantB != nil {
+                Picker("", selection: $showVariantB) {
+                    Text("A").tag(false)
+                    Text("B").tag(true)
+                }
+                .pickerStyle(.segmented)
+                .frame(width: 80)
+                .padding(8)
+
+                // Run A/B button
+                if !isRunningAB {
+                    Button(action: runABTest) {
+                        Label("Run A/B", systemImage: "arrow.left.arrow.right")
+                            .font(.caption)
                     }
-                    .pickerStyle(.segmented)
-                    .frame(width: 80)
-                    .padding(8)
+                    .buttonStyle(.bordered)
+                    .padding(.trailing, 4)
+                } else {
+                    ProgressView()
+                        .controlSize(.small)
+                        .padding(12)
+                }
+            }
 
-                    // Run A/B button
-                    if !isRunningAB {
-                        Button(action: runABTest) {
-                            Label("Run A/B", systemImage: "arrow.left.arrow.right")
-                                .font(.caption)
-                        }
-                        .buttonStyle(.bordered)
-                        .padding(.trailing, 4)
-                    } else {
-                        ProgressView()
-                            .controlSize(.small)
-                            .padding(12)
+            // A/B activate button
+            Button(action: activateABMode) {
+                Image(systemName: prompt.variantB != nil ? "a.square.fill" : "a.square")
+                    .font(.title2)
+                    .foregroundStyle(prompt.variantB != nil ? .purple : .secondary)
+                    .padding(12)
+            }
+            .buttonStyle(.plain)
+            .help(prompt.variantB != nil ? "A/B mode active — run test to compare" : "Create variant B for A/B testing (Pro)")
+
+            // AI Assist button (Pro)
+            Button(action: {
+                guard ProStatusManager.shared.isProUnlocked else { showPaywall = true; return }
+                showAIPanel.toggle()
+                if !hasDiscoveredAIAssist { hasDiscoveredAIAssist = true }
+            }) {
+                ZStack(alignment: .topTrailing) {
+                    Image(systemName: "sparkles")
+                        .font(.title2)
+                        .foregroundStyle(showAIPanel ? .blue : .secondary)
+                        .padding(12)
+
+                    if ProStatusManager.shared.isProUnlocked && !hasDiscoveredAIAssist {
+                        Circle()
+                            .fill(.blue)
+                            .frame(width: 8, height: 8)
+                            .offset(x: -4, y: 4)
                     }
                 }
+            }
+            .buttonStyle(.plain)
+            .help("AI Assist (Pro)")
 
-                // A/B activate button
-                Button(action: activateABMode) {
-                    Image(systemName: prompt.variantB != nil ? "a.square.fill" : "a.square")
-                        .font(.title2)
-                        .foregroundStyle(prompt.variantB != nil ? .purple : .secondary)
-                        .padding(12)
-                }
-                .buttonStyle(.plain)
-                .help(prompt.variantB != nil ? "A/B mode active — run test to compare" : "Create variant B for A/B testing (Pro)")
+            // Run button (Pro)
+            Button(action: {
+                guard ProStatusManager.shared.isProUnlocked else { showPaywall = true; return }
+                showResponsePanel.toggle()
+            }) {
+                Image(systemName: showResponsePanel ? "play.circle.fill" : "play.circle")
+                    .font(.title2)
+                    .foregroundStyle(showResponsePanel ? .blue : .secondary)
+                    .padding(12)
+            }
+            .buttonStyle(.plain)
+            .help("Run prompt (Pro)")
 
-                // AI Assist button (Pro)
-                Button(action: {
-                    guard ProStatusManager.shared.isProUnlocked else { showPaywall = true; return }
-                    showAIPanel.toggle()
-                    if !hasDiscoveredAIAssist { hasDiscoveredAIAssist = true }
-                }) {
-                    ZStack(alignment: .topTrailing) {
-                        Image(systemName: "sparkles")
-                            .font(.title2)
-                            .foregroundStyle(showAIPanel ? .blue : .secondary)
-                            .padding(12)
+            // Save as Template button
+            Button(action: {
+                templateName = prompt.title
+                showSaveAsTemplate = true
+            }) {
+                Image(systemName: "rectangle.stack.badge.plus")
+                    .font(.title2)
+                    .foregroundStyle(.secondary)
+                    .padding(12)
+            }
+            .buttonStyle(.plain)
+            .help("Save as Template")
 
-                        if ProStatusManager.shared.isProUnlocked && !hasDiscoveredAIAssist {
-                            Circle()
-                                .fill(.blue)
-                                .frame(width: 8, height: 8)
-                                .offset(x: -4, y: 4)
-                        }
-                    }
-                }
-                .buttonStyle(.plain)
-                .help("AI Assist (Pro)")
+            // Inspector toggle
+            Button(action: { showInspector.toggle() }) {
+                Image(systemName: "info.circle")
+                    .font(.title2)
+                    .foregroundStyle(showInspector ? .blue : .secondary)
+                    .padding(12)
+            }
+            .buttonStyle(.plain)
+            .keyboardShortcut("i", modifiers: .command)
+            .help("Toggle Inspector (⌘I)")
+            .accessibilityLabel(showInspector ? "Hide inspector" : "Show inspector")
+        }
+    }
 
-                // Run button (Pro)
-                Button(action: {
-                    guard ProStatusManager.shared.isProUnlocked else { showPaywall = true; return }
-                    showResponsePanel.toggle()
-                }) {
-                    Image(systemName: showResponsePanel ? "play.circle.fill" : "play.circle")
-                        .font(.title2)
-                        .foregroundStyle(showResponsePanel ? .blue : .secondary)
-                        .padding(12)
-                }
-                .buttonStyle(.plain)
-                .help("Run prompt (Pro)")
+    // MARK: - Mode Switching
 
-                // Save as Template button
-                Button(action: {
-                    templateName = prompt.title
-                    showSaveAsTemplate = true
-                }) {
-                    Image(systemName: "rectangle.stack.badge.plus")
-                        .font(.title2)
-                        .foregroundStyle(.secondary)
-                        .padding(12)
-                }
-                .buttonStyle(.plain)
-                .help("Save as Template")
-
-                // Inspector toggle
-                Button(action: { showInspector.toggle() }) {
-                    Image(systemName: "info.circle")
-                        .font(.title2)
-                        .foregroundStyle(showInspector ? .blue : .secondary)
-                        .padding(12)
-                }
-                .buttonStyle(.plain)
-                .keyboardShortcut("i", modifiers: .command)
-                .help("Toggle Inspector (⌘I)")
-                .accessibilityLabel(showInspector ? "Hide inspector" : "Show inspector")
+    private func handleModeChange(to newMode: EditingMode) {
+        if newMode == .blocks && prompt.editingMode == .text {
+            // Switching from Text to Blocks
+            showModeSwitchDialog = true
+        } else if newMode == .text && prompt.editingMode == .blocks {
+            // Switching from Blocks to Text
+            if prompt.blockSyncState == .diverged {
+                showBlocksToTextWarning = true
+            } else {
+                prompt.editingMode = .text
             }
         }
-        .onChange(of: prompt.isFavorite) { _, _ in
-            debouncedSave()
-        }
-        .onChange(of: prompt.isArchived) { _, _ in
-            debouncedSave()
-        }
-        .onChange(of: prompt.tags) { _, _ in
-            debouncedSave()
-        }
-        .sheet(isPresented: $showPaywall) {
-            PaywallView(featureName: "API Runner", featureDescription: "Run prompts directly against any LLM without leaving Pault.", featureIcon: "play.circle.fill")
-        }
-        .alert("AI Error", isPresented: Binding(
-            get: { aiError != nil },
-            set: { if !$0 { aiError = nil } }
-        )) {
-            Button("OK") { aiError = nil }
-        } message: {
-            if let msg = aiError { Text(msg) }
-        }
-        .sheet(isPresented: $showABResult) {
-            if let a = abRunA, let b = abRunB {
-                ABTestResultView(prompt: prompt, runA: a, runB: b)
+    }
+
+    private func switchToBlocksStartFresh() {
+        prompt.editingMode = .blocks
+        // Block composition stays as-is (or empty if none)
+        prompt.blockSyncState = nil
+    }
+
+    private func switchToBlocksWithParse() {
+        isParsingTextToBlocks = true
+
+        Task { @MainActor in
+            do {
+                let snapshot = try await TextToBlocksService.shared.parseTextToBlocks(text: prompt.content)
+                prompt.blockComposition = snapshot
+                prompt.editingMode = .blocks
+                prompt.blockSyncState = .synced
+                isParsingTextToBlocks = false
+            } catch {
+                isParsingTextToBlocks = false
+                aiError = error.localizedDescription
             }
         }
-        .sheet(isPresented: $showSaveAsTemplate) {
-            SaveAsTemplateSheet(
-                name: $templateName,
-                category: $templateCategory,
-                onSave: {
-                    let template = PromptTemplate(
-                        name: templateName,
-                        content: prompt.content,
-                        category: templateCategory
-                    )
-                    modelContext.insert(template)
-                    try? modelContext.save()
-                    showSaveAsTemplate = false
-                },
-                onCancel: { showSaveAsTemplate = false }
-            )
-        }
+    }
+
+    private func switchToText() {
+        prompt.editingMode = .text
     }
 
     private func activateABMode() {

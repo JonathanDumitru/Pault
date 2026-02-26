@@ -8,7 +8,7 @@
 import SwiftUI
 
 /// Block categories form the constrained API surface (color-coded)
-enum BlockCategory: String, CaseIterable, Identifiable {
+enum BlockCategory: String, CaseIterable, Identifiable, Codable {
     case intent = "Intent & Framing"
     case rolePerspective = "Role & Perspective"
     case inputs = "Inputs & Context"
