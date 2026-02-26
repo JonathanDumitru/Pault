@@ -467,4 +467,27 @@ struct PromptStudioModelTests {
         model.markDirty()
         #expect(model.isDirty == true)
     }
+
+    // MARK: - Consolidated Library
+
+    @Test func consolidatedLibrary_groups20CategoriesInto7() throws {
+        let context = try makeContext()
+        let prompt = makePrompt(in: context)
+        let model = PromptStudioModel(prompt: prompt)
+
+        #expect(model.consolidatedLibrary.count == 7)
+        #expect(model.consolidatedLibrary[.role] != nil)
+        #expect(model.consolidatedLibrary[.task] != nil)
+    }
+
+    @Test func consolidatedLibrary_includesAllBlocksFromLegacy() throws {
+        let context = try makeContext()
+        let prompt = makePrompt(in: context)
+        let model = PromptStudioModel(prompt: prompt)
+
+        let legacyTotal = model.library.values.reduce(0) { $0 + $1.count }
+        let consolidatedTotal = model.consolidatedLibrary.values.reduce(0) { $0 + $1.count }
+
+        #expect(consolidatedTotal == legacyTotal)
+    }
 }

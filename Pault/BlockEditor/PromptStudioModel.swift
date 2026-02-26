@@ -50,6 +50,25 @@ final class PromptStudioModel: ObservableObject {
 
     @Published var library: [BlockCategory: [Block]] = [:]
 
+    /// Consolidated library grouping legacy categories into 7 top-level groups
+    var consolidatedLibrary: [ConsolidatedBlockCategory: [Block]] {
+        var result: [ConsolidatedBlockCategory: [Block]] = [:]
+
+        for consolidated in ConsolidatedBlockCategory.allCases {
+            var blocks: [Block] = []
+            for legacy in consolidated.legacyCategories {
+                if let legacyBlocks = library[legacy] {
+                    blocks.append(contentsOf: legacyBlocks)
+                }
+            }
+            if !blocks.isEmpty {
+                result[consolidated] = blocks
+            }
+        }
+
+        return result
+    }
+
     // MARK: - Modifier Library
 
     @Published var modifierLibrary: [ModifierCategory: [BlockModifier]] = [:]
