@@ -12,6 +12,7 @@ import SwiftUI
 struct CompositionCanvasView: View {
     @ObservedObject var model: PromptStudioModel
 
+    @StateObject private var slashState = SlashCommandState()
     @State private var draggedBlockID: UUID?
     @FocusState private var isFocused: Bool
 
@@ -43,6 +44,32 @@ struct CompositionCanvasView: View {
                 }
             }
             return !items.isEmpty
+        }
+        .overlay {
+            if slashState.isVisible {
+                Color.black.opacity(0.3)
+                    .ignoresSafeArea()
+                    .onTapGesture { slashState.hide() }
+
+                SlashCommandPaletteView(state: slashState, model: model) { block in
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                        model.addToCanvas(block)
+                    }
+                }
+            }
+        }
+        .onKeyPress(phases: .down) { keyPress in
+            // "/" key opens slash command palette
+            if keyPress.characters == "/" && keyPress.modifiers.isEmpty {
+                slashState.show()
+                return .handled
+            }
+            // ⌘K also opens slash command palette
+            if keyPress.characters.lowercased() == "k" && keyPress.modifiers == .command {
+                slashState.show()
+                return .handled
+            }
+            return .ignored
         }
     }
 
@@ -121,11 +148,29 @@ struct CompositionCanvasView: View {
                     .font(.headline)
                     .foregroundStyle(.secondary)
 
-                Text("Drag blocks from the library or double-click to add")
+                Text("Type / to search blocks or press \u{2318}K")
                     .font(.caption)
                     .foregroundStyle(.tertiary)
                     .multilineTextAlignment(.center)
             }
+
+            // Slash trigger area
+            Button(action: { slashState.show() }) {
+                HStack(spacing: 8) {
+                    Text("/")
+                        .font(.system(.body, design: .monospaced))
+                        .foregroundStyle(.tertiary)
+
+                    Text("Add block...")
+                        .font(.callout)
+                        .foregroundStyle(.quaternary)
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 10)
+                .background(Color(nsColor: .controlBackgroundColor))
+                .cornerRadius(8)
+            }
+            .buttonStyle(.plain)
 
             Spacer()
         }
