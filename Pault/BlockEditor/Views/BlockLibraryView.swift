@@ -2,25 +2,25 @@
 //  BlockLibraryView.swift
 //  Pault
 //
-//  Block library sidebar with categories and search.
-//  Adapted from Schemap for Pault's block editor integration.
+//  Collapsible block library panel with categories and search.
+//  Works with BlockEditorView's collapsible panel system.
 //
 
 import SwiftUI
 
-/// Left sidebar showing the block library with categories and search
+/// Left panel showing the block library with categories and search
 struct BlockLibraryView: View {
     @ObservedObject var model: PromptStudioModel
 
     @State private var searchQuery: String = ""
-    @State private var expandedCategories: Set<BlockCategory> = Set(BlockCategory.allCases)
+    @State private var expandedCategories: Set<ConsolidatedBlockCategory> = Set(ConsolidatedBlockCategory.allCases)
     @FocusState private var isSearchFocused: Bool
 
     // MARK: - Filtering
 
-    private var filteredLibrary: [(BlockCategory, [Block])] {
-        BlockCategory.allCases.compactMap { category in
-            guard let blocks = model.library[category], !blocks.isEmpty else { return nil }
+    private var filteredLibrary: [(ConsolidatedBlockCategory, [Block])] {
+        ConsolidatedBlockCategory.allCases.compactMap { category in
+            guard let blocks = model.consolidatedLibrary[category], !blocks.isEmpty else { return nil }
 
             if searchQuery.isEmpty {
                 return (category, blocks)
@@ -73,30 +73,32 @@ struct BlockLibraryView: View {
                 LazyVStack(spacing: 0, pinnedViews: .sectionHeaders) {
                     ForEach(filteredLibrary, id: \.0) { category, blocks in
                         Section {
-                            ForEach(blocks) { block in
-                                BlockLibraryRowView(
-                                    block: block,
-                                    category: category,
-                                    compatibilityLevel: model.isLibraryBlockCompatible(block),
-                                    onAdd: { model.addToCanvas(block) }
-                                )
+                            if expandedCategories.contains(category) {
+                                ForEach(blocks) { block in
+                                    BlockLibraryRowView(
+                                        block: block,
+                                        category: category,
+                                        compatibilityLevel: model.isLibraryBlockCompatible(block),
+                                        onAdd: { model.addToCanvas(block) }
+                                    )
+                                }
                             }
                         } header: {
-                            categoryHeader(category: category)
+                            categoryHeader(category: category, blockCount: blocks.count)
                         }
                     }
                 }
                 .padding(.bottom, 12)
             }
         }
-        .frame(minWidth: 200, idealWidth: 220, maxWidth: 280)
+        .frame(minWidth: AppConstants.Panels.blockLibraryMinWidth)
         .background(Color(nsColor: .windowBackgroundColor))
     }
 
     // MARK: - Category Header
 
     @ViewBuilder
-    private func categoryHeader(category: BlockCategory) -> some View {
+    private func categoryHeader(category: ConsolidatedBlockCategory, blockCount: Int) -> some View {
         Button(action: {
             withAnimation(.easeInOut(duration: 0.2)) {
                 if expandedCategories.contains(category) {
@@ -107,14 +109,18 @@ struct BlockLibraryView: View {
             }
         }) {
             HStack(spacing: 8) {
-                Circle()
-                    .fill(category.color)
-                    .frame(width: 8, height: 8)
+                Image(systemName: category.icon)
+                    .font(.caption)
+                    .foregroundStyle(category.color)
 
                 Text(category.rawValue)
                     .font(.caption)
                     .fontWeight(.semibold)
                     .foregroundStyle(category.color)
+
+                Text("(\(blockCount))")
+                    .font(.caption2)
+                    .foregroundStyle(.tertiary)
 
                 Spacer()
 
@@ -134,7 +140,7 @@ struct BlockLibraryView: View {
 
 private struct BlockLibraryRowView: View {
     let block: Block
-    let category: BlockCategory
+    let category: ConsolidatedBlockCategory
     let compatibilityLevel: CompatibilityLevel?
     let onAdd: () -> Void
 
