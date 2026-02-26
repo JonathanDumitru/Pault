@@ -47,7 +47,7 @@ struct ContentView: View {
             .navigationSplitViewColumnWidth(min: 220, ideal: 260, max: 320)
         } detail: {
             if let prompt = selectedPrompt {
-                PromptPreviewView(prompt: prompt, showInspector: $showInspector)
+                PromptDetailView(prompt: prompt, showInspector: $showInspector)
                     .id(prompt.id)
             } else {
                 EmptyDetailView()
