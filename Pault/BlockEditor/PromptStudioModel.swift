@@ -914,6 +914,15 @@ final class PromptStudioModel: ObservableObject {
         compileDebounced()
     }
 
+    /// Get placeholder completion status for a canvas block
+    func placeholderStatus(for blockID: UUID) -> BlockPlaceholderStatus {
+        guard let block = canvasBlocks.first(where: { $0.id == blockID }) else {
+            return .complete
+        }
+        let inputs = blockInputs[blockID] ?? [:]
+        return BlockPlaceholderStatus.calculate(snippet: block.snippet, inputs: inputs)
+    }
+
     /// Compile with debouncing (for user input)
     func compileDebounced() {
         compileWorkItem?.cancel()

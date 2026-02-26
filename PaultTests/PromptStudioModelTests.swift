@@ -490,4 +490,82 @@ struct PromptStudioModelTests {
 
         #expect(consolidatedTotal == legacyTotal)
     }
+
+    // MARK: - Placeholder Status
+
+    @Test func placeholderStatus_returnsUnfilledForEmptyInputs() throws {
+        let context = try makeContext()
+        let prompt = makePrompt(in: context)
+        let model = PromptStudioModel(prompt: prompt)
+
+        // Add a block with placeholders
+        let roleBlocks = model.library[.rolePerspective] ?? []
+        guard let block = roleBlocks.first(where: { $0.snippet.contains("{{") }) else {
+            Issue.record("No block with placeholders found")
+            return
+        }
+        model.addToCanvas(block)
+
+        let status = model.placeholderStatus(for: model.canvasBlocks[0].id)
+        #expect(status == .unfilled)
+    }
+
+    @Test func placeholderStatus_returnsCompleteWhenFilled() throws {
+        let context = try makeContext()
+        let prompt = makePrompt(in: context)
+        let model = PromptStudioModel(prompt: prompt)
+
+        // Add a block and fill its placeholders
+        let roleBlocks = model.library[.rolePerspective] ?? []
+        guard let block = roleBlocks.first(where: { $0.snippet.contains("{{") }) else {
+            Issue.record("No block with placeholders found")
+            return
+        }
+        model.addToCanvas(block)
+
+        let addedBlock = model.canvasBlocks[0]
+        let placeholders = PromptStudioModel.placeholders(in: addedBlock.snippet)
+        for placeholder in placeholders {
+            model.setBlockInput(blockID: addedBlock.id, placeholder: placeholder, value: "test value")
+        }
+
+        let status = model.placeholderStatus(for: addedBlock.id)
+        #expect(status == .complete)
+    }
+
+    @Test func placeholderStatus_returnsCompleteForBlockNotOnCanvas() throws {
+        let context = try makeContext()
+        let prompt = makePrompt(in: context)
+        let model = PromptStudioModel(prompt: prompt)
+
+        // Request status for a non-existent block ID
+        let nonExistentID = UUID()
+        let status = model.placeholderStatus(for: nonExistentID)
+        #expect(status == .complete)
+    }
+
+    @Test func placeholderStatus_returnsPartialWhenSomeFilled() throws {
+        let context = try makeContext()
+        let prompt = makePrompt(in: context)
+        let model = PromptStudioModel(prompt: prompt)
+
+        // Add a block with multiple placeholders (Persona has several)
+        let roleBlocks = model.library[.rolePerspective] ?? []
+        guard let block = roleBlocks.first(where: { $0.title == "Persona" }) else {
+            Issue.record("Persona block not found")
+            return
+        }
+        model.addToCanvas(block)
+
+        let addedBlock = model.canvasBlocks[0]
+        let placeholders = PromptStudioModel.placeholders(in: addedBlock.snippet)
+
+        // Fill only the first placeholder
+        if let firstPlaceholder = placeholders.first {
+            model.setBlockInput(blockID: addedBlock.id, placeholder: firstPlaceholder, value: "test value")
+        }
+
+        let status = model.placeholderStatus(for: addedBlock.id)
+        #expect(status == .partial)
+    }
 }
