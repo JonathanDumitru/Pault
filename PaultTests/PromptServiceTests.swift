@@ -404,4 +404,20 @@ struct PromptServiceTests {
         let result = service.filterPrompts([])
         #expect(result.isEmpty)
     }
+
+    // MARK: - createPromptFromTemplate
+
+    @Test func createPromptFromTemplatePopulatesContent() throws {
+        let context = try makeContext()
+        let service = PromptService(modelContext: context)
+
+        let prompt = service.createPrompt(
+            title: "Bug Report",
+            content: "## Summary\n{{summary}}\n## Steps\n{{steps}}"
+        )
+
+        #expect(prompt.title == "Bug Report")
+        #expect(prompt.content.contains("{{summary}}"))
+        #expect(prompt.content.contains("{{steps}}"))
+    }
 }

@@ -25,7 +25,18 @@ final class Prompt {
     var lastUsedAt: Date?
     var variantB: String?    // A/B testing: alternate prompt content; nil = no variant active
 
-    init(id: UUID = UUID(), title: String, content: String, attributedContent: Data? = nil, isFavorite: Bool = false, isArchived: Bool = false, createdAt: Date = Date(), updatedAt: Date = Date(), tags: [Tag] = [], templateVariables: [TemplateVariable] = [], attachments: [Attachment] = [], lastUsedAt: Date? = nil) {
+    // MARK: - Block Editor Properties
+
+    /// Serialised JSON representation of the block canvas composition
+    var blockCompositionData: Data?
+    /// Raw string backing for EditingMode enum
+    var editingModeRaw: String?
+    /// Raw string backing for BlockSyncState enum
+    var blockSyncStateRaw: String?
+
+    // MARK: - Init
+
+    init(id: UUID = UUID(), title: String, content: String, attributedContent: Data? = nil, isFavorite: Bool = false, isArchived: Bool = false, createdAt: Date = Date(), updatedAt: Date = Date(), tags: [Tag] = [], templateVariables: [TemplateVariable] = [], attachments: [Attachment] = [], lastUsedAt: Date? = nil, blockCompositionData: Data? = nil, editingModeRaw: String? = nil, blockSyncStateRaw: String? = nil) {
         self.id = id
         self.title = title
         self.content = content
@@ -38,7 +49,44 @@ final class Prompt {
         self.templateVariables = templateVariables
         self.attachments = attachments
         self.lastUsedAt = lastUsedAt
+        self.blockCompositionData = blockCompositionData
+        self.editingModeRaw = editingModeRaw
+        self.blockSyncStateRaw = blockSyncStateRaw
     }
+
+    // MARK: - Computed Accessors
+
+    /// The current editing mode; defaults to `.text` when no raw value is stored.
+    var editingMode: EditingMode {
+        get { EditingMode(rawValue: editingModeRaw ?? "") ?? .text }
+        set { editingModeRaw = newValue.rawValue }
+    }
+
+    /// The block sync state; nil when no block data has ever been stored.
+    var blockSyncState: BlockSyncState? {
+        get {
+            guard let raw = blockSyncStateRaw else { return nil }
+            return BlockSyncState(rawValue: raw)
+        }
+        set { blockSyncStateRaw = newValue?.rawValue }
+    }
+
+    /// Decoded/encoded block composition snapshot.
+    var blockComposition: BlockCompositionSnapshot? {
+        get {
+            guard let data = blockCompositionData else { return nil }
+            return try? JSONDecoder().decode(BlockCompositionSnapshot.self, from: data)
+        }
+        set {
+            if let value = newValue {
+                blockCompositionData = try? JSONEncoder().encode(value)
+            } else {
+                blockCompositionData = nil
+            }
+        }
+    }
+
+    // MARK: - Helpers
 
     func markAsUsed() {
         lastUsedAt = Date()

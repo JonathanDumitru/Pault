@@ -29,7 +29,11 @@ struct InspectorView: View {
             // Tab picker
             Picker("", selection: $selectedTab) {
                 ForEach(InspectorTab.allCases, id: \.self) { tab in
-                    Text(tab.rawValue).tag(tab)
+                    if tab == .history {
+                        Text("\(tab.rawValue) (\(prompt.versions.count))").tag(tab)
+                    } else {
+                        Text(tab.rawValue).tag(tab)
+                    }
                 }
             }
             .pickerStyle(.segmented)

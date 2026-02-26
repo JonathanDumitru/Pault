@@ -26,6 +26,7 @@ struct ContentView: View {
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding: Bool = false
     @State private var showOnboarding: Bool = false
     @State private var showingAnalytics: Bool = false
+    @State private var showCreationLaunchpad: Bool = false
 
     private var service: PromptService { PromptService(modelContext: modelContext) }
 
@@ -69,7 +70,7 @@ struct ContentView: View {
                 .disabled(selectedPrompt == nil)
                 .help("Edit Prompt (⌘E)")
 
-                Button(action: { openWindow(id: "new-prompt") }) {
+                Button(action: { showCreationLaunchpad = true }) {
                     Image(systemName: "plus")
                 }
                 .help("New Prompt (⌘N)")
@@ -125,8 +126,11 @@ struct ContentView: View {
         .sheet(isPresented: $showingAnalytics) {
             AnalyticsView()
         }
+        .sheet(isPresented: $showCreationLaunchpad) {
+            PromptLaunchpadView()
+        }
         .onReceive(NotificationCenter.default.publisher(for: .createNewPrompt)) { _ in
-            openWindow(id: "new-prompt")
+            showCreationLaunchpad = true
         }
         .onReceive(NotificationCenter.default.publisher(for: .promptCreated)) { notification in
             guard let promptID = notification.userInfo?["promptID"] as? UUID else { return }

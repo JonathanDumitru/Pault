@@ -35,6 +35,31 @@ struct PromptDetailView: View {
     @State private var isRunningAB: Bool = false
     @State private var showAIPanel: Bool = false
     @State private var aiError: String? = nil
+    @AppStorage("versionHistoryLimit") private var versionHistoryLimit: Int = 50
+    @AppStorage("coachingDismissedVariables") private var coachingDismissedVariables = false
+    @AppStorage("coachingDismissedTags") private var coachingDismissedTags = false
+    @AppStorage("hasDiscoveredAIAssist") private var hasDiscoveredAIAssist = false
+    @State private var showSaveAsTemplate = false
+    @State private var templateName = ""
+    @State private var templateCategory = "General"
+
+    private var coachingTip: (message: String, icon: String)? {
+        if prompt.content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            && !coachingDismissedVariables {
+            return ("Use {{variable_name}} to create reusable placeholders", "lightbulb")
+        }
+        if !prompt.content.isEmpty
+            && prompt.templateVariables.isEmpty
+            && !coachingDismissedVariables {
+            return ("Add {{variables}} to make this prompt reusable across different contexts", "lightbulb")
+        }
+        if !prompt.templateVariables.isEmpty
+            && prompt.tags.isEmpty
+            && !coachingDismissedTags {
+            return ("Add tags to organize and find your prompts quickly", "tag")
+        }
+        return nil
+    }
 
     var body: some View {
         HStack(spacing: 0) {
@@ -51,6 +76,29 @@ struct PromptDetailView: View {
                     .onChange(of: prompt.title) { _, _ in
                         debouncedSave()
                     }
+
+                // Contextual coaching tip
+                if let tip = coachingTip {
+                    HStack(spacing: 8) {
+                        Image(systemName: tip.icon)
+                            .foregroundStyle(.blue)
+                            .font(.caption)
+                        Text(tip.message)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        Spacer()
+                        Button(action: dismissCurrentTip) {
+                            Image(systemName: "xmark")
+                                .font(.caption2)
+                                .foregroundStyle(.tertiary)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 8)
+                    .background(Color.blue.opacity(0.05))
+                    .transition(.move(edge: .top).combined(with: .opacity))
+                }
 
                 // Content editor — switches to variantB when A/B mode is active
                 RichTextEditor(
@@ -141,11 +189,21 @@ struct PromptDetailView: View {
                 Button(action: {
                     guard ProStatusManager.shared.isProUnlocked else { showPaywall = true; return }
                     showAIPanel.toggle()
+                    if !hasDiscoveredAIAssist { hasDiscoveredAIAssist = true }
                 }) {
-                    Image(systemName: "sparkles")
-                        .font(.title2)
-                        .foregroundStyle(showAIPanel ? .blue : .secondary)
-                        .padding(12)
+                    ZStack(alignment: .topTrailing) {
+                        Image(systemName: "sparkles")
+                            .font(.title2)
+                            .foregroundStyle(showAIPanel ? .blue : .secondary)
+                            .padding(12)
+
+                        if ProStatusManager.shared.isProUnlocked && !hasDiscoveredAIAssist {
+                            Circle()
+                                .fill(.blue)
+                                .frame(width: 8, height: 8)
+                                .offset(x: -4, y: 4)
+                        }
+                    }
                 }
                 .buttonStyle(.plain)
                 .help("AI Assist (Pro)")
@@ -162,6 +220,19 @@ struct PromptDetailView: View {
                 }
                 .buttonStyle(.plain)
                 .help("Run prompt (Pro)")
+
+                // Save as Template button
+                Button(action: {
+                    templateName = prompt.title
+                    showSaveAsTemplate = true
+                }) {
+                    Image(systemName: "rectangle.stack.badge.plus")
+                        .font(.title2)
+                        .foregroundStyle(.secondary)
+                        .padding(12)
+                }
+                .buttonStyle(.plain)
+                .help("Save as Template")
 
                 // Inspector toggle
                 Button(action: { showInspector.toggle() }) {
@@ -200,6 +271,23 @@ struct PromptDetailView: View {
             if let a = abRunA, let b = abRunB {
                 ABTestResultView(prompt: prompt, runA: a, runB: b)
             }
+        }
+        .sheet(isPresented: $showSaveAsTemplate) {
+            SaveAsTemplateSheet(
+                name: $templateName,
+                category: $templateCategory,
+                onSave: {
+                    let template = PromptTemplate(
+                        name: templateName,
+                        content: prompt.content,
+                        category: templateCategory
+                    )
+                    modelContext.insert(template)
+                    try? modelContext.save()
+                    showSaveAsTemplate = false
+                },
+                onCancel: { showSaveAsTemplate = false }
+            )
         }
     }
 
@@ -266,6 +354,16 @@ struct PromptDetailView: View {
         return (result, Int(Date().timeIntervalSince(start) * 1000))
     }
 
+    private func dismissCurrentTip() {
+        withAnimation {
+            if prompt.content.isEmpty || prompt.templateVariables.isEmpty {
+                coachingDismissedVariables = true
+            } else if prompt.tags.isEmpty {
+                coachingDismissedTags = true
+            }
+        }
+    }
+
     private func debouncedSave() {
         saveTask?.cancel()
         saveTask = Task {
@@ -273,7 +371,7 @@ struct PromptDetailView: View {
             guard !Task.isCancelled else { return }
             await MainActor.run {
                 prompt.updatedAt = Date()
-                service.saveSnapshot(for: prompt)  // internally calls modelContext.save()
+                service.saveSnapshot(for: prompt, limit: versionHistoryLimit)
             }
         }
     }
@@ -287,6 +385,51 @@ struct PromptDetailView: View {
                 TemplateEngine.syncVariables(for: prompt, in: modelContext)
             }
         }
+    }
+}
+
+private struct SaveAsTemplateSheet: View {
+    @Binding var name: String
+    @Binding var category: String
+    let onSave: () -> Void
+    let onCancel: () -> Void
+
+    private let categories = ["General", "Writing", "Engineering", "Productivity", "Analysis"]
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Text("Save as Template")
+                    .font(.headline)
+                Spacer()
+                Button("Cancel", action: onCancel)
+                    .keyboardShortcut(.cancelAction)
+            }
+            .padding()
+
+            Divider()
+
+            Form {
+                TextField("Template Name", text: $name)
+                Picker("Category", selection: $category) {
+                    ForEach(categories, id: \.self) { cat in
+                        Text(cat).tag(cat)
+                    }
+                }
+            }
+            .formStyle(.grouped)
+
+            Divider()
+
+            HStack {
+                Spacer()
+                Button("Save Template", action: onSave)
+                    .buttonStyle(.borderedProminent)
+                    .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            }
+            .padding()
+        }
+        .frame(width: 360, height: 240)
     }
 }
 

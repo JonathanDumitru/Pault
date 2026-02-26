@@ -49,6 +49,8 @@ struct PaultApp: App {
             CopyEvent.self,
             PromptVersion.self,
             SmartCollection.self,
+            PromptTemplate.self,
+            CustomBlock.self,
         ])
         let persistentConfig = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
@@ -114,13 +116,6 @@ struct PaultApp: App {
         .windowResizability(.contentSize)
         .defaultSize(AppConstants.Windows.aboutDefault)
 
-        Window("New Prompt", id: "new-prompt") {
-            NewPromptView()
-        }
-        .windowResizability(.contentMinSize)
-        .defaultSize(AppConstants.Windows.promptDefault)
-        .modelContainer(sharedModelContainer)
-
         WindowGroup("Edit Prompt", for: UUID.self) { $promptID in
             if let promptID {
                 EditPromptView(promptID: promptID)
@@ -137,6 +132,10 @@ struct PaultApp: App {
 
         // Pass model container to AppDelegate synchronously to avoid race condition
         appDelegate.modelContainer = sharedModelContainer
+
+        // Seed built-in prompt templates on first launch
+        let seedContext = ModelContext(sharedModelContainer)
+        TemplateSeedService.seed(into: seedContext)
 
         // One-time migration: "paste" action removed in 2.5B — fall back to "copy"
         if UserDefaults.standard.string(forKey: "defaultAction") == "paste" {

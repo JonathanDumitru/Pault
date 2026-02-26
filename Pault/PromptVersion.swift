@@ -1,6 +1,23 @@
 import Foundation
 import SwiftData
 
+/// Codable snapshot of prompt metadata captured at version-save time.
+struct VersionSnapshot: Codable, Equatable {
+    var tags: [TagSnapshot]
+    var variables: [VariableSnapshot]
+
+    struct TagSnapshot: Codable, Equatable {
+        var name: String
+        var color: String
+    }
+
+    struct VariableSnapshot: Codable, Equatable {
+        var name: String
+        var defaultValue: String
+        var occurrenceIndex: Int
+    }
+}
+
 @Model
 final class PromptVersion {
     var id: UUID
@@ -9,6 +26,19 @@ final class PromptVersion {
     var content: String
     var savedAt: Date
     var changeNote: String?
+    var isFavorite: Bool
+    var snapshotData: Data?
+
+    /// Convenience computed property to encode/decode the VersionSnapshot.
+    var snapshot: VersionSnapshot? {
+        get {
+            guard let data = snapshotData else { return nil }
+            return try? JSONDecoder().decode(VersionSnapshot.self, from: data)
+        }
+        set {
+            snapshotData = newValue.flatMap { try? JSONEncoder().encode($0) }
+        }
+    }
 
     init(
         id: UUID = UUID(),
@@ -16,7 +46,9 @@ final class PromptVersion {
         title: String,
         content: String,
         savedAt: Date = Date(),
-        changeNote: String? = nil
+        changeNote: String? = nil,
+        isFavorite: Bool = false,
+        snapshotData: Data? = nil
     ) {
         self.id = id
         self.prompt = prompt
@@ -24,5 +56,7 @@ final class PromptVersion {
         self.content = content
         self.savedAt = savedAt
         self.changeNote = changeNote
+        self.isFavorite = isFavorite
+        self.snapshotData = snapshotData
     }
 }

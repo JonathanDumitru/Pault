@@ -34,6 +34,16 @@ final class PromptService {
         return prompt
     }
 
+    /// Creates a new prompt pre-filled from a template and increments the template's usage count.
+    @discardableResult
+    func createPromptFromTemplate(_ template: PromptTemplate) -> Prompt {
+        let prompt = createPrompt(title: template.name, content: template.content)
+        template.usageCount += 1
+        template.updatedAt = Date()
+        save("createPromptFromTemplate")
+        return prompt
+    }
+
     func deletePrompt(_ prompt: Prompt) {
         AttachmentManager.deleteFiles(for: prompt.id)
         modelContext.delete(prompt)
@@ -197,24 +207,63 @@ final class PromptService {
     // MARK: - Versioning
 
     func saveSnapshot(for prompt: Prompt, changeNote: String? = nil, limit: Int = 50) {
+        // Dedup guard: skip if nothing changed vs latest version
+        let promptID = prompt.id
+        let descriptor = FetchDescriptor<PromptVersion>(
+            sortBy: [SortDescriptor(\.savedAt, order: .reverse)]
+        )
+        if let allVersions = try? modelContext.fetch(descriptor),
+           let latest = allVersions.first(where: { $0.prompt?.id == promptID }) {
+            let currentTagNames = prompt.tags.map(\.name).sorted()
+            let latestTagNames = latest.snapshot?.tags.map(\.name).sorted() ?? []
+            let currentVarPairs = prompt.templateVariables
+                .sorted(by: { $0.sortOrder < $1.sortOrder })
+                .map { "\($0.name)=\($0.defaultValue)" }
+            let latestVarPairs = latest.snapshot?.variables
+                .sorted(by: { $0.occurrenceIndex < $1.occurrenceIndex })
+                .map { "\($0.name)=\($0.defaultValue)" } ?? []
+
+            let unchanged = prompt.content == latest.content
+                && prompt.title == latest.title
+                && prompt.isFavorite == latest.isFavorite
+                && currentTagNames == latestTagNames
+                && currentVarPairs == latestVarPairs
+
+            if unchanged && changeNote == nil { return }
+        }
+
+        // Build snapshot metadata
+        let tagSnapshots = prompt.tags.map {
+            VersionSnapshot.TagSnapshot(name: $0.name, color: $0.color)
+        }
+        let varSnapshots = prompt.templateVariables
+            .sorted(by: { $0.sortOrder < $1.sortOrder })
+            .map {
+                VersionSnapshot.VariableSnapshot(
+                    name: $0.name,
+                    defaultValue: $0.defaultValue,
+                    occurrenceIndex: $0.occurrenceIndex
+                )
+            }
+        let snapshot = VersionSnapshot(tags: tagSnapshots, variables: varSnapshots)
+
         let version = PromptVersion(
             prompt: prompt,
             title: prompt.title,
             content: prompt.content,
-            changeNote: changeNote
+            changeNote: changeNote,
+            isFavorite: prompt.isFavorite,
+            snapshotData: try? JSONEncoder().encode(snapshot)
         )
-        // Insert BEFORE fetching so the new version is included in the count,
-        // ensuring the pruning condition and prefix calculation are correct.
         modelContext.insert(version)
 
         // Prune: keep only the most recent `limit` versions for this prompt.
         // NOTE: Optional relationship traversal in #Predicate is unreliable;
         // fetch all and filter in memory.
-        let promptID = prompt.id
-        let descriptor = FetchDescriptor<PromptVersion>(
+        let allDescriptor = FetchDescriptor<PromptVersion>(
             sortBy: [SortDescriptor(\.savedAt, order: .forward)]
         )
-        guard let allVersions = try? modelContext.fetch(descriptor) else { return }
+        guard let allVersions = try? modelContext.fetch(allDescriptor) else { return }
         let promptVersions = allVersions.filter { $0.prompt?.id == promptID }
 
         if promptVersions.count > limit {

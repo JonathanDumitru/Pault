@@ -129,4 +129,93 @@ struct PromptVersionSnapshotTests {
         let versions = try context.fetch(descriptor)
         #expect(versions.count == limit)
     }
+
+    // MARK: - saveSnapshot_capturesMetadata
+
+    @Test func saveSnapshot_capturesTagsAndVariables() throws {
+        let context = try makeContext()
+        let service = PromptService(modelContext: context)
+
+        let prompt = service.createPrompt(title: "Test", content: "Hello {{name}}")
+        TemplateEngine.syncVariables(for: prompt, in: context)
+        prompt.templateVariables.first?.defaultValue = "World"
+
+        let tag = service.createTag(name: "demo", color: "purple")
+        service.addTag(tag, to: prompt)
+
+        service.saveSnapshot(for: prompt)
+
+        let descriptor = FetchDescriptor<PromptVersion>()
+        let versions = try context.fetch(descriptor)
+        let version = try #require(versions.first)
+
+        #expect(version.isFavorite == false)
+        let snap = try #require(version.snapshot)
+        #expect(snap.tags.count == 1)
+        #expect(snap.tags[0].name == "demo")
+        #expect(snap.tags[0].color == "purple")
+        #expect(snap.variables.count == 1)
+        #expect(snap.variables[0].name == "name")
+        #expect(snap.variables[0].defaultValue == "World")
+    }
+
+    @Test func saveSnapshot_capturesFavoriteStatus() throws {
+        let context = try makeContext()
+        let service = PromptService(modelContext: context)
+
+        let prompt = service.createPrompt(title: "Fav", content: "Body")
+        prompt.isFavorite = true
+
+        service.saveSnapshot(for: prompt)
+
+        let descriptor = FetchDescriptor<PromptVersion>()
+        let version = try #require(try context.fetch(descriptor).first)
+
+        #expect(version.isFavorite == true)
+    }
+
+    // MARK: - Dedup Guard
+
+    @Test func saveSnapshot_skipsWhenNothingChanged() throws {
+        let context = try makeContext()
+        let service = PromptService(modelContext: context)
+
+        let prompt = service.createPrompt(title: "Same", content: "Same")
+        service.saveSnapshot(for: prompt)
+        service.saveSnapshot(for: prompt) // duplicate — should be skipped
+
+        let descriptor = FetchDescriptor<PromptVersion>()
+        let versions = try context.fetch(descriptor)
+        #expect(versions.count == 1)
+    }
+
+    @Test func saveSnapshot_createsWhenContentChanges() throws {
+        let context = try makeContext()
+        let service = PromptService(modelContext: context)
+
+        let prompt = service.createPrompt(title: "Title", content: "v1")
+        service.saveSnapshot(for: prompt)
+
+        prompt.content = "v2"
+        service.saveSnapshot(for: prompt)
+
+        let descriptor = FetchDescriptor<PromptVersion>()
+        let versions = try context.fetch(descriptor)
+        #expect(versions.count == 2)
+    }
+
+    @Test func saveSnapshot_createsWhenFavoriteChanges() throws {
+        let context = try makeContext()
+        let service = PromptService(modelContext: context)
+
+        let prompt = service.createPrompt(title: "T", content: "C")
+        service.saveSnapshot(for: prompt)
+
+        prompt.isFavorite = true
+        service.saveSnapshot(for: prompt)
+
+        let descriptor = FetchDescriptor<PromptVersion>()
+        let versions = try context.fetch(descriptor)
+        #expect(versions.count == 2)
+    }
 }
