@@ -11,10 +11,42 @@ import SwiftUI
 /// Left panel showing the block library with categories and search
 struct BlockLibraryView: View {
     @ObservedObject var model: PromptStudioModel
+    @ObservedObject var slashState: SlashCommandState
 
     @State private var searchQuery: String = ""
     @State private var expandedCategories: Set<ConsolidatedBlockCategory> = Set(ConsolidatedBlockCategory.allCases)
     @FocusState private var isSearchFocused: Bool
+
+    // MARK: - Constants
+
+    private let maxRecentBlocks = 3
+    private let maxSuggestedCategories = 2
+
+    // MARK: - Recent & Suggested
+    // Note: These computed properties are lightweight (iteration over small arrays)
+    // and SwiftUI's diffing handles this efficiently. No caching needed.
+
+    private var recentBlocks: [Block] {
+        let allBlocks = model.consolidatedLibrary.values.flatMap { $0 }
+        return slashState.recentBlockTitles.prefix(maxRecentBlocks).compactMap { title in
+            allBlocks.first { $0.title == title }
+        }
+    }
+
+    private var suggestedBlocks: [(Block, String)] {
+        let categories = model.canvasBlocks.map { ConsolidatedBlockCategory.from(legacy: $0.category) }
+        guard let suggestion = BlockSuggestionEngine.suggest(canvasCategories: categories) else {
+            return []
+        }
+
+        var results: [(Block, String)] = []
+        for category in suggestion.suggestedCategories.prefix(maxSuggestedCategories) {
+            if let blocks = model.consolidatedLibrary[category], let block = blocks.first {
+                results.append((block, category.rawValue))
+            }
+        }
+        return results
+    }
 
     // MARK: - Filtering
 
@@ -71,6 +103,40 @@ struct BlockLibraryView: View {
             // Block list
             ScrollView {
                 LazyVStack(spacing: 0, pinnedViews: .sectionHeaders) {
+                    // Recent section
+                    if searchQuery.isEmpty && !recentBlocks.isEmpty {
+                        Section {
+                            ForEach(recentBlocks) { block in
+                                let category = ConsolidatedBlockCategory.from(legacy: block.category)
+                                BlockLibraryRowView(
+                                    block: block,
+                                    category: category,
+                                    compatibilityLevel: model.isLibraryBlockCompatible(block),
+                                    onAdd: { model.addToCanvas(block) }
+                                )
+                            }
+                        } header: {
+                            recentHeader()
+                        }
+                    }
+
+                    // Suggested section
+                    if searchQuery.isEmpty && !suggestedBlocks.isEmpty {
+                        Section {
+                            ForEach(suggestedBlocks, id: \.0.id) { block, _ in
+                                let category = ConsolidatedBlockCategory.from(legacy: block.category)
+                                BlockLibraryRowView(
+                                    block: block,
+                                    category: category,
+                                    compatibilityLevel: model.isLibraryBlockCompatible(block),
+                                    onAdd: { model.addToCanvas(block) }
+                                )
+                            }
+                        } header: {
+                            suggestedHeader()
+                        }
+                    }
+
                     ForEach(filteredLibrary, id: \.0) { category, blocks in
                         Section {
                             if expandedCategories.contains(category) {
@@ -133,6 +199,48 @@ struct BlockLibraryView: View {
             .background(Color(nsColor: .windowBackgroundColor))
         }
         .buttonStyle(.plain)
+    }
+
+    // MARK: - Recent Header
+
+    @ViewBuilder
+    private func recentHeader() -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: "clock.fill")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
+            Text("Recent")
+                .font(.caption)
+                .fontWeight(.semibold)
+                .foregroundStyle(.secondary)
+
+            Spacer()
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+        .background(Color(nsColor: .windowBackgroundColor))
+    }
+
+    // MARK: - Suggested Header
+
+    @ViewBuilder
+    private func suggestedHeader() -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: "lightbulb.fill")
+                .font(.caption)
+                .foregroundStyle(.yellow)
+
+            Text("Suggested")
+                .font(.caption)
+                .fontWeight(.semibold)
+                .foregroundStyle(.yellow)
+
+            Spacer()
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+        .background(Color(nsColor: .windowBackgroundColor))
     }
 }
 
@@ -204,6 +312,7 @@ private struct BlockLibraryRowView: View {
 #Preview {
     let prompt = Prompt(title: "Test", content: "Test content")
     let model = PromptStudioModel(prompt: prompt)
-    return BlockLibraryView(model: model)
+    let slashState = SlashCommandState()
+    return BlockLibraryView(model: model, slashState: slashState)
         .frame(height: 600)
 }

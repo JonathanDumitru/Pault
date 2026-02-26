@@ -11,8 +11,8 @@ import SwiftUI
 /// Central pane showing the block stack with inputs and modifiers
 struct CompositionCanvasView: View {
     @ObservedObject var model: PromptStudioModel
+    @ObservedObject var slashState: SlashCommandState
 
-    @StateObject private var slashState = SlashCommandState()
     @State private var draggedBlockID: UUID?
     @FocusState private var isFocused: Bool
 
@@ -348,6 +348,7 @@ private struct BlockDragPreview: View {
 #Preview {
     let prompt = Prompt(title: "Test", content: "Test content")
     let model = PromptStudioModel(prompt: prompt)
-    return CompositionCanvasView(model: model)
+    let slashState = SlashCommandState()
+    return CompositionCanvasView(model: model, slashState: slashState)
         .frame(width: 400, height: 600)
 }

@@ -14,6 +14,7 @@ struct BlockEditorView: View {
     @Bindable var prompt: Prompt
     @StateObject private var model: PromptStudioModel
     @StateObject private var autoCollapse = AutoCollapseManager()
+    @StateObject private var slashState = SlashCommandState()
 
     // Panel visibility state with persistence
     @AppStorage("showBlockLibrary") private var showLibrary: Bool = false
@@ -38,7 +39,7 @@ struct BlockEditorView: View {
             HStack(spacing: 0) {
                 // Left pane: Block Library
                 if showLibrary {
-                    BlockLibraryView(model: model)
+                    BlockLibraryView(model: model, slashState: slashState)
                         .frame(width: AppConstants.Panels.blockLibraryWidth)
                         .transition(.move(edge: .leading).combined(with: .opacity))
                         .autoCollapseWarning(autoCollapse)
@@ -48,7 +49,7 @@ struct BlockEditorView: View {
                 }
 
                 // Center pane: Composition Canvas
-                CompositionCanvasView(model: model)
+                CompositionCanvasView(model: model, slashState: slashState)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
 
                 // Right pane: Preview
