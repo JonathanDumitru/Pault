@@ -2,6 +2,9 @@
 //  SidebarView.swift
 //  Pault
 //
+//  Collapsible sidebar with prompt list, filters, and collections.
+//  Works with CollapsiblePanelLayout for slide-in/out behavior.
+//
 
 import SwiftUI
 import SwiftData
@@ -18,7 +21,7 @@ struct SidebarView: View {
     @Environment(\.openWindow) private var openWindow
     @Query(sort: [SortDescriptor(\Prompt.updatedAt, order: .reverse)]) private var allPrompts: [Prompt]
     @Query(sort: [SortDescriptor(\Tag.name, order: .forward)]) private var allTags: [Tag]
-    @AppStorage("useCompactMode") private var useCompactMode: Bool = false
+    @AppStorage("useCompactMode") private var useCompactMode: Bool = true  // Default to compact for collapsible
     @Query(sort: [SortDescriptor(\SmartCollection.sortOrder)]) private var collections: [SmartCollection]
     @State private var showingNewCollection = false
 
@@ -247,7 +250,8 @@ struct SidebarView: View {
                 .scrollContentBackground(.hidden)
             }
         }
-        .frame(minWidth: 220)
+        .frame(minWidth: AppConstants.Panels.sidebarMinWidth)
+        .background(Color(nsColor: .windowBackgroundColor))
         .sheet(isPresented: $showingNewCollection) {
             SmartCollectionEditorView()
         }

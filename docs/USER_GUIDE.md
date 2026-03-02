@@ -1,5 +1,38 @@
 # User guide
 
+## Visual walkthrough placeholders
+Use these placeholders until final UI screenshots are captured. The file names match the existing screenshot plan in `docs/app-store/screenshot-capture.md`.
+
+### Placeholder 1: main library overview
+- **Future image path:** `docs/app-store/screenshots/01-library-overview.png`
+- **Capture target:** Main window with sidebar filters, search, and a selected prompt in the detail pane.
+- **What should be visible:** Recently Used / All Prompts / Archived filters, prompt list, editor area.
+
+### Placeholder 2: prompt detail editor
+- **Future image path:** `docs/app-store/screenshots/02-editor-detail.png`
+- **Capture target:** Prompt detail editor with realistic title/content and the inspector open.
+- **What should be visible:** Inline editing, variables section (if prompt contains `{{variable}}`), tags/favorite/archive controls.
+
+### Placeholder 3: menu bar popover
+- **Future image path:** `docs/app-store/screenshots/03-menu-bar-popover.png`
+- **Capture target:** Menu bar mini library open with search/filter state.
+- **What should be visible:** Favorites/All/Archived filter pills, prompt rows, quick actions.
+
+### Placeholder 4: global launcher
+- **Future image path:** `docs/app-store/screenshots/04-global-launcher.png`
+- **Capture target:** Hotkey launcher (`⌘⇧P`) with query text and ranked results.
+- **What should be visible:** Search field, highlighted selection, keyboard hint flow.
+
+### Placeholder 5: quick paste action
+- **Future image path:** `docs/app-store/screenshots/05-quick-paste.png`
+- **Capture target:** Action view after selecting a launcher result.
+- **What should be visible:** Copy/Paste action buttons and selected prompt context.
+
+### Placeholder 6: favorites + archived state
+- **Future image path:** `docs/app-store/screenshots/06-favorites-archive.png`
+- **Capture target:** One view showing favorite and archived workflow states.
+- **What should be visible:** A favorited prompt and archived-filter behavior.
+
 ## Getting started
 - Launch Pault to open the main window (sidebar + detail editor).
 - On first launch, a short onboarding flow introduces main window, menu bar, and hotkey launcher.

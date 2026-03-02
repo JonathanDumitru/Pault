@@ -2,12 +2,13 @@
 //  CompiledPreviewView.swift
 //  Pault
 //
-//  Right pane showing the compiled template preview with different modes.
+//  Collapsible preview panel showing compiled template output.
+//  Works with BlockEditorView's collapsible panel system.
 //
 
 import SwiftUI
 
-/// Right pane displaying the compiled output and inspector
+/// Right panel displaying the compiled output and inspector
 struct CompiledPreviewView: View {
     @ObservedObject var model: PromptStudioModel
     @Bindable var prompt: Prompt
@@ -27,7 +28,7 @@ struct CompiledPreviewView: View {
             // Inspector section
             inspectorSection
         }
-        .frame(minWidth: 250, idealWidth: 280, maxWidth: 320)
+        .frame(minWidth: AppConstants.Panels.blockPreviewMinWidth)
         .background(Color(nsColor: .windowBackgroundColor))
     }
 

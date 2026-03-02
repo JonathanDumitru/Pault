@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{app_name}} - Week {{week_number}}: {{week_theme}}</title>
+    <link rel="stylesheet" href="../../templates/styles.css">
+    <style>
+        /* Inline critical styles for self-contained HTML */
+        @media print {
+            .week-navigation__nav { display: none; }
+            .copy-btn { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="post-container">
+        <nav class="week-navigation">
+            <div class="week-navigation__header">
+                <h1 class="week-navigation__title">{{app_name}} Social Media Campaign</h1>
+                <p class="week-navigation__subtitle">{{tagline}}</p>
+            </div>
+            <div class="week-navigation__nav">
+                {{prev_link}}
+                <span class="week-navigation__indicator">Week {{week_number}} of 13</span>
+                {{next_link}}
+            </div>
+        </nav>
+
+        <header class="week-header">
+            <h2 class="week-header__title">Week {{week_number}}: {{week_theme}}</h2>
+            <p class="week-header__description">{{week_description}}</p>
+            <div class="week-header__stats">
+                <span class="week-header__stat">{{post_count}} posts</span>
+                <span class="week-header__stat">{{platforms}}</span>
+            </div>
+        </header>
+
+        <main class="posts-grid">
+{{posts}}
+        </main>
+
+        <footer class="week-footer">
+            <p>Generated for {{app_name}} · 90-Day Social Media Campaign</p>
+        </footer>
+    </div>
+
+    <script>
+    // Copy button functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const copyButtons = document.querySelectorAll('.copy-btn');
+
+        copyButtons.forEach(button => {
+            button.addEventListener('click', async function() {
+                const targetId = this.getAttribute('data-copy-target');
+                const targetElement = document.getElementById(targetId);
+
+                if (!targetElement) return;
+
+                const textToCopy = targetElement.innerText.trim();
+
+                try {
+                    await navigator.clipboard.writeText(textToCopy);
+
+                    // Show success state
+                    this.classList.add('copy-btn--copied');
+                    const textSpan = this.querySelector('.copy-btn__text');
+                    const originalText = textSpan.textContent;
+                    textSpan.textContent = 'Copied!';
+
+                    // Reset after 2 seconds
+                    setTimeout(() => {
+                        this.classList.remove('copy-btn--copied');
+                        textSpan.textContent = originalText;
+                    }, 2000);
+                } catch (err) {
+                    console.error('Failed to copy text:', err);
+
+                    // Fallback for older browsers
+                    const textArea = document.createElement('textarea');
+                    textArea.value = textToCopy;
+                    textArea.style.position = 'fixed';
+                    textArea.style.left = '-9999px';
+                    document.body.appendChild(textArea);
+                    textArea.select();
+
+                    try {
+                        document.execCommand('copy');
+                        this.classList.add('copy-btn--copied');
+                        const textSpan = this.querySelector('.copy-btn__text');
+                        const originalText = textSpan.textContent;
+                        textSpan.textContent = 'Copied!';
+
+                        setTimeout(() => {
+                            this.classList.remove('copy-btn--copied');
+                            textSpan.textContent = originalText;
+                        }, 2000);
+                    } catch (e) {
+                        console.error('Fallback copy failed:', e);
+                    }
+
+                    document.body.removeChild(textArea);
+                }
+            });
+        });
+    });
+    </script>
+</body>
+</html>

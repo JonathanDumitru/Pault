@@ -2,6 +2,9 @@
 //  InspectorView.swift
 //  Pault
 //
+//  Collapsible inspector panel with single-scroll layout.
+//  Combines Tags, Stats (Pro), and History into one scrollable view.
+//
 
 import SwiftUI
 import SwiftData
@@ -13,166 +16,241 @@ struct InspectorView: View {
     @Bindable var prompt: Prompt
     @State private var newTagName: String = ""
     @State private var showingTagPicker: Bool = false
-    @State private var selectedTab: InspectorTab = .info
-
-    enum InspectorTab: String, CaseIterable {
-        case info = "Info"
-        case stats = "Stats"
-        case history = "History"
-    }
+    @State private var showHistory: Bool = false
 
     private let tagColors = TagColors.all
     private var service: PromptService { PromptService(modelContext: modelContext) }
 
     var body: some View {
-        VStack(spacing: 0) {
-            // Tab picker
-            Picker("", selection: $selectedTab) {
-                ForEach(InspectorTab.allCases, id: \.self) { tab in
-                    if tab == .history {
-                        Text("\(tab.rawValue) (\(prompt.versions.count))").tag(tab)
-                    } else {
-                        Text(tab.rawValue).tag(tab)
-                    }
-                }
-            }
-            .pickerStyle(.segmented)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                // Tags section
+                tagsSection
 
-            Divider()
+                sectionDivider
 
-            // Tab content
-            switch selectedTab {
-            case .info:
-                infoContent
-            case .stats:
+                // Favorite toggle
+                favoriteSection
+
+                sectionDivider
+
+                // Quick info
+                infoSection
+
+                // Stats section (Pro only)
                 if ProStatusManager.shared.isProUnlocked {
-                    PromptStatsView(prompt: prompt)
-                } else {
-                    proGateView(feature: "Stats")
+                    sectionDivider
+                    statsSection
                 }
-            case .history:
-                PromptVersionHistoryView(prompt: prompt)
+
+                sectionDivider
+
+                // History section (collapsible)
+                historySection
+
+                sectionDivider
+
+                // Archive button
+                archiveSection
             }
+            .padding(.vertical, 8)
         }
-        .frame(width: 220)
-        .background(.regularMaterial)
+        .frame(minWidth: AppConstants.Panels.inspectorMinWidth)
+        .background(Color(nsColor: .windowBackgroundColor))
     }
 
-    private var infoContent: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            // Tags section
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Tags")
-                    .font(.headline)
-                    .foregroundStyle(.secondary)
+    // MARK: - Section Divider
 
-                FlowLayout(spacing: 6) {
-                    ForEach(prompt.tags) { tag in
-                        TagPillView(name: tag.name, color: tag.color, onRemove: {
-                            removeTag(tag)
-                        })
-                        .accessibilityLabel("Tag: \(tag.name)")
-                        .accessibilityHint("Double-click to remove")
-                    }
+    private var sectionDivider: some View {
+        Divider()
+            .padding(.vertical, 12)
+            .padding(.horizontal, 12)
+    }
 
-                    Button(action: { showingTagPicker.toggle() }) {
-                        Image(systemName: "plus")
-                            .font(.caption)
-                            .padding(6)
-                            .background(Color.secondary.opacity(0.2))
-                            .clipShape(Circle())
-                    }
-                    .buttonStyle(.plain)
-                    .popover(isPresented: $showingTagPicker) {
-                        TagPickerPopover(
-                            allTags: allTags,
-                            selectedTags: prompt.tags,
-                            onSelect: { tag in
-                                addTag(tag)
-                            },
-                            onCreate: { name, color in
-                                createAndAddTag(name: name, color: color)
-                            }
-                        )
-                        .frame(width: 260, height: 380)
-                    }
+    // MARK: - Tags Section
+
+    private var tagsSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Tags")
+                .font(.caption)
+                .fontWeight(.semibold)
+                .foregroundStyle(.secondary)
+
+            FlowLayout(spacing: 6) {
+                ForEach(prompt.tags) { tag in
+                    TagPillView(name: tag.name, color: tag.color, onRemove: {
+                        removeTag(tag)
+                    })
+                    .accessibilityLabel("Tag: \(tag.name)")
+                    .accessibilityHint("Double-click to remove")
                 }
-            }
 
-            Divider()
-
-            // Favorite toggle
-            HStack {
-                Text("Favorite")
-                    .foregroundStyle(.secondary)
-                Spacer()
-                Button(action: { prompt.isFavorite.toggle() }) {
-                    Image(systemName: prompt.isFavorite ? "star.fill" : "star")
-                        .foregroundStyle(prompt.isFavorite ? .yellow : .secondary)
+                Button(action: { showingTagPicker.toggle() }) {
+                    Image(systemName: "plus")
+                        .font(.caption2)
+                        .padding(5)
+                        .background(Color.secondary.opacity(0.2))
+                        .clipShape(Circle())
                 }
                 .buttonStyle(.plain)
-            }
-
-            Divider()
-
-            // Dates
-            VStack(alignment: .leading, spacing: 4) {
-                HStack {
-                    Text("Created")
-                        .foregroundStyle(.secondary)
-                    Spacer()
-                    Text(prompt.createdAt.formatted(date: .abbreviated, time: .shortened))
-                        .font(.caption)
-                }
-                HStack {
-                    Text("Modified")
-                        .foregroundStyle(.secondary)
-                    Spacer()
-                    Text(prompt.updatedAt.formatted(date: .abbreviated, time: .shortened))
-                        .font(.caption)
-                }
-                HStack {
-                    Text("Last Used")
-                        .foregroundStyle(.secondary)
-                    Spacer()
-                    if let lastUsed = prompt.lastUsedAt {
-                        Text(lastUsed.formatted(date: .abbreviated, time: .shortened))
-                            .font(.caption)
-                    } else {
-                        Text("Never")
-                            .font(.caption)
-                            .foregroundStyle(.tertiary)
-                    }
+                .popover(isPresented: $showingTagPicker) {
+                    TagPickerPopover(
+                        allTags: allTags,
+                        selectedTags: prompt.tags,
+                        onSelect: { tag in
+                            addTag(tag)
+                        },
+                        onCreate: { name, color in
+                            createAndAddTag(name: name, color: color)
+                        }
+                    )
+                    .frame(width: 260, height: 380)
                 }
             }
-
-            Divider()
-
-            // Archive button
-            Button(action: { prompt.isArchived.toggle() }) {
-                Label(prompt.isArchived ? "Unarchive" : "Archive", systemImage: "archivebox")
-            }
-            .buttonStyle(.plain)
-            .foregroundStyle(prompt.isArchived ? .blue : .secondary)
-
-            Spacer()
         }
-        .padding()
+        .padding(.horizontal, 12)
     }
 
-    private func proGateView(feature: String) -> some View {
-        VStack(spacing: 12) {
-            ProBadge()
-            Text("\(feature) is a Pro feature")
+    // MARK: - Favorite Section
+
+    private var favoriteSection: some View {
+        HStack {
+            Text("Favorite")
                 .font(.caption)
                 .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
+            Spacer()
+            Button(action: { prompt.isFavorite.toggle() }) {
+                Image(systemName: prompt.isFavorite ? "star.fill" : "star")
+                    .font(.caption)
+                    .foregroundStyle(prompt.isFavorite ? .yellow : .secondary)
+            }
+            .buttonStyle(.plain)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding()
+        .padding(.horizontal, 12)
     }
+
+    // MARK: - Info Section
+
+    private var infoSection: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("Details")
+                .font(.caption)
+                .fontWeight(.semibold)
+                .foregroundStyle(.secondary)
+
+            Group {
+                infoRow(label: "Created", value: prompt.createdAt.formatted(date: .abbreviated, time: .omitted))
+                infoRow(label: "Modified", value: prompt.updatedAt.formatted(date: .abbreviated, time: .omitted))
+                infoRow(label: "Last Used", value: prompt.lastUsedAt?.formatted(date: .abbreviated, time: .omitted) ?? "Never")
+            }
+        }
+        .padding(.horizontal, 12)
+    }
+
+    private func infoRow(label: String, value: String) -> some View {
+        HStack {
+            Text(label)
+                .font(.caption2)
+                .foregroundStyle(.tertiary)
+            Spacer()
+            Text(value)
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    // MARK: - Stats Section (Pro)
+
+    private var statsSection: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("Stats")
+                .font(.caption)
+                .fontWeight(.semibold)
+                .foregroundStyle(.secondary)
+
+            // Inline mini stats - only show available data
+            HStack(spacing: 16) {
+                VStack(spacing: 2) {
+                    Text("\(prompt.versions.count)")
+                        .font(.title3)
+                        .fontWeight(.medium)
+                    Text("Versions")
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
+                }
+
+                VStack(spacing: 2) {
+                    Text("\(prompt.templateVariables.count)")
+                        .font(.title3)
+                        .fontWeight(.medium)
+                    Text("Variables")
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
+                }
+
+                VStack(spacing: 2) {
+                    Text("\(prompt.attachments.count)")
+                        .font(.title3)
+                        .fontWeight(.medium)
+                    Text("Files")
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
+                }
+            }
+            .frame(maxWidth: .infinity)
+        }
+        .padding(.horizontal, 12)
+    }
+
+    // MARK: - History Section
+
+    private var historySection: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Button(action: { withAnimation { showHistory.toggle() } }) {
+                HStack {
+                    Text("History")
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.secondary)
+
+                    Text("(\(prompt.versions.count))")
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
+
+                    Spacer()
+
+                    Image(systemName: showHistory ? "chevron.down" : "chevron.right")
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
+                }
+            }
+            .buttonStyle(.plain)
+
+            if showHistory {
+                PromptVersionHistoryView(prompt: prompt)
+                    .transition(.opacity.combined(with: .move(edge: .top)))
+            }
+        }
+        .padding(.horizontal, 12)
+    }
+
+    // MARK: - Archive Section
+
+    private var archiveSection: some View {
+        Button(action: { prompt.isArchived.toggle() }) {
+            HStack {
+                Image(systemName: "archivebox")
+                    .font(.caption)
+                Text(prompt.isArchived ? "Unarchive" : "Archive")
+                    .font(.caption)
+            }
+            .foregroundStyle(prompt.isArchived ? .blue : .secondary)
+        }
+        .buttonStyle(.plain)
+        .padding(.horizontal, 12)
+    }
+
+    // MARK: - Tag Actions
 
     private func addTag(_ tag: Tag) {
         service.addTag(tag, to: prompt)

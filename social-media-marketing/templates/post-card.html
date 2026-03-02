@@ -1,0 +1,56 @@
+<!-- Post Card Template
+     Variables: {{day}}, {{week}}, {{platforms}}, {{type}}, {{content}}, {{visual}}, {{hashtags}}
+-->
+<article class="post-card" data-day="{{day}}" data-type="{{type}}">
+    <header class="post-card__header">
+        <div class="post-card__meta">
+            <span class="post-card__day">Day {{day}} · Week {{week}}</span>
+            <span class="badge badge--{{type}}">{{type}}</span>
+        </div>
+        <div class="post-card__platforms">
+            {{platforms}}
+        </div>
+    </header>
+
+    <div class="post-card__body">
+        <div class="post-card__content-header">
+            <span class="post-card__label">Post Text</span>
+            <button class="copy-btn" data-copy-target="post-text-{{day}}" aria-label="Copy post text">
+                <svg class="copy-btn__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10.5 1H3.5C2.67 1 2 1.67 2 2.5V11H3.5V2.5H10.5V1ZM12.5 4H6.5C5.67 4 5 4.67 5 5.5V13.5C5 14.33 5.67 15 6.5 15H12.5C13.33 15 14 14.33 14 13.5V5.5C14 4.67 13.33 4 12.5 4ZM12.5 13.5H6.5V5.5H12.5V13.5Z" fill="currentColor"/>
+                </svg>
+                <svg class="copy-btn__icon copy-btn__icon--success" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 10.8L3.2 8L2.27 8.93L6 12.67L14 4.67L13.07 3.73L6 10.8Z" fill="currentColor"/>
+                </svg>
+                <span class="copy-btn__text">Copy</span>
+            </button>
+        </div>
+        <div class="post-card__text" id="post-text-{{day}}">
+{{content}}
+        </div>
+    </div>
+
+    <div class="post-card__visual">
+        <div class="post-card__visual-header">
+            <span class="post-card__label">Visual Description</span>
+        </div>
+        <div class="post-card__visual-content">
+{{visual}}
+        </div>
+    </div>
+
+    <footer class="post-card__footer">
+        <div class="post-card__hashtags" id="hashtags-{{day}}">
+{{hashtags}}
+        </div>
+        <button class="copy-btn" data-copy-target="hashtags-{{day}}" aria-label="Copy hashtags">
+            <svg class="copy-btn__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10.5 1H3.5C2.67 1 2 1.67 2 2.5V11H3.5V2.5H10.5V1ZM12.5 4H6.5C5.67 4 5 4.67 5 5.5V13.5C5 14.33 5.67 15 6.5 15H12.5C13.33 15 14 14.33 14 13.5V5.5C14 4.67 13.33 4 12.5 4ZM12.5 13.5H6.5V5.5H12.5V13.5Z" fill="currentColor"/>
+            </svg>
+            <svg class="copy-btn__icon copy-btn__icon--success" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6 10.8L3.2 8L2.27 8.93L6 12.67L14 4.67L13.07 3.73L6 10.8Z" fill="currentColor"/>
+            </svg>
+            <span class="copy-btn__text">Copy</span>
+        </button>
+    </footer>
+</article>

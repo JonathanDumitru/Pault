@@ -4,6 +4,9 @@
 //
 //  Created by Jonathan Hines Dumitru on 12/16/25.
 //
+//  Full-width prompt editor with auto-collapse integration.
+//  Inspector is now managed by ContentView's collapsible panel system.
+//
 
 import SwiftUI
 import SwiftData
@@ -20,6 +23,9 @@ struct PromptDetailView: View {
     @Bindable var prompt: Prompt
 
     @Binding var showInspector: Bool
+
+    /// Optional auto-collapse manager from parent (for typing-triggered collapse)
+    var autoCollapseManager: AutoCollapseManager?
 
     private var service: PromptService { PromptService(modelContext: modelContext) }
 
@@ -76,6 +82,7 @@ struct PromptDetailView: View {
             // Content area - switches between text and blocks mode
             if prompt.editingMode == .blocks {
                 BlockEditorView(prompt: prompt)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 textEditorContent
             }
@@ -213,33 +220,36 @@ struct PromptDetailView: View {
     // MARK: - Text Editor Content
 
     private var textEditorContent: some View {
-        HStack(spacing: 0) {
-            // Main editor
-            VStack(alignment: .leading, spacing: 0) {
-                // Contextual coaching tip
-                if let tip = coachingTip {
-                    HStack(spacing: 8) {
-                        Image(systemName: tip.icon)
-                            .foregroundStyle(.blue)
-                            .font(.caption)
-                        Text(tip.message)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                        Spacer()
-                        Button(action: dismissCurrentTip) {
-                            Image(systemName: "xmark")
-                                .font(.caption2)
-                                .foregroundStyle(.tertiary)
-                        }
-                        .buttonStyle(.plain)
+        // Full-width editor (inspector is now managed by ContentView)
+        VStack(alignment: .leading, spacing: 0) {
+            // Contextual coaching tip
+            if let tip = coachingTip {
+                HStack(spacing: 8) {
+                    Image(systemName: tip.icon)
+                        .foregroundStyle(.blue)
+                        .font(.caption)
+                    Text(tip.message)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                    Button(action: dismissCurrentTip) {
+                        Image(systemName: "xmark")
+                            .font(.caption2)
+                            .foregroundStyle(.tertiary)
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 8)
-                    .background(Color.blue.opacity(0.05))
-                    .transition(.move(edge: .top).combined(with: .opacity))
+                    .buttonStyle(.plain)
                 }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 8)
+                .background(Color.blue.opacity(0.05))
+                .transition(.move(edge: .top).combined(with: .opacity))
+            }
 
-                // Content editor — switches to variantB when A/B mode is active
+            // Content editor — switches to variantB when A/B mode is active
+            // Centered with max-width for readability
+            HStack {
+                Spacer(minLength: 0)
+
                 RichTextEditor(
                     attributedContent: showVariantB ? .constant(nil) : $prompt.attributedContent,
                     plainContent: showVariantB ? Binding(
@@ -247,44 +257,43 @@ struct PromptDetailView: View {
                         set: { prompt.variantB = $0 }
                     ) : $prompt.content
                 )
+                .frame(maxWidth: AppConstants.Panels.editorMaxContentWidth)
                 .padding(.horizontal, 16)
                 .padding(.bottom, 16)
                 .onChange(of: prompt.content) { _, _ in
                     debouncedSave()
                     debouncedSyncVariables()
+                    // Trigger auto-collapse
+                    autoCollapseManager?.userDidType()
                 }
                 .onChange(of: prompt.attributedContent) { _, _ in
                     debouncedSave()
+                    // Trigger auto-collapse
+                    autoCollapseManager?.userDidType()
                 }
 
-                // Template variables (shown when {{variables}} exist in content)
-                TemplateVariablesView(prompt: prompt)
-
-                // Attachments strip
-                AttachmentsStripView(prompt: prompt)
-
-                // AI Assist panel (shown when sparkles button is active)
-                if showAIPanel {
-                    AIAssistPanel(prompt: prompt, config: responseConfig)
-                        .transition(.move(edge: .bottom).combined(with: .opacity))
-                }
-
-                // Streaming response panel (shown when run is active)
-                if showResponsePanel {
-                    ResponsePanel(prompt: prompt, config: responseConfig)
-                        .transition(.move(edge: .bottom).combined(with: .opacity))
-                }
+                Spacer(minLength: 0)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-            // Inspector panel
-            if showInspector {
-                Divider()
-                InspectorView(prompt: prompt)
-                    .transition(.move(edge: .trailing))
+            // Template variables (shown when {{variables}} exist in content)
+            TemplateVariablesView(prompt: prompt)
+
+            // Attachments strip
+            AttachmentsStripView(prompt: prompt)
+
+            // AI Assist panel (shown when sparkles button is active)
+            if showAIPanel {
+                AIAssistPanel(prompt: prompt, config: responseConfig)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+
+            // Streaming response panel (shown when run is active)
+            if showResponsePanel {
+                ResponsePanel(prompt: prompt, config: responseConfig)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
-        .animation(.easeInOut(duration: 0.2), value: showInspector)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .animation(.easeInOut(duration: 0.2), value: showResponsePanel)
         .animation(.easeInOut(duration: 0.2), value: showAIPanel)
         .overlay(alignment: .bottomTrailing) {
@@ -379,19 +388,10 @@ struct PromptDetailView: View {
             }
             .buttonStyle(.plain)
             .help("Save as Template")
-
-            // Inspector toggle
-            Button(action: { showInspector.toggle() }) {
-                Image(systemName: "info.circle")
-                    .font(.title2)
-                    .foregroundStyle(showInspector ? .blue : .secondary)
-                    .padding(12)
-            }
-            .buttonStyle(.plain)
-            .keyboardShortcut("i", modifiers: .command)
-            .help("Toggle Inspector (⌘I)")
-            .accessibilityLabel(showInspector ? "Hide inspector" : "Show inspector")
         }
+        .padding(8)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 10))
+        .padding(16)
     }
 
     // MARK: - Mode Switching

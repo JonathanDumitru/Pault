@@ -4,6 +4,10 @@
 //
 //  Created by Jonathan Hines Dumitru on 12/16/25.
 //
+//  Main window with collapsible sidebar and inspector panels.
+//  Layout: [Sidebar] | Editor | [Inspector]
+//  Default state: Editor only (panels collapsed)
+//
 
 import SwiftUI
 import SwiftData
@@ -20,7 +24,6 @@ struct ContentView: View {
     @State private var selectedPrompt: Prompt?
     @State private var selectedFilter: SidebarFilter = .all
     @State private var searchText: String = ""
-    @State private var showInspector: Bool = false
     @State private var promptToDelete: Prompt?
     @State private var showCopyToast: Bool = false
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding: Bool = false
@@ -28,115 +31,254 @@ struct ContentView: View {
     @State private var showingAnalytics: Bool = false
     @State private var showCreationLaunchpad: Bool = false
 
+    // Panel visibility state with persistence
+    @AppStorage("showSidebar") private var showSidebar: Bool = false
+    @AppStorage("showInspector") private var showInspector: Bool = false
+
+    // Auto-collapse manager
+    @StateObject private var autoCollapse = AutoCollapseManager()
+
     private var service: PromptService { PromptService(modelContext: modelContext) }
 
     var body: some View {
-        NavigationSplitView {
-            SidebarView(
-                selectedPrompt: $selectedPrompt,
-                selectedFilter: $selectedFilter,
-                searchText: $searchText,
-                onDelete: { promptToDelete = $0 },
-                onToggleFavorite: { service.toggleFavorite($0) },
-                onToggleArchive: { service.toggleArchive($0) },
-                onCopy: { prompt in
-                    service.copyToClipboard(prompt)
-                    withAnimation { showCopyToast = true }
+        mainContent
+            .copyToast(isShowing: $showCopyToast)
+            .frame(minWidth: 700, minHeight: 500)
+            .onDeleteCommand {
+                if let prompt = selectedPrompt {
+                    promptToDelete = prompt
                 }
-            )
-            .navigationSplitViewColumnWidth(min: 220, ideal: 260, max: 320)
-        } detail: {
-            if let prompt = selectedPrompt {
-                PromptDetailView(prompt: prompt, showInspector: $showInspector)
-                    .id(prompt.id)
-            } else {
-                EmptyDetailView()
             }
+            .alert("Delete Prompt?", isPresented: Binding(
+                get: { promptToDelete != nil },
+                set: { if !$0 { promptToDelete = nil } }
+            )) {
+                Button("Delete", role: .destructive) {
+                    if let prompt = promptToDelete {
+                        deletePrompt(prompt)
+                    }
+                    promptToDelete = nil
+                }
+                Button("Cancel", role: .cancel) {
+                    promptToDelete = nil
+                }
+            } message: {
+                if let prompt = promptToDelete {
+                    Text("Are you sure you want to delete \"\(prompt.title.isEmpty ? "Untitled" : prompt.title)\"? This cannot be undone.")
+                }
+            }
+            .onAppear {
+                if !hasCompletedOnboarding {
+                    showOnboarding = true
+                }
+            }
+            .sheet(isPresented: $showOnboarding) {
+                OnboardingView(isPresented: $showOnboarding)
+            }
+            .onChange(of: showOnboarding) { _, newValue in
+                if !newValue {
+                    hasCompletedOnboarding = true
+                }
+            }
+            .sheet(isPresented: $showingAnalytics) {
+                AnalyticsView()
+            }
+            .sheet(isPresented: $showCreationLaunchpad) {
+                PromptLaunchpadView()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .createNewPrompt)) { _ in
+                showCreationLaunchpad = true
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .promptCreated)) { notification in
+                guard let promptID = notification.userInfo?["promptID"] as? UUID else { return }
+                selectedPrompt = prompts.first(where: { $0.id == promptID })
+            }
+            // Auto-collapse handler
+            .onChange(of: autoCollapse.shouldCollapse) { _, shouldCollapse in
+                if shouldCollapse {
+                    withAnimation(.spring(response: AppConstants.Panels.Animation.slideDuration, dampingFraction: AppConstants.Panels.Animation.dampingFraction)) {
+                        showSidebar = false
+                        showInspector = false
+                    }
+                    autoCollapse.didCollapse()
+                }
+            }
+            // Escape key collapses all panels
+            .onKeyPress(.escape) {
+                if showSidebar || showInspector {
+                    withAnimation {
+                        showSidebar = false
+                        showInspector = false
+                    }
+                    return .handled
+                }
+                return .ignored
+            }
+    }
+
+    // MARK: - Main Content
+
+    private var mainContent: some View {
+        VStack(spacing: 0) {
+            // Top toolbar
+            mainToolbar
+
+            Divider()
+
+            // Content area with collapsible panels
+            HStack(spacing: 0) {
+                // Sidebar panel (leading)
+                if showSidebar {
+                    SidebarView(
+                        selectedPrompt: $selectedPrompt,
+                        selectedFilter: $selectedFilter,
+                        searchText: $searchText,
+                        onDelete: { promptToDelete = $0 },
+                        onToggleFavorite: { service.toggleFavorite($0) },
+                        onToggleArchive: { service.toggleArchive($0) },
+                        onCopy: { prompt in
+                            service.copyToClipboard(prompt)
+                            withAnimation { showCopyToast = true }
+                        }
+                    )
+                    .frame(width: AppConstants.Panels.sidebarWidth)
+                    .transition(.move(edge: .leading).combined(with: .opacity))
+                    .autoCollapseWarning(autoCollapse)
+                    .protectFromAutoCollapse(autoCollapse, panel: .sidebar)
+
+                    Divider()
+                }
+
+                // Center content (detail view)
+                detailContent
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+                // Inspector panel (trailing)
+                if showInspector, let prompt = selectedPrompt {
+                    Divider()
+
+                    InspectorView(prompt: prompt)
+                        .frame(width: AppConstants.Panels.inspectorWidth)
+                        .transition(.move(edge: .trailing).combined(with: .opacity))
+                        .autoCollapseWarning(autoCollapse)
+                        .protectFromAutoCollapse(autoCollapse, panel: .inspector)
+                }
+            }
+            .animation(.spring(response: AppConstants.Panels.Animation.slideDuration, dampingFraction: AppConstants.Panels.Animation.dampingFraction), value: showSidebar)
+            .animation(.spring(response: AppConstants.Panels.Animation.slideDuration, dampingFraction: AppConstants.Panels.Animation.dampingFraction), value: showInspector)
         }
-        .navigationSplitViewStyle(.balanced)
-        .toolbar {
-            ToolbarItemGroup(placement: .primaryAction) {
+    }
+
+    // MARK: - Toolbar
+
+    private var mainToolbar: some View {
+        HStack(spacing: 12) {
+            // Sidebar toggle (left)
+            Button(action: {
+                withAnimation {
+                    showSidebar.toggle()
+                    if showSidebar { autoCollapse.userDidExpandPanel() }
+                }
+            }) {
+                Image(systemName: "sidebar.left")
+                    .font(.body)
+                    .foregroundStyle(showSidebar ? .primary : .secondary)
+            }
+            .buttonStyle(.plain)
+            .keyboardShortcut("1", modifiers: .command)
+            .help("Toggle Sidebar (⌘1)")
+
+            Divider()
+                .frame(height: 16)
+
+            // Title / Breadcrumb
+            if let prompt = selectedPrompt {
+                Text(prompt.title.isEmpty ? "Untitled" : prompt.title)
+                    .font(.headline)
+                    .lineLimit(1)
+            } else {
+                Text("No Prompt Selected")
+                    .font(.headline)
+                    .foregroundStyle(.secondary)
+            }
+
+            Spacer()
+
+            // Action buttons
+            if selectedPrompt != nil {
                 Button(action: copySelectedPrompt) {
                     Image(systemName: "doc.on.doc")
                 }
+                .buttonStyle(.plain)
                 .keyboardShortcut("c", modifiers: .command)
-                .disabled(selectedPrompt == nil)
                 .help("Copy Prompt Content (⌘C)")
 
                 Button(action: editSelectedPrompt) {
                     Image(systemName: "pencil")
                 }
+                .buttonStyle(.plain)
                 .keyboardShortcut("e", modifiers: .command)
-                .disabled(selectedPrompt == nil)
                 .help("Edit Prompt (⌘E)")
+            }
 
-                Button(action: { showCreationLaunchpad = true }) {
-                    Image(systemName: "plus")
-                }
-                .help("New Prompt (⌘N)")
+            Button(action: { showCreationLaunchpad = true }) {
+                Image(systemName: "plus")
+            }
+            .buttonStyle(.plain)
+            .keyboardShortcut("n", modifiers: .command)
+            .help("New Prompt (⌘N)")
 
-                if ProStatusManager.shared.isProUnlocked {
-                    Button {
-                        showingAnalytics = true
-                    } label: {
-                        Image(systemName: "chart.bar")
-                    }
-                    .help("Analytics")
+            if ProStatusManager.shared.isProUnlocked {
+                Button {
+                    showingAnalytics = true
+                } label: {
+                    Image(systemName: "chart.bar")
                 }
+                .buttonStyle(.plain)
+                .help("Analytics")
             }
-        }
-        .copyToast(isShowing: $showCopyToast)
-        .frame(minWidth: 700, minHeight: 500)
-        .onDeleteCommand {
-            if let prompt = selectedPrompt {
-                promptToDelete = prompt
-            }
-        }
-        .alert("Delete Prompt?", isPresented: Binding(
-            get: { promptToDelete != nil },
-            set: { if !$0 { promptToDelete = nil } }
-        )) {
-            Button("Delete", role: .destructive) {
-                if let prompt = promptToDelete {
-                    deletePrompt(prompt)
+
+            Divider()
+                .frame(height: 16)
+
+            // Inspector toggle (right)
+            Button(action: {
+                withAnimation {
+                    showInspector.toggle()
+                    if showInspector { autoCollapse.userDidExpandPanel() }
                 }
-                promptToDelete = nil
+            }) {
+                Image(systemName: "info.circle")
+                    .font(.body)
+                    .foregroundStyle(showInspector ? .primary : .secondary)
             }
-            Button("Cancel", role: .cancel) {
-                promptToDelete = nil
-            }
-        } message: {
-            if let prompt = promptToDelete {
-                Text("Are you sure you want to delete \"\(prompt.title.isEmpty ? "Untitled" : prompt.title)\"? This cannot be undone.")
-            }
+            .buttonStyle(.plain)
+            .keyboardShortcut("i", modifiers: .command)
+            .help("Toggle Inspector (⌘I)")
+            .disabled(selectedPrompt == nil)
         }
-        .onAppear {
-            if !hasCompletedOnboarding {
-                showOnboarding = true
-            }
-        }
-        .sheet(isPresented: $showOnboarding) {
-            OnboardingView(isPresented: $showOnboarding)
-        }
-        .onChange(of: showOnboarding) { _, newValue in
-            if !newValue {
-                hasCompletedOnboarding = true
-            }
-        }
-        .sheet(isPresented: $showingAnalytics) {
-            AnalyticsView()
-        }
-        .sheet(isPresented: $showCreationLaunchpad) {
-            PromptLaunchpadView()
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .createNewPrompt)) { _ in
-            showCreationLaunchpad = true
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .promptCreated)) { notification in
-            guard let promptID = notification.userInfo?["promptID"] as? UUID else { return }
-            selectedPrompt = prompts.first(where: { $0.id == promptID })
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .background(.regularMaterial)
+    }
+
+    // MARK: - Detail Content
+
+    @ViewBuilder
+    private var detailContent: some View {
+        if let prompt = selectedPrompt {
+            PromptDetailView(
+                prompt: prompt,
+                showInspector: $showInspector,
+                autoCollapseManager: autoCollapse
+            )
+            .id(prompt.id)
+        } else {
+            EmptyDetailView()
         }
     }
+
+    // MARK: - Actions
 
     private func deletePrompt(_ prompt: Prompt) {
         if selectedPrompt?.id == prompt.id {
