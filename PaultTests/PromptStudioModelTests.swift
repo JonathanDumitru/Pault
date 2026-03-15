@@ -563,4 +563,195 @@ struct PromptStudioModelTests {
         let status = model.placeholderStatus(for: addedBlock.id)
         #expect(status == .partial)
     }
+
+    // MARK: - Modifier Compilation Effect
+
+    @Test func addModifier_changesCompiledOutput() throws {
+        let context = try makeContext()
+        let prompt = makePrompt(in: context)
+        let model = PromptStudioModel(prompt: prompt)
+
+        let block = Block(title: "Task", category: .instructions, valueType: .string, snippet: "DO: {{task}}")
+        model.addToCanvas(block)
+        let blockID = model.canvasBlocks[0].id
+        model.setBlockInput(blockID: blockID, placeholder: "task", value: "write code")
+        model.compileNow()
+
+        let beforeModifier = model.compiledTemplate
+
+        guard let formalModifier = model.modifierLibrary[.tone]?.first(where: { $0.name == "+Formal" }) else {
+            Issue.record("+Formal modifier not found")
+            return
+        }
+
+        model.addModifierToBlock(blockID: blockID, modifier: formalModifier)
+
+        // Clear cache so modifiers are included in recompilation
+        CompilationCache.shared.clear()
+        model.compileNow()
+
+        #expect(model.compiledTemplate != beforeModifier)
+        #expect(model.compiledTemplate.contains("[TONE: formal]"))
+    }
+
+    // MARK: - Multiple Modifier Stacking
+
+    @Test func multipleModifiers_stackOnSameBlock() throws {
+        let context = try makeContext()
+        let prompt = makePrompt(in: context)
+        let model = PromptStudioModel(prompt: prompt)
+
+        let block = Block(title: "Task", category: .instructions, valueType: .string, snippet: "DO: test")
+        model.addToCanvas(block)
+        let blockID = model.canvasBlocks[0].id
+
+        guard let formalMod = model.modifierLibrary[.tone]?.first(where: { $0.name == "+Formal" }),
+              let conciseMod = model.modifierLibrary[.format]?.first(where: { $0.name == "+Concise" }) else {
+            Issue.record("Expected +Formal and +Concise modifiers")
+            return
+        }
+
+        model.addModifierToBlock(blockID: blockID, modifier: formalMod)
+        model.addModifierToBlock(blockID: blockID, modifier: conciseMod)
+
+        // Clear cache so modifiers are included in recompilation
+        CompilationCache.shared.clear()
+        model.compileNow()
+
+        let attached = model.modifiersForBlock(blockID)
+        #expect(attached.count == 2)
+        #expect(model.compiledTemplate.contains("[TONE: formal]"))
+        #expect(model.compiledTemplate.contains("[VERBOSITY: concise"))
+    }
+
+    // MARK: - Recompile After Move
+
+    @Test func moveOnCanvas_updatesCompiledOutput() throws {
+        let context = try makeContext()
+        let prompt = makePrompt(in: context)
+        let model = PromptStudioModel(prompt: prompt)
+
+        let block1 = Block(title: "A", category: .instructions, valueType: .string, snippet: "FIRST")
+        let block2 = Block(title: "B", category: .instructions, valueType: .string, snippet: "SECOND")
+        model.addToCanvas(block1)
+        model.addToCanvas(block2)
+        model.compileNow()
+
+        // Before move: FIRST\n\nSECOND
+        #expect(model.compiledTemplate.contains("FIRST\n\nSECOND"))
+
+        // Move block2 before block1
+        model.moveOnCanvas(from: IndexSet(integer: 1), to: 0)
+
+        // After move: SECOND\n\nFIRST
+        #expect(model.compiledTemplate.contains("SECOND\n\nFIRST"))
+    }
+
+    // MARK: - Save/Restore Round-Trip
+
+    @Test func saveAndRestore_roundTrip_preservesCanvas() throws {
+        let context = try makeContext()
+        let prompt = makePrompt(in: context)
+
+        // Create model, add blocks, fill inputs, save
+        let model1 = PromptStudioModel(prompt: prompt)
+        let roleBlock = Block(title: "Role", category: .rolePerspective, valueType: .string, snippet: "ROLE: {{role}}")
+        let taskBlock = Block(title: "Task", category: .instructions, valueType: .string, snippet: "DO: {{task}}")
+        model1.addToCanvas(roleBlock)
+        model1.addToCanvas(taskBlock)
+
+        let b1 = model1.canvasBlocks[0]
+        let b2 = model1.canvasBlocks[1]
+        model1.setBlockInput(blockID: b1.id, placeholder: "role", value: "engineer")
+        model1.setBlockInput(blockID: b2.id, placeholder: "task", value: "build system")
+        model1.compileNow()
+
+        // Create a new model from the same prompt (simulates reload)
+        let model2 = PromptStudioModel(prompt: prompt)
+
+        #expect(model2.canvasBlocks.count == 2)
+        #expect(model2.canvasBlocks[0].title == "Role")
+        #expect(model2.canvasBlocks[1].title == "Task")
+        #expect(model2.compiledTemplate.contains("ROLE: engineer"))
+        #expect(model2.compiledTemplate.contains("DO: build system"))
+    }
+
+    // MARK: - Empty Canvas Compilation
+
+    @Test func emptyCanvasCompilation_producesEmptyString() throws {
+        let context = try makeContext()
+        let prompt = makePrompt(in: context)
+        let model = PromptStudioModel(prompt: prompt)
+
+        // Empty canvas should produce empty compiled template
+        #expect(model.compiledTemplate == "")
+        #expect(model.rawTemplate == "")
+    }
+
+    // MARK: - Block With No Placeholders
+
+    @Test func blockWithNoPlaceholders_addsNoInputs() throws {
+        let context = try makeContext()
+        let prompt = makePrompt(in: context)
+        let model = PromptStudioModel(prompt: prompt)
+
+        // Add a static block with no {{placeholders}}
+        let staticBlock = Block(title: "Static", category: .instructions, valueType: .string, snippet: "Just a static snippet with no variables")
+        model.addToCanvas(staticBlock)
+
+        let addedID = model.canvasBlocks[0].id
+        let inputs = model.blockInputs[addedID]
+
+        // No inputs should be created since there are no placeholders
+        #expect(inputs == nil)
+        // But the compiled output should contain the static snippet
+        #expect(model.compiledTemplate.contains("Just a static snippet"))
+    }
+
+    // MARK: - setBlockInput for Non-Existent Block
+
+    @Test func setBlockInput_forNonExistentBlock_doesNotCrash() throws {
+        let context = try makeContext()
+        let prompt = makePrompt(in: context)
+        let model = PromptStudioModel(prompt: prompt)
+
+        let nonExistentID = UUID()
+
+        // This should not crash
+        model.setBlockInput(blockID: nonExistentID, placeholder: "foo", value: "bar")
+
+        // The input should be stored but won't affect compilation
+        #expect(model.blockInputs[nonExistentID]?["foo"] == "bar")
+    }
+
+    // MARK: - Placeholders with Duplicates
+
+    @Test func placeholders_includesDuplicateOccurrences() {
+        // placeholders() returns all matches including duplicates
+        let placeholders = PromptStudioModel.placeholders(in: "{{name}} and {{name}} at {{place}}")
+        #expect(placeholders.count == 3)
+        #expect(placeholders.filter { $0 == "name" }.count == 2)
+        #expect(placeholders.contains("place"))
+    }
+
+    // MARK: - addToCanvas from Library Block
+
+    @Test func addToCanvas_fromLibraryBlock_createsIndependentCopy() throws {
+        let context = try makeContext()
+        let prompt = makePrompt(in: context)
+        let model = PromptStudioModel(prompt: prompt)
+
+        guard let roleBlock = model.library[.rolePerspective]?.first(where: { $0.title == "Role" }) else {
+            Issue.record("Role block not found in library")
+            return
+        }
+
+        model.addToCanvas(roleBlock)
+        model.addToCanvas(roleBlock)
+
+        // Two independent copies with different IDs
+        #expect(model.canvasBlocks.count == 2)
+        #expect(model.canvasBlocks[0].id != model.canvasBlocks[1].id)
+        #expect(model.canvasBlocks[0].title == model.canvasBlocks[1].title)
+    }
 }

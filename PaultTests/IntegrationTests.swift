@@ -142,4 +142,48 @@ struct IntegrationTests {
         #expect(roleVar != nil)
         #expect(roleVar?.defaultValue == "")
     }
+
+    // MARK: - Block Composition -> Compiled Preview Pipeline
+
+    @Test func blockComposition_compilesToPreview() throws {
+        let context = try makeContext()
+        let prompt = Prompt(title: "Integration", content: "")
+        context.insert(prompt)
+
+        let model = PromptStudioModel(prompt: prompt)
+
+        // Add blocks to canvas
+        let roleBlock = Block(title: "Role", category: .rolePerspective, valueType: .string, snippet: "ROLE: {{role}}")
+        let taskBlock = Block(title: "Task", category: .instructions, valueType: .string, snippet: "TASK: {{task}}")
+        model.addToCanvas(roleBlock)
+        model.addToCanvas(taskBlock)
+
+        // Fill placeholders
+        let b1 = model.canvasBlocks[0]
+        let b2 = model.canvasBlocks[1]
+        model.setBlockInput(blockID: b1.id, placeholder: "role", value: "engineer")
+        model.setBlockInput(blockID: b2.id, placeholder: "task", value: "review code")
+
+        // Compile and verify full pipeline
+        model.compileNow()
+
+        // Verify compiled output contains resolved values
+        #expect(model.compiledTemplate.contains("ROLE: engineer"))
+        #expect(model.compiledTemplate.contains("TASK: review code"))
+
+        // Verify raw template preserves placeholder syntax
+        #expect(model.rawTemplate.contains("{{role}}"))
+        #expect(model.rawTemplate.contains("{{task}}"))
+
+        // Verify saved to prompt
+        #expect(prompt.content.contains("ROLE: engineer"))
+        #expect(prompt.content.contains("TASK: review code"))
+
+        // Verify block composition snapshot was persisted
+        #expect(prompt.blockComposition != nil)
+        #expect(prompt.blockComposition?.blocks.count == 2)
+
+        // Verify sync state
+        #expect(prompt.blockSyncState == .synced)
+    }
 }
