@@ -136,10 +136,5 @@ struct PaultApp: App {
         // Seed built-in prompt templates on first launch
         let seedContext = ModelContext(sharedModelContainer)
         TemplateSeedService.seed(into: seedContext)
-
-        // One-time migration: "paste" action removed in 2.5B — fall back to "copy"
-        if UserDefaults.standard.string(forKey: "defaultAction") == "paste" {
-            UserDefaults.standard.set("copy", forKey: "defaultAction")
-        }
     }
 }
