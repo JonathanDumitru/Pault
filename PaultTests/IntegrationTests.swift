@@ -12,11 +12,7 @@ import AppKit
 struct IntegrationTests {
 
     private func makeContext() throws -> ModelContext {
-        let container = try ModelContainer(
-            for: Prompt.self, TemplateVariable.self, Pault.Tag.self, Attachment.self,
-            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
-        )
-        return ModelContext(container)
+        try TestHelpers.makeTestModelContext()
     }
 
     // MARK: - Template Variables -> Copy

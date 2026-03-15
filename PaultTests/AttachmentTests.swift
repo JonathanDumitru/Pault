@@ -30,12 +30,8 @@ struct AttachmentTests {
         #expect(prompt.attachments.isEmpty)
     }
 
-    @Test func cascadeDeleteRemovesAttachments() async throws {
-        let container = try ModelContainer(
-            for: Prompt.self, FileAttachment.self, Tag.self, TemplateVariable.self,
-            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
-        )
-        let context = ModelContext(container)
+    @Test @MainActor func cascadeDeleteRemovesAttachments() async throws {
+        let context = try TestHelpers.makeTestModelContext()
 
         let prompt = Prompt(title: "Test", content: "Content")
         context.insert(prompt)

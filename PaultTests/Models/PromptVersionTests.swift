@@ -4,22 +4,12 @@ import SwiftData
 @testable import Pault
 
 struct PromptVersionTests {
+    @MainActor
     private func makeContainer() throws -> ModelContainer {
-        let schema = Schema([
-            Prompt.self,
-            TemplateVariable.self,
-            Pault.Tag.self,
-            Attachment.self,
-            CopyEvent.self,
-            PromptRun.self,
-            PromptVersion.self,
-        ])
-        return try ModelContainer(for: schema, configurations: [
-            ModelConfiguration(isStoredInMemoryOnly: true)
-        ])
+        try TestHelpers.makeTestModelContainer()
     }
 
-    @Test func init_setsAllFields() throws {
+    @Test @MainActor func init_setsAllFields() throws {
         let container = try makeContainer()
         let ctx = ModelContext(container)
         let fixedID = UUID()
@@ -57,7 +47,7 @@ struct PromptVersionTests {
         #expect(version.savedAt <= after)
     }
 
-    @Test func multipleVersions_canBeInserted() throws {
+    @Test @MainActor func multipleVersions_canBeInserted() throws {
         let container = try makeContainer()
         let ctx = ModelContext(container)
 
@@ -106,7 +96,7 @@ struct PromptVersionTests {
 
     // MARK: - New PromptVersion fields
 
-    @Test func promptVersion_newFieldsHaveDefaults() throws {
+    @Test @MainActor func promptVersion_newFieldsHaveDefaults() throws {
         let container = try makeContainer()
         let ctx = ModelContext(container)
         let version = PromptVersion(title: "T", content: "C")

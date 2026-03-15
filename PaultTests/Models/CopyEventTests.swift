@@ -4,16 +4,13 @@ import SwiftData
 @testable import Pault
 
 struct CopyEventTests {
-    private func makeContainer() throws -> ModelContainer {
-        let schema = Schema([CopyEvent.self])
-        return try ModelContainer(for: schema, configurations: [
-            ModelConfiguration(isStoredInMemoryOnly: true)
-        ])
+    @MainActor
+    private func makeContext() throws -> ModelContext {
+        try TestHelpers.makeTestModelContext()
     }
 
-    @Test func init_setsPromptID() throws {
-        let container = try makeContainer()
-        let ctx = ModelContext(container)
+    @Test @MainActor func init_setsPromptID() throws {
+        let ctx = try makeContext()
         let id = UUID()
         let before = Date()
         let event = CopyEvent(promptID: id)

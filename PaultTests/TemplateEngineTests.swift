@@ -124,9 +124,8 @@ struct TemplateEngineTests {
 
     // MARK: - syncVariables
 
-    @Test func syncCreatesNewVariables() async throws {
-        let container = try ModelContainer(for: Prompt.self, TemplateVariable.self, Tag.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
-        let context = ModelContext(container)
+    @Test @MainActor func syncCreatesNewVariables() async throws {
+        let context = try TestHelpers.makeTestModelContext()
 
         let prompt = Prompt(title: "Test", content: "Hello {{name}} from {{company}}")
         context.insert(prompt)
@@ -141,9 +140,8 @@ struct TemplateEngineTests {
         #expect(sorted[1].sortOrder == 1)
     }
 
-    @Test func syncRemovesStaleVariables() async throws {
-        let container = try ModelContainer(for: Prompt.self, TemplateVariable.self, Tag.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
-        let context = ModelContext(container)
+    @Test @MainActor func syncRemovesStaleVariables() async throws {
+        let context = try TestHelpers.makeTestModelContext()
 
         let prompt = Prompt(title: "Test", content: "{{name}} and {{company}}")
         context.insert(prompt)
@@ -158,9 +156,8 @@ struct TemplateEngineTests {
         #expect(prompt.templateVariables.first?.name == "name")
     }
 
-    @Test func syncPreservesExistingValues() async throws {
-        let container = try ModelContainer(for: Prompt.self, TemplateVariable.self, Tag.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
-        let context = ModelContext(container)
+    @Test @MainActor func syncPreservesExistingValues() async throws {
+        let context = try TestHelpers.makeTestModelContext()
 
         let prompt = Prompt(title: "Test", content: "{{name}} from {{company}}")
         context.insert(prompt)
@@ -274,9 +271,8 @@ struct TemplateEngineTests {
 
     // MARK: - syncVariables (additional)
 
-    @Test func syncHandlesNoVariables() async throws {
-        let container = try ModelContainer(for: Prompt.self, TemplateVariable.self, Tag.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
-        let context = ModelContext(container)
+    @Test @MainActor func syncHandlesNoVariables() async throws {
+        let context = try TestHelpers.makeTestModelContext()
 
         let prompt = Prompt(title: "Test", content: "No variables here")
         context.insert(prompt)
@@ -285,9 +281,8 @@ struct TemplateEngineTests {
         #expect(prompt.templateVariables.isEmpty)
     }
 
-    @Test func syncCreatesPerOccurrenceVariables() async throws {
-        let container = try ModelContainer(for: Prompt.self, TemplateVariable.self, Tag.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
-        let context = ModelContext(container)
+    @Test @MainActor func syncCreatesPerOccurrenceVariables() async throws {
+        let context = try TestHelpers.makeTestModelContext()
 
         let prompt = Prompt(title: "Test", content: "{{name}} met {{name}}")
         context.insert(prompt)
@@ -303,9 +298,8 @@ struct TemplateEngineTests {
         #expect(sorted[1].sortOrder == 1)
     }
 
-    @Test func syncPreservesPerOccurrenceValues() async throws {
-        let container = try ModelContainer(for: Prompt.self, TemplateVariable.self, Tag.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
-        let context = ModelContext(container)
+    @Test @MainActor func syncPreservesPerOccurrenceValues() async throws {
+        let context = try TestHelpers.makeTestModelContext()
 
         let prompt = Prompt(title: "Test", content: "{{name}} met {{name}}")
         context.insert(prompt)
@@ -325,9 +319,8 @@ struct TemplateEngineTests {
         #expect(reSorted[1].defaultValue == "Bob")
     }
 
-    @Test func syncHandlesOccurrenceCountChange() async throws {
-        let container = try ModelContainer(for: Prompt.self, TemplateVariable.self, Tag.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
-        let context = ModelContext(container)
+    @Test @MainActor func syncHandlesOccurrenceCountChange() async throws {
+        let context = try TestHelpers.makeTestModelContext()
 
         let prompt = Prompt(title: "Test", content: "{{name}} met {{name}}")
         context.insert(prompt)
@@ -345,9 +338,8 @@ struct TemplateEngineTests {
         #expect(sorted[2].defaultValue == "")  // New occurrence starts empty
     }
 
-    @Test func syncRemovesDuplicateOccurrenceWhenReduced() async throws {
-        let container = try ModelContainer(for: Prompt.self, TemplateVariable.self, Tag.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
-        let context = ModelContext(container)
+    @Test @MainActor func syncRemovesDuplicateOccurrenceWhenReduced() async throws {
+        let context = try TestHelpers.makeTestModelContext()
 
         let prompt = Prompt(title: "Test", content: "{{name}} met {{name}}")
         context.insert(prompt)

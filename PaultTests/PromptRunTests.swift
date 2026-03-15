@@ -7,12 +7,7 @@ import AppKit
 struct PromptRunTests {
 
     private func makeContext() throws -> ModelContext {
-        let container = try ModelContainer(
-            for: Prompt.self, TemplateVariable.self, Pault.Tag.self, Attachment.self,
-            PromptRun.self,
-            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
-        )
-        return ModelContext(container)
+        try TestHelpers.makeTestModelContext()
     }
 
     @Test func promptRunPersistsWithRequiredFields() throws {

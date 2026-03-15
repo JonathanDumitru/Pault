@@ -17,12 +17,7 @@ struct BlockCompositionSnapshotTests {
     // MARK: - Helpers
 
     private func makeContext() throws -> ModelContext {
-        let container = try ModelContainer(
-            for: Prompt.self, TemplateVariable.self, Pault.Tag.self, Attachment.self,
-                CopyEvent.self, PromptRun.self, PromptVersion.self,
-            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
-        )
-        return ModelContext(container)
+        try TestHelpers.makeTestModelContext()
     }
 
     // MARK: - Round-trip encode/decode

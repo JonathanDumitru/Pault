@@ -16,12 +16,7 @@ struct PromptStudioModelTests {
     // MARK: - Helpers
 
     private func makeContext() throws -> ModelContext {
-        let container = try ModelContainer(
-            for: Prompt.self, TemplateVariable.self, Pault.Tag.self, Attachment.self,
-                CopyEvent.self, PromptRun.self, PromptVersion.self,
-            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
-        )
-        return ModelContext(container)
+        try TestHelpers.makeTestModelContext()
     }
 
     private func makePrompt(in context: ModelContext, title: String = "Test", content: String = "") -> Prompt {

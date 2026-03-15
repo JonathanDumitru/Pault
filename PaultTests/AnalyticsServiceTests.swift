@@ -11,12 +11,7 @@ import SwiftData
 @MainActor
 struct AnalyticsServiceTests {
     private func makeContext() throws -> ModelContext {
-        let schema = Schema([Prompt.self, Tag.self, TemplateVariable.self,
-                             Attachment.self, PromptRun.self, CopyEvent.self])
-        let container = try ModelContainer(for: schema, configurations: [
-            ModelConfiguration(isStoredInMemoryOnly: true)
-        ])
-        return ModelContext(container)
+        try TestHelpers.makeTestModelContext()
     }
 
     @Test func copyCount_returnsCorrectCount() throws {

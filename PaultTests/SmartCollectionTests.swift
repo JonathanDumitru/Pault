@@ -12,11 +12,7 @@ import Foundation
 struct SmartCollectionTests {
 
     private func makeContext() throws -> ModelContext {
-        let container = try ModelContainer(
-            for: SmartCollection.self,
-            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
-        )
-        return ModelContext(container)
+        try TestHelpers.makeTestModelContext()
     }
 
     @Test func savedFilter_storesFilterJSON() throws {

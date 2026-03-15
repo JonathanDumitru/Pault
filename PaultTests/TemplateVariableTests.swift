@@ -33,8 +33,7 @@ struct TemplateVariableTests {
     }
 
     @Test func cascadeDeleteRemovesVariables() async throws {
-        let container = try ModelContainer(for: Prompt.self, TemplateVariable.self, Tag.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
-        let context = ModelContext(container)
+        let context = try TestHelpers.makeTestModelContext()
 
         let prompt = Prompt(title: "Test", content: "{{name}}")
         context.insert(prompt)

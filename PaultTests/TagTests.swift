@@ -5,7 +5,6 @@
 
 import Foundation
 import Testing
-import SwiftData
 @testable import Pault
 
 struct TagTests {

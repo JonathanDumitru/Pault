@@ -11,11 +11,7 @@ import SwiftData
 struct TemplateSeedServiceTests {
 
     private func makeContext() throws -> ModelContext {
-        let container = try ModelContainer(
-            for: PromptTemplate.self,
-            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
-        )
-        return ModelContext(container)
+        try TestHelpers.makeTestModelContext()
     }
 
     @Test func seedCreatesBuiltInTemplates() throws {
