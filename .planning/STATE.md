@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: context-gathered
-stopped_at: Phase 2 CONTEXT.md written -- ready for /gsd:plan-phase
-last_updated: "2026-03-25T12:00:00.000Z"
+status: "CONTEXT.md written -- ready for /gsd:plan-phase"
+stopped_at: Completed 02-01-PLAN.md (UndoManager integration, CompilationCache fix, AppConstants)
+last_updated: "2026-03-26T21:37:09.176Z"
 last_activity: 2026-03-25 -- Phase 2 context captured (21 areas, ~135 decisions)
 progress:
   total_phases: 8
   completed_phases: 1
-  total_plans: 2
-  completed_plans: 2
+  total_plans: 5
+  completed_plans: 3
   percent: 10
 ---
 
@@ -50,6 +50,7 @@ Progress: [█░░░░░░░░░] 10%
 - Trend: Stable
 
 *Updated after each plan completion*
+| Phase 02-block-editor-polish P01 | 90 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -65,6 +66,9 @@ Recent decisions affecting current work:
 - Compilation cache does not include modifiers in cache key -- tests must clear cache before verifying modifier effects (deferred fix)
 - PromptStudioModel.placeholders() returns duplicates (not unique) -- tests adjusted to match actual behavior
 - [Phase 01]: C617.1 reason code sufficient for FileTimestamp API (app-container access only)
+- [Phase 02]: UndoManager groupsByEvent=false requires explicit beginUndoGrouping/endUndoGrouping on all public structural operations
+- [Phase 02]: UndoRedoTests use XCTestCase async + MainActor.run to avoid macOS 26 Swift Concurrency + ObjC crash with @MainActor + UndoManager
+- [Phase 02]: NSApp.keyWindow.undoManager injection pattern for BlockEditorView (not @Environment) to avoid SwiftUI crash on macOS 26
 
 ### Pending Todos
 
@@ -78,6 +82,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-25T12:00:00.000Z
-Stopped at: Phase 2 CONTEXT.md written -- ready for /gsd:plan-phase
+Last session: 2026-03-26T21:37:09.173Z
+Stopped at: Completed 02-01-PLAN.md (UndoManager integration, CompilationCache fix, AppConstants)
 Resume file: None

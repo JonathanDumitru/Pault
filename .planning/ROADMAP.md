@@ -167,7 +167,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Compliance & Test Infrastructure | 2/2 | Complete   | 2026-03-15 |
-| 2. Block Editor Polish | 0/3 | Not started | - |
+| 2. Block Editor Polish | 1/3 | In Progress|  |
 | 3. StoreKit 2 Paywall | 0/3 | Not started | - |
 | 4. Pro Features -- AI Assist & API Runner | 0/3 | Not started | - |
 | 5. Pro Features -- Versioning, Analytics & Smart Collections | 0/3 | Not started | - |
