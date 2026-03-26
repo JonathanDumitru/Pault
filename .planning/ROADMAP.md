@@ -49,12 +49,13 @@ Plans:
   3. Block expansion/collapse animations are smooth with no layout jumps
   4. VoiceOver can navigate all canvas elements; every block editor operation is achievable via keyboard alone
   5. Canvas remains responsive with 20+ blocks; compiled preview updates within 300ms of input change
-**Plans**: 3 plans
+**Plans**: 4 plans
 
 Plans:
 - [ ] 02-01-PLAN.md -- Undo/redo system, compilation cache fix, and design constants
 - [ ] 02-02-PLAN.md -- Canvas UX polish: drag-drop position indicator, keyboard shortcuts, focus management
 - [ ] 02-03-PLAN.md -- Accessibility (VoiceOver, Reduce Motion, high contrast) and performance benchmarks
+- [ ] 02-04-PLAN.md -- Gap closure: first-input focus after slash palette insert
 
 ### Phase 3: StoreKit 2 Paywall
 **Goal**: Users can purchase, restore, and manage an annual Pro subscription with a compliant, polished paywall experience
@@ -167,7 +168,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Compliance & Test Infrastructure | 2/2 | Complete   | 2026-03-15 |
-| 2. Block Editor Polish | 2/3 | In Progress|  |
+| 2. Block Editor Polish | 3/4 | In Progress|  |
 | 3. StoreKit 2 Paywall | 0/3 | Not started | - |
 | 4. Pro Features -- AI Assist & API Runner | 0/3 | Not started | - |
 | 5. Pro Features -- Versioning, Analytics & Smart Collections | 0/3 | Not started | - |
