@@ -131,6 +131,11 @@ final class PromptStudioModel: ObservableObject {
     private let compilationDebounceDelay: TimeInterval = 0.3
     @Published var isCompiling: Bool = false
 
+    // MARK: - Undo / Redo
+
+    /// Injected from BlockEditorView via .onAppear. Weak to avoid retain cycles.
+    weak var undoManager: UndoManager?
+
     // MARK: - Dirty State
 
     @Published var isDirty: Bool = false
@@ -656,13 +661,77 @@ final class PromptStudioModel: ObservableObject {
             modifierInputs[newModifier.id] = defaults
         }
 
+        // Register undo: remove the newly added modifier
+        let addedModifierID = newModifier.id
+        let capturedModifier = newModifier
+        undoManager?.beginUndoGrouping()
+        undoManager?.registerUndo(withTarget: self) { target in
+            target.removeModifierFromBlock(blockID: blockID, modifierID: addedModifierID, capturedModifier: capturedModifier)
+        }
+        undoManager?.setActionName("Add Modifier")
+        undoManager?.endUndoGrouping()
+
         compileNow()
         markDirty()
     }
 
+    /// Remove a modifier, registering undo so it can be restored.
     func removeModifierFromBlock(blockID: UUID, modifierID: UUID) {
+        guard let modifier = blockModifiers[blockID]?.first(where: { $0.id == modifierID }) else { return }
+        let capturedModifier = modifier
+        let capturedInputs = modifierInputs[modifierID] ?? [:]
+
         blockModifiers[blockID]?.removeAll { $0.id == modifierID }
         modifierInputs.removeValue(forKey: modifierID)
+
+        undoManager?.beginUndoGrouping()
+        undoManager?.registerUndo(withTarget: self) { target in
+            target.restoreModifier(capturedModifier, inputs: capturedInputs, toBlock: blockID)
+        }
+        undoManager?.setActionName("Remove Modifier")
+        undoManager?.endUndoGrouping()
+
+        compileNow()
+        markDirty()
+    }
+
+    /// Internal overload used by undo of addModifierToBlock. Removes without registering
+    /// its own undo (the undo chain is managed by the caller).
+    private func removeModifierFromBlock(blockID: UUID, modifierID: UUID, capturedModifier: BlockModifier) {
+        let capturedInputs = modifierInputs[modifierID] ?? [:]
+        blockModifiers[blockID]?.removeAll { $0.id == modifierID }
+        modifierInputs.removeValue(forKey: modifierID)
+
+        // Register undo: restore the modifier (this becomes redo).
+        // No beginUndoGrouping here — called from undo callback, which manages its own group.
+        undoManager?.registerUndo(withTarget: self) { target in
+            target.restoreModifier(capturedModifier, inputs: capturedInputs, toBlock: blockID)
+        }
+        undoManager?.setActionName("Add Modifier")
+
+        compileNow()
+        markDirty()
+    }
+
+    /// Restore a previously removed modifier to a block (used by undo/redo).
+    private func restoreModifier(_ modifier: BlockModifier, inputs: [String: String], toBlock blockID: UUID) {
+        if blockModifiers[blockID] == nil {
+            blockModifiers[blockID] = []
+        }
+        blockModifiers[blockID]?.append(modifier)
+        if !inputs.isEmpty {
+            modifierInputs[modifier.id] = inputs
+        }
+
+        // Register undo: remove this restored modifier (becomes redo of remove).
+        // No explicit grouping — we're called from an undo callback which has its own group.
+        let modifierID = modifier.id
+        let capturedModifier = modifier
+        undoManager?.registerUndo(withTarget: self) { target in
+            target.removeModifierFromBlock(blockID: blockID, modifierID: modifierID, capturedModifier: capturedModifier)
+        }
+        undoManager?.setActionName("Remove Modifier")
+
         compileNow()
         markDirty()
     }
@@ -740,11 +809,86 @@ final class PromptStudioModel: ObservableObject {
             for name in placeholders { defaults[name] = "" }
             blockInputs[new.id] = defaults
         }
+
+        // Register undo: undo of add = remove by ID
+        let addedID = new.id
+        undoManager?.beginUndoGrouping()
+        undoManager?.registerUndo(withTarget: self) { target in
+            target.removeFromCanvas(byID: addedID)
+        }
+        undoManager?.setActionName("Add Block")
+        undoManager?.endUndoGrouping()
+
         compileNow()
         markDirty()
     }
 
+    /// Convenience remove-by-ID used by undo operations. Does NOT register its own undo (caller is responsible).
+    private func removeFromCanvasByIDNoUndo(_ id: UUID) {
+        guard let index = canvasBlocks.firstIndex(where: { $0.id == id }) else { return }
+        canvasBlocks.remove(at: index)
+        blockInputs.removeValue(forKey: id)
+        if let modifiers = blockModifiers[id] {
+            for modifier in modifiers {
+                modifierInputs.removeValue(forKey: modifier.id)
+            }
+        }
+        blockModifiers.removeValue(forKey: id)
+        if selectedCanvasBlockID == id { selectedCanvasBlockID = nil }
+        compileNow()
+        markDirty()
+    }
+
+    /// Remove a single block by ID, registering undo so the block can be restored.
+    func removeFromCanvas(byID id: UUID) {
+        guard let index = canvasBlocks.firstIndex(where: { $0.id == id }) else { return }
+        let snapshot = CanvasUndoSnapshot(
+            block: canvasBlocks[index],
+            index: index,
+            inputs: blockInputs[id] ?? [:],
+            modifiers: blockModifiers[id] ?? [],
+            modifierInputs: {
+                var result: [UUID: [String: String]] = [:]
+                for mod in (blockModifiers[id] ?? []) {
+                    result[mod.id] = modifierInputs[mod.id] ?? [:]
+                }
+                return result
+            }()
+        )
+
+        removeFromCanvasByIDNoUndo(id)
+
+        undoManager?.beginUndoGrouping()
+        undoManager?.registerUndo(withTarget: self) { target in
+            target.restoreFromSnapshot(snapshot)
+        }
+        undoManager?.setActionName("Remove Block")
+        undoManager?.endUndoGrouping()
+    }
+
     func removeFromCanvas(at offsets: IndexSet) {
+        // Capture snapshots before removal (sorted descending so indices stay valid)
+        let sortedOffsets = offsets.sorted().reversed()
+        var snapshots: [CanvasUndoSnapshot] = []
+        for index in sortedOffsets {
+            let block = canvasBlocks[index]
+            let id = block.id
+            let snapshot = CanvasUndoSnapshot(
+                block: block,
+                index: index,
+                inputs: blockInputs[id] ?? [:],
+                modifiers: blockModifiers[id] ?? [],
+                modifierInputs: {
+                    var result: [UUID: [String: String]] = [:]
+                    for mod in (blockModifiers[id] ?? []) {
+                        result[mod.id] = modifierInputs[mod.id] ?? [:]
+                    }
+                    return result
+                }()
+            )
+            snapshots.append(snapshot)
+        }
+
         let removed = offsets.map { canvasBlocks[$0].id }
         canvasBlocks.remove(atOffsets: offsets)
         for id in removed {
@@ -757,14 +901,137 @@ final class PromptStudioModel: ObservableObject {
             blockModifiers.removeValue(forKey: id)
         }
         if let sel = selectedCanvasBlockID, removed.contains(sel) { selectedCanvasBlockID = nil }
+
+        // Register undo: restore all removed blocks in original order
+        undoManager?.beginUndoGrouping()
+        undoManager?.registerUndo(withTarget: self) { target in
+            // Restore in ascending index order so each insertion is at the correct position
+            for snapshot in snapshots.sorted(by: { $0.index < $1.index }) {
+                target.restoreFromSnapshot(snapshot)
+            }
+        }
+        undoManager?.setActionName("Remove Block")
+        undoManager?.endUndoGrouping()
+
+        compileNow()
+        markDirty()
+    }
+
+    /// Restore a block from a CanvasUndoSnapshot, inserting at the original index.
+    /// Registers undo so this restore itself can be undone (becomes redo).
+    private func restoreFromSnapshot(_ snapshot: CanvasUndoSnapshot) {
+        let insertIndex = min(snapshot.index, canvasBlocks.count)
+        canvasBlocks.insert(snapshot.block, at: insertIndex)
+        blockInputs[snapshot.block.id] = snapshot.inputs
+        if !snapshot.modifiers.isEmpty {
+            blockModifiers[snapshot.block.id] = snapshot.modifiers
+        }
+        for (modID, inputs) in snapshot.modifierInputs {
+            modifierInputs[modID] = inputs
+        }
+
+        // Register undo for this restore (which becomes redo when the user presses redo).
+        // No explicit grouping here — we're called from an undo callback which has its own group.
+        let restoredID = snapshot.block.id
+        undoManager?.registerUndo(withTarget: self) { target in
+            target.removeFromCanvas(byID: restoredID)
+        }
+        undoManager?.setActionName("Remove Block")
+
         compileNow()
         markDirty()
     }
 
     func moveOnCanvas(from source: IndexSet, to destination: Int) {
+        // Capture current order for undo
+        let sourceIndices = Array(source)
         canvasBlocks.move(fromOffsets: source, toOffset: destination)
+
+        // Register undo: compute inverse move
+        // After moving `source` to `destination`, to undo we need to move the items back.
+        // The moved items end up at the insertion point adjusted by how many items moved before it.
+        let adjustedDestination: Int
+        let movedCount = sourceIndices.count
+        let actualDest: Int
+        if sourceIndices.allSatisfy({ $0 < destination }) {
+            // All moved items were before destination, so they shift destination down
+            actualDest = destination - movedCount
+        } else if sourceIndices.allSatisfy({ $0 >= destination }) {
+            actualDest = destination
+        } else {
+            // Mixed — compute destination for moved items
+            let countBefore = sourceIndices.filter { $0 < destination }.count
+            actualDest = destination - countBefore
+        }
+        // Undo: move items at actualDest...(actualDest+movedCount) back to original position
+        let undoSource = IndexSet(actualDest ..< (actualDest + movedCount))
+        let undoDest = sourceIndices[0] < destination ? sourceIndices[0] : destination + movedCount
+
+        undoManager?.beginUndoGrouping()
+        undoManager?.registerUndo(withTarget: self) { target in
+            target.moveOnCanvas(from: undoSource, to: undoDest)
+        }
+        undoManager?.setActionName("Move Block")
+        undoManager?.endUndoGrouping()
+
         compileNow()
         markDirty()
+    }
+
+    /// Duplicate an existing canvas block. The duplicate is inserted immediately after the original.
+    func duplicateBlock(id: UUID) {
+        guard let index = canvasBlocks.firstIndex(where: { $0.id == id }) else { return }
+        let original = canvasBlocks[index]
+        let duplicate = Block(
+            title: original.title,
+            category: original.category,
+            valueType: original.valueType,
+            snippet: original.snippet
+        )
+
+        // Copy inputs
+        let duplicateInputs = blockInputs[original.id] ?? [:]
+
+        // Copy modifiers (with new IDs)
+        var duplicateModifiers: [BlockModifier] = []
+        var duplicateModifierInputs: [UUID: [String: String]] = [:]
+        for modifier in blockModifiers[original.id] ?? [] {
+            let newMod = BlockModifier(
+                name: modifier.name,
+                category: modifier.category,
+                snippet: modifier.snippet,
+                description: modifier.description
+            )
+            duplicateModifiers.append(newMod)
+            duplicateModifierInputs[newMod.id] = modifierInputs[modifier.id] ?? [:]
+        }
+
+        let insertIndex = index + 1
+        canvasBlocks.insert(duplicate, at: insertIndex)
+        blockInputs[duplicate.id] = duplicateInputs
+        if !duplicateModifiers.isEmpty {
+            blockModifiers[duplicate.id] = duplicateModifiers
+        }
+        for (modID, inputs) in duplicateModifierInputs {
+            modifierInputs[modID] = inputs
+        }
+
+        // Register undo: remove the duplicate
+        let duplicateID = duplicate.id
+        undoManager?.beginUndoGrouping()
+        undoManager?.registerUndo(withTarget: self) { target in
+            target.removeFromCanvas(byID: duplicateID)
+        }
+        undoManager?.setActionName("Duplicate Block")
+        undoManager?.endUndoGrouping()
+
+        compileNow()
+        markDirty()
+    }
+
+    /// Clear the undo history. Called on navigation away from prompt (not on save).
+    func clearUndoHistory() {
+        undoManager?.removeAllActions()
     }
 
     // MARK: - Compilation

@@ -79,6 +79,11 @@ struct BlockEditorView: View {
             }
         }
         .onAppear {
+            // Inject the window's UndoManager so Cmd+Z/Shift+Cmd+Z work via the responder chain.
+            // We use NSApp.keyWindow to get the system UndoManager rather than @Environment
+            // to avoid a SwiftUI + Swift Concurrency crash on macOS 26 (swift_task_isMainExecutorImpl).
+            model.undoManager = NSApp.keyWindow?.undoManager
+
             // Show onboarding tip for first-time users with empty canvas
             if !hasSeenOnboarding && model.canvasBlocks.isEmpty {
                 withAnimation(.easeOut(duration: 0.3).delay(0.5)) {
@@ -87,6 +92,8 @@ struct BlockEditorView: View {
             }
         }
         .onChange(of: prompt.id) { _, _ in
+            // Clear undo history when navigating to a different prompt
+            model.clearUndoHistory()
             // Reload model when prompt changes
             model.loadFromPrompt()
             model.compileNow()

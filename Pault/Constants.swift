@@ -113,28 +113,31 @@ enum AppConstants {
     // MARK: - Shadow Scale
 
     struct ShadowStyle {
-        let color: Color
+        let colorOpacity: Double
         let radius: CGFloat
         let x: CGFloat
         let y: CGFloat
+
+        /// SwiftUI Color computed from opacity (safe to access from any thread at init)
+        var color: Color { .black.opacity(colorOpacity) }
     }
 
     enum Shadow {
         /// Subtle rest-state shadow for block rows
-        static let subtle = ShadowStyle(color: .black.opacity(0.08), radius: 2, x: 0, y: 1)
+        static let subtle = ShadowStyle(colorOpacity: 0.08, radius: 2, x: 0, y: 1)
         /// Medium shadow for hover and selected states
-        static let medium = ShadowStyle(color: .black.opacity(0.12), radius: 4, x: 0, y: 2)
+        static let medium = ShadowStyle(colorOpacity: 0.12, radius: 4, x: 0, y: 2)
         /// Elevated shadow for overlays and dialogs
-        static let elevated = ShadowStyle(color: .black.opacity(0.16), radius: 8, x: 0, y: 4)
+        static let elevated = ShadowStyle(colorOpacity: 0.16, radius: 8, x: 0, y: 4)
     }
 
     // MARK: - Standard Animations
 
     enum StandardAnimation {
         /// Standard easeInOut at 0.2s — for most UI transitions
-        static let standard = SwiftUI.Animation.easeInOut(duration: 0.2)
+        static var standard: SwiftUI.Animation { .easeInOut(duration: 0.2) }
         /// Spring for interactive elements — response 0.3, damping 0.8
-        static let spring = SwiftUI.Animation.spring(response: 0.3, dampingFraction: 0.8)
+        static var spring: SwiftUI.Animation { .spring(response: 0.3, dampingFraction: 0.8) }
     }
 
     // MARK: - Canvas Layout
