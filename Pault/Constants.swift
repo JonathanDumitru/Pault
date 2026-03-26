@@ -5,6 +5,7 @@
 
 import Carbon
 import CoreGraphics
+import SwiftUI
 
 /// Application-wide named constants.
 /// Use these instead of inline literals for window sizes, key codes, and durations.
@@ -85,5 +86,65 @@ enum AppConstants {
             /// Opacity during warning phase
             static let warningOpacity: Double = 0.6
         }
+    }
+
+    // MARK: - Spacing (8pt grid system)
+
+    enum Spacing {
+        /// 4pt — half of base grid unit
+        static let halfGrid: CGFloat = 4
+        /// 8pt — base grid unit
+        static let grid: CGFloat = 8
+        /// 16pt — double grid unit
+        static let doubleGrid: CGFloat = 16
+    }
+
+    // MARK: - Corner Radii
+
+    enum CornerRadius {
+        /// 4pt — small elements (badges, tags)
+        static let small: CGFloat = 4
+        /// 8pt — medium elements (block rows, cards)
+        static let medium: CGFloat = 8
+        /// 12pt — large elements (overlays, dialogs)
+        static let large: CGFloat = 12
+    }
+
+    // MARK: - Shadow Scale
+
+    struct ShadowStyle {
+        let color: Color
+        let radius: CGFloat
+        let x: CGFloat
+        let y: CGFloat
+    }
+
+    enum Shadow {
+        /// Subtle rest-state shadow for block rows
+        static let subtle = ShadowStyle(color: .black.opacity(0.08), radius: 2, x: 0, y: 1)
+        /// Medium shadow for hover and selected states
+        static let medium = ShadowStyle(color: .black.opacity(0.12), radius: 4, x: 0, y: 2)
+        /// Elevated shadow for overlays and dialogs
+        static let elevated = ShadowStyle(color: .black.opacity(0.16), radius: 8, x: 0, y: 4)
+    }
+
+    // MARK: - Standard Animations
+
+    enum StandardAnimation {
+        /// Standard easeInOut at 0.2s — for most UI transitions
+        static let standard = SwiftUI.Animation.easeInOut(duration: 0.2)
+        /// Spring for interactive elements — response 0.3, damping 0.8
+        static let spring = SwiftUI.Animation.spring(response: 0.3, dampingFraction: 0.8)
+    }
+
+    // MARK: - Canvas Layout
+
+    enum Canvas {
+        /// Minimum canvas width before panels auto-collapse
+        static let minWidth: CGFloat = 300
+        /// Maximum height for block input text fields before scrolling
+        static let maxInputHeight: CGFloat = 500
+        /// Block count at which a performance/complexity warning is shown
+        static let blockCountWarning: Int = 30
     }
 }

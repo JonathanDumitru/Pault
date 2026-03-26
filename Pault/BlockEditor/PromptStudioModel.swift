@@ -33,6 +33,16 @@ struct CanvasProperties {
     var notes: String = ""
 }
 
+/// Snapshot of a canvas block used to capture state for undo/redo operations.
+/// Internal to PromptStudioModel — do not use outside the block editor.
+struct CanvasUndoSnapshot {
+    let block: Block
+    let index: Int
+    let inputs: [String: String]
+    let modifiers: [BlockModifier]
+    let modifierInputs: [UUID: [String: String]]
+}
+
 /// Main view model for the prompt studio
 @MainActor
 final class PromptStudioModel: ObservableObject {
@@ -771,7 +781,12 @@ final class PromptStudioModel: ObservableObject {
                 snippet: block.snippet
             )
         }
-        let cacheKey = CompilationCache.shared.generateCacheKey(blocks: blocks, blockInputs: blockInputs)
+        let cacheKey = CompilationCache.shared.generateCacheKey(
+            blocks: blocks,
+            blockInputs: blockInputs,
+            blockModifiers: blockModifiers,
+            modifierInputs: modifierInputs
+        )
 
         if let cached = CompilationCache.shared.get(key: cacheKey) {
             compiledTemplate = cached.compiledTemplate

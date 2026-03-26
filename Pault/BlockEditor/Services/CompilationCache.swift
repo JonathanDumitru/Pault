@@ -27,21 +27,40 @@ final class CompilationCache {
 
     private init() {}
 
-    /// Generate cache key from blocks and inputs
-    func generateCacheKey(blocks: [BlockData], blockInputs: [UUID: [String: String]]) -> String {
-        // Create a hash from blocks and inputs
+    /// Generate cache key from blocks, inputs, modifiers, and modifier inputs.
+    /// Using actual string content (not .hashValue) to avoid collision risk per research pitfall 6.
+    func generateCacheKey(
+        blocks: [BlockData],
+        blockInputs: [UUID: [String: String]],
+        blockModifiers: [UUID: [BlockModifier]] = [:],
+        modifierInputs: [UUID: [String: String]] = [:]
+    ) -> String {
         var keyComponents: [String] = []
 
-        // Add block IDs and snippets
+        // Add block IDs and snippet content (actual string, not hashValue)
         for block in blocks {
-            keyComponents.append("\(block.id.uuidString):\(block.snippet.hashValue)")
+            keyComponents.append("\(block.id.uuidString):\(block.snippet)")
         }
 
-        // Add input values
+        // Add block input values (actual string, not hashValue)
         for (blockID, inputs) in blockInputs.sorted(by: { $0.key.uuidString < $1.key.uuidString }) {
             keyComponents.append("\(blockID.uuidString):")
             for (key, value) in inputs.sorted(by: { $0.key < $1.key }) {
-                keyComponents.append("\(key)=\(value.hashValue)")
+                keyComponents.append("\(key)=\(value)")
+            }
+        }
+
+        // Add modifier IDs and snippet content so modifier changes invalidate the cache
+        for (blockID, modifiers) in blockModifiers.sorted(by: { $0.key.uuidString < $1.key.uuidString }) {
+            for modifier in modifiers {
+                keyComponents.append("mod:\(blockID.uuidString):\(modifier.id.uuidString):\(modifier.snippet)")
+            }
+        }
+
+        // Add modifier input values
+        for (modifierID, inputs) in modifierInputs.sorted(by: { $0.key.uuidString < $1.key.uuidString }) {
+            for (key, value) in inputs.sorted(by: { $0.key < $1.key }) {
+                keyComponents.append("modinput:\(modifierID.uuidString):\(key)=\(value)")
             }
         }
 
