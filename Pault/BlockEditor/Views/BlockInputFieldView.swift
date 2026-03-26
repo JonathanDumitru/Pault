@@ -13,6 +13,7 @@ struct BlockInputFieldView: View {
     let value: String
     let onChange: (String) -> Void
     var isCompact: Bool = false
+    var shouldFocus: Binding<Bool> = .constant(false)
 
     @State private var localValue: String = ""
     @FocusState private var isFocused: Bool
@@ -90,6 +91,12 @@ struct BlockInputFieldView: View {
         .onChange(of: value) { _, newValue in
             if localValue != newValue {
                 localValue = newValue
+            }
+        }
+        .onChange(of: shouldFocus.wrappedValue) { _, newValue in
+            if newValue {
+                isFocused = true
+                shouldFocus.wrappedValue = false
             }
         }
     }

@@ -172,9 +172,10 @@ struct CompositionCanvasView: View {
                     SlashCommandPaletteView(state: slashState, model: model) { block in
                         withAnimation(AppConstants.StandardAnimation.spring) {
                             model.addToCanvas(block)
-                            // After insert, select and scroll to new block
+                            // After insert, select, scroll, and drive focus into first input
                             if let last = model.canvasBlocks.last {
                                 model.selectedCanvasBlockID = last.id
+                                model.pendingFirstInputFocusBlockID = last.id
                             }
                         }
                     }
@@ -477,7 +478,9 @@ struct CompositionCanvasView: View {
                                     model.removeModifierFromBlock(blockID: block.id, modifierID: modifierID)
                                 }
                             },
-                            modifierLibrary: model.modifierLibrary
+                            modifierLibrary: model.modifierLibrary,
+                            pendingFirstInputFocusBlockID: model.pendingFirstInputFocusBlockID,
+                            onClearPendingFocus: { model.pendingFirstInputFocusBlockID = nil }
                         )
                         .id(block.id)
                         .transition(reduceMotion

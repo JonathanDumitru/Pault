@@ -45,11 +45,14 @@ struct BlockRowView: View {
     let onAddModifier: (BlockModifier) -> Void
     let onRemoveModifier: (UUID) -> Void
     let modifierLibrary: [ModifierCategory: [BlockModifier]]
+    let pendingFirstInputFocusBlockID: UUID?
+    let onClearPendingFocus: () -> Void
 
     @State private var isExpanded = true
     @State private var showModifierPicker = false
     @State private var isHovered = false
     @State private var isDragHandleHovered = false
+    @State private var shouldFocusFirstInput: Bool = false
 
     // Accessibility environments
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -212,6 +215,14 @@ struct BlockRowView: View {
         .onReceive(NotificationCenter.default.publisher(for: .blockRowToggleAllExpanded)) { _ in
             withAnimation(expandCollapseAnimation) { isExpanded.toggle() }
         }
+        // Drive focus into first input field after slash palette or library insert
+        .onChange(of: pendingFirstInputFocusBlockID) { _, newID in
+            guard newID == block.id, isExpanded, !placeholders.isEmpty else { return }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                shouldFocusFirstInput = true
+                onClearPendingFocus()
+            }
+        }
     }
 
     // MARK: - Block Header
@@ -321,13 +332,14 @@ struct BlockRowView: View {
 
     private var inputFields: some View {
         VStack(alignment: .leading, spacing: 8) {
-            ForEach(placeholders, id: \.self) { placeholder in
+            ForEach(Array(placeholders.enumerated()), id: \.element) { idx, placeholder in
                 BlockInputFieldView(
                     placeholder: placeholder,
                     value: inputs[placeholder] ?? "",
                     onChange: { newValue in
                         onInputChange(placeholder, newValue)
-                    }
+                    },
+                    shouldFocus: idx == 0 ? $shouldFocusFirstInput : .constant(false)
                 )
             }
         }
@@ -574,7 +586,9 @@ private struct ModifierPickerView: View {
         onMoveDown: {},
         onAddModifier: { _ in },
         onRemoveModifier: { _ in },
-        modifierLibrary: [:]
+        modifierLibrary: [:],
+        pendingFirstInputFocusBlockID: nil,
+        onClearPendingFocus: {}
     )
     .padding()
     .frame(width: 400)

@@ -216,4 +216,40 @@ final class KeyboardNavigationTests: XCTestCase {
             XCTAssertTrue(model.isDirty, "Model should be dirty after duplicate")
         }
     }
+
+    // MARK: - pendingFirstInputFocusBlockID
+
+    /// After addToCanvas and simulating what CompositionCanvasView does,
+    /// pendingFirstInputFocusBlockID equals the new block's ID
+    func test_pendingFirstInputFocusBlockID_setAfterAddToCanvas() async throws {
+        try await MainActor.run {
+            let model = try makeModel()
+            model.addToCanvas(makeBlock(title: "Focus Target", snippet: "TEXT: {{value}}"))
+
+            // Simulate what CompositionCanvasView's slash palette onSelect does
+            if let last = model.canvasBlocks.last {
+                model.selectedCanvasBlockID = last.id
+                model.pendingFirstInputFocusBlockID = last.id
+            }
+
+            XCTAssertNotNil(model.pendingFirstInputFocusBlockID)
+            XCTAssertEqual(model.pendingFirstInputFocusBlockID, model.canvasBlocks.last?.id)
+        }
+    }
+
+    /// After setting pendingFirstInputFocusBlockID and clearing it, property is nil
+    func test_pendingFirstInputFocusBlockID_clearedAfterConsumption() async throws {
+        try await MainActor.run {
+            let model = try makeModel()
+            model.addToCanvas(makeBlock(title: "Focus Target", snippet: "TEXT: {{value}}"))
+
+            // Simulate set
+            model.pendingFirstInputFocusBlockID = model.canvasBlocks.last?.id
+            XCTAssertNotNil(model.pendingFirstInputFocusBlockID)
+
+            // Simulate consumption (BlockRowView calls onClearPendingFocus)
+            model.pendingFirstInputFocusBlockID = nil
+            XCTAssertNil(model.pendingFirstInputFocusBlockID, "pendingFirstInputFocusBlockID should be nil after cleared")
+        }
+    }
 }

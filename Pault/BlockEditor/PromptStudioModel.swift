@@ -118,6 +118,10 @@ final class PromptStudioModel: ObservableObject {
     @Published var selectedCanvasBlockID: UUID? = nil
     @Published var canvasProperties: CanvasProperties = .init()
 
+    /// Set after slash palette or library insert to drive @FocusState into the first input field.
+    /// BlockRowView observes this and clears it after consuming.
+    @Published var pendingFirstInputFocusBlockID: UUID? = nil
+
     // MARK: - Compatibility
 
     private(set) var compatibility: [String: [(title: String, level: CompatibilityLevel)]] = [:]
