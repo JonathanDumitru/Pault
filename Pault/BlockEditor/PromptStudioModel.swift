@@ -9,6 +9,7 @@
 
 import SwiftUI
 import Combine
+import Accessibility
 
 /// Preview mode for displaying compiled templates
 enum PreviewMode: String, CaseIterable, Identifiable {
@@ -1266,5 +1267,16 @@ final class PromptStudioModel: ObservableObject {
 
     func markDirty() {
         isDirty = true
+    }
+
+    // MARK: - Accessibility Announcements
+
+    /// Post a polite VoiceOver announcement with a short delay so it doesn't
+    /// interrupt ongoing speech. Uses AccessibilityNotification.Announcement
+    /// which posts at the default (polite) priority.
+    func announceCanvasChange(_ message: String) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            AccessibilityNotification.Announcement(message).post()
+        }
     }
 }

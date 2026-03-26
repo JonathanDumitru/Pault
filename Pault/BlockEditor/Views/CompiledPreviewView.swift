@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import Accessibility
 
 /// Right panel displaying the compiled output and inspector
 struct CompiledPreviewView: View {
@@ -30,6 +31,13 @@ struct CompiledPreviewView: View {
         }
         .frame(minWidth: AppConstants.Panels.blockPreviewMinWidth)
         .background(Color(nsColor: .windowBackgroundColor))
+        .onChange(of: model.compiledTemplate) { _, newValue in
+            // Polite low-priority announcement when preview updates
+            guard !newValue.isEmpty else { return }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                AccessibilityNotification.Announcement("Preview updated, \(model.tokenEstimate) tokens.").post()
+            }
+        }
     }
 
     // MARK: - Header

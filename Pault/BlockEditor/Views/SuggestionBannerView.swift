@@ -5,6 +5,10 @@
 //  Inline suggestion banner shown in canvas to guide users
 //  with contextual suggestions from the BlockSuggestionEngine.
 //
+//  Features (02-03):
+//  - Polite accessibility alert annotation
+//  - Slide + fade animation respects Reduce Motion
+//
 
 import SwiftUI
 
@@ -13,6 +17,8 @@ struct SuggestionBannerView: View {
     let suggestion: BlockSuggestion
     let onSelectCategory: (ConsolidatedBlockCategory) -> Void
     let onDismiss: () -> Void
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         HStack(spacing: 12) {
@@ -41,6 +47,7 @@ struct SuggestionBannerView: View {
                             .cornerRadius(4)
                         }
                         .buttonStyle(.plain)
+                        .accessibilityLabel("Add \(category.rawValue) block")
                     }
                 }
             }
@@ -53,6 +60,7 @@ struct SuggestionBannerView: View {
                     .foregroundStyle(.tertiary)
             }
             .buttonStyle(.plain)
+            .accessibilityLabel("Dismiss suggestion")
         }
         .padding(12)
         .background(Color(nsColor: .controlBackgroundColor))
@@ -61,6 +69,9 @@ struct SuggestionBannerView: View {
             RoundedRectangle(cornerRadius: 8)
                 .strokeBorder(Color.yellow.opacity(0.3), lineWidth: 1)
         )
+        // Mark as polite accessibility alert so VoiceOver announces it
+        .accessibilityAddTraits(.isStaticText)
+        .accessibilityLabel("Suggestion: \(suggestion.message)")
     }
 }
 

@@ -173,6 +173,7 @@ struct SlashCommandPaletteView: View {
 
     @ViewBuilder
     private func blockRow(_ block: Block, isSelected: Bool) -> some View {
+        let category = ConsolidatedBlockCategory.from(legacy: block.category)
         Button(action: {
             state.recordUsage(block: block)
             onSelect(block)
@@ -182,13 +183,14 @@ struct SlashCommandPaletteView: View {
                 Circle()
                     .fill(block.category.color)
                     .frame(width: 8, height: 8)
+                    .accessibilityHidden(true)
 
                 Text(block.title)
                     .font(.callout)
 
                 Spacer()
 
-                Text(ConsolidatedBlockCategory.from(legacy: block.category).rawValue)
+                Text(category.rawValue)
                     .font(.caption2)
                     .foregroundStyle(.tertiary)
             }
@@ -198,6 +200,8 @@ struct SlashCommandPaletteView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .accessibilityLabel("\(block.title), \(category.rawValue)\(isSelected ? ", selected" : "")")
+        .accessibilityHint("Press Return to add to canvas")
     }
 
     @ViewBuilder

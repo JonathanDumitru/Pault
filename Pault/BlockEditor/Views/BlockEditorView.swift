@@ -27,6 +27,10 @@ struct BlockEditorView: View {
     @State private var showDirtyNavigationAlert = false
     @State private var pendingPromptID: UUID? = nil
 
+    // Accessibility
+    @Environment(\.accessibilityVoiceOverEnabled) private var voiceOverEnabled
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     init(prompt: Prompt) {
         self.prompt = prompt
         self._model = StateObject(wrappedValue: PromptStudioModel(prompt: prompt))
@@ -67,8 +71,20 @@ struct BlockEditorView: View {
                         .protectFromAutoCollapse(autoCollapse, panel: .blockPreview)
                 }
             }
-            .animation(.spring(response: AppConstants.Panels.Animation.slideDuration, dampingFraction: AppConstants.Panels.Animation.dampingFraction), value: showLibrary)
-            .animation(.spring(response: AppConstants.Panels.Animation.slideDuration, dampingFraction: AppConstants.Panels.Animation.dampingFraction), value: showPreview)
+            .animation(
+                reduceMotion ? nil : .spring(
+                    response: AppConstants.Panels.Animation.slideDuration,
+                    dampingFraction: AppConstants.Panels.Animation.dampingFraction
+                ),
+                value: showLibrary
+            )
+            .animation(
+                reduceMotion ? nil : .spring(
+                    response: AppConstants.Panels.Animation.slideDuration,
+                    dampingFraction: AppConstants.Panels.Animation.dampingFraction
+                ),
+                value: showPreview
+            )
 
             // Preview strip (always visible at bottom)
             PreviewStripView(model: model, isExpanded: $showPreview)
@@ -137,13 +153,21 @@ struct BlockEditorView: View {
                 autoCollapse.userDidType()
             }
         }
-        // Auto-collapse handler
+        // Auto-collapse handler (disabled when VoiceOver is active)
         .onChange(of: autoCollapse.shouldCollapse) { _, shouldCollapse in
-            if shouldCollapse {
-                withAnimation(.spring(response: AppConstants.Panels.Animation.slideDuration, dampingFraction: AppConstants.Panels.Animation.dampingFraction)) {
+            if shouldCollapse && !voiceOverEnabled {
+                withAnimation(
+                    reduceMotion ? nil : .spring(
+                        response: AppConstants.Panels.Animation.slideDuration,
+                        dampingFraction: AppConstants.Panels.Animation.dampingFraction
+                    )
+                ) {
                     showLibrary = false
                     showPreview = false
                 }
+                autoCollapse.didCollapse()
+            } else if shouldCollapse && voiceOverEnabled {
+                // Don't collapse — just reset the trigger so it can fire again later
                 autoCollapse.didCollapse()
             }
         }

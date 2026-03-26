@@ -12,6 +12,14 @@
 //  - Long titles truncated with .help() tooltip
 //  - Responds to .blockRowToggleExpand and .blockRowToggleAllExpanded notifications
 //
+//  Features (02-03):
+//  - VoiceOver accessibilityLabel with category and position
+//  - VoiceOver custom actions: Move Up, Move Down, Delete, Duplicate, Expand/Collapse
+//  - Visible focus ring (2pt system accent color) on selected block
+//  - Reduce Motion: spring animations replaced with instant transitions
+//  - Differentiate Without Color: SF Symbol icons shown alongside status colors
+//  - High contrast mode: increased color opacity and thicker borders
+//
 
 import SwiftUI
 import AppKit
@@ -43,8 +51,60 @@ struct BlockRowView: View {
     @State private var isHovered = false
     @State private var isDragHandleHovered = false
 
+    // Accessibility environments
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityDifferentiateWithoutColor) private var differentiateWithoutColor
+    @Environment(\.colorSchemeContrast) private var colorSchemeContrast
+
     private var placeholders: [String] {
         PromptStudioModel.placeholders(in: block.snippet)
+    }
+
+    /// Animation to use based on Reduce Motion preference
+    private var expandCollapseAnimation: Animation? {
+        reduceMotion ? nil : .easeInOut(duration: 0.2)
+    }
+
+    /// Scale effect for drag — disabled under Reduce Motion
+    private var dragScale: CGFloat {
+        reduceMotion ? 1.0 : (isDragging ? 1.03 : 1.0)
+    }
+
+    /// Opacity for dragging — same regardless of motion
+    private var dragOpacity: Double {
+        isDragging ? 0.85 : 1.0
+    }
+
+    /// Border line width based on contrast
+    private var selectedBorderWidth: CGFloat {
+        colorSchemeContrast == .increased ? 3 : 2
+    }
+
+    /// Shadow color opacity adjusted for high contrast
+    private var shadowOpacity: Double {
+        colorSchemeContrast == .increased ? 0.25 : 1.0
+    }
+
+    private var currentShadow: (color: Color, radius: CGFloat, y: CGFloat) {
+        if isDragging {
+            return (
+                Color.black.opacity(AppConstants.Shadow.elevated.colorOpacity * shadowOpacity),
+                AppConstants.Shadow.elevated.radius,
+                AppConstants.Shadow.elevated.y
+            )
+        } else if isHovered {
+            return (
+                Color.black.opacity(AppConstants.Shadow.medium.colorOpacity * shadowOpacity),
+                AppConstants.Shadow.medium.radius,
+                AppConstants.Shadow.medium.y
+            )
+        } else {
+            return (
+                Color.black.opacity(AppConstants.Shadow.subtle.colorOpacity * shadowOpacity),
+                AppConstants.Shadow.subtle.radius,
+                AppConstants.Shadow.subtle.y
+            )
+        }
     }
 
     var body: some View {
@@ -70,30 +130,48 @@ struct BlockRowView: View {
             RoundedRectangle(cornerRadius: AppConstants.CornerRadius.medium)
                 .fill(Color(nsColor: .controlBackgroundColor))
         )
+        // Selected border: 2pt system accent color (not a glow)
         .overlay(
             RoundedRectangle(cornerRadius: AppConstants.CornerRadius.medium)
                 .strokeBorder(
-                    isSelected ? block.category.color : Color.clear,
-                    lineWidth: 2
+                    isSelected ? Color.accentColor : Color.clear,
+                    lineWidth: isSelected ? selectedBorderWidth : 0
                 )
         )
-        // Lift effect when dragging
-        .scaleEffect(isDragging ? 1.03 : 1.0)
+        // Lift effect when dragging (disabled under Reduce Motion)
+        .scaleEffect(dragScale)
         .shadow(
-            color: isDragging
-                ? Color.black.opacity(AppConstants.Shadow.elevated.colorOpacity)
-                : Color.black.opacity(isHovered ? AppConstants.Shadow.medium.colorOpacity : AppConstants.Shadow.subtle.colorOpacity),
-            radius: isDragging
-                ? AppConstants.Shadow.elevated.radius
-                : (isHovered ? AppConstants.Shadow.medium.radius : AppConstants.Shadow.subtle.radius),
+            color: currentShadow.color,
+            radius: currentShadow.radius,
             x: 0,
-            y: isDragging ? AppConstants.Shadow.elevated.y : (isHovered ? AppConstants.Shadow.medium.y : AppConstants.Shadow.subtle.y)
+            y: currentShadow.y
         )
-        .opacity(isDragging ? 0.85 : 1.0)
-        .animation(.easeInOut(duration: 0.15), value: isDragging)
+        .opacity(dragOpacity)
+        .animation(reduceMotion ? nil : .easeInOut(duration: 0.15), value: isDragging)
         .contentShape(Rectangle())
         .onTapGesture { onSelect() }
         .onHover { isHovered = $0 }
+        // Accessibility: label with category and position
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("\(block.category.rawValue) block: \(block.title), position \(index + 1) of \(totalCount)")
+        // Accessibility: custom actions for VoiceOver navigation
+        .accessibilityAction(named: "Move Up") {
+            guard index > 0 else { return }
+            onMoveUp()
+        }
+        .accessibilityAction(named: "Move Down") {
+            guard index < totalCount - 1 else { return }
+            onMoveDown()
+        }
+        .accessibilityAction(named: "Delete") {
+            onRemove()
+        }
+        .accessibilityAction(named: "Duplicate") {
+            onDuplicate()
+        }
+        .accessibilityAction(named: isExpanded ? "Collapse" : "Expand") {
+            withAnimation(expandCollapseAnimation) { isExpanded.toggle() }
+        }
         // Right-click context menu
         .contextMenu {
             Button(action: onDuplicate) {
@@ -110,7 +188,7 @@ struct BlockRowView: View {
             .disabled(index == totalCount - 1)
             Divider()
             Button(action: {
-                withAnimation(.easeInOut(duration: 0.2)) { isExpanded.toggle() }
+                withAnimation(expandCollapseAnimation) { isExpanded.toggle() }
             }) {
                 Label(isExpanded ? "Collapse" : "Expand", systemImage: isExpanded ? "chevron.up.square" : "chevron.down.square")
             }
@@ -128,11 +206,11 @@ struct BlockRowView: View {
         // Listen for keyboard-triggered toggle expand (from CompositionCanvasView)
         .onReceive(NotificationCenter.default.publisher(for: .blockRowToggleExpand)) { notification in
             if let id = notification.object as? UUID, id == block.id {
-                withAnimation(.easeInOut(duration: 0.2)) { isExpanded.toggle() }
+                withAnimation(expandCollapseAnimation) { isExpanded.toggle() }
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .blockRowToggleAllExpanded)) { _ in
-            withAnimation(.easeInOut(duration: 0.2)) { isExpanded.toggle() }
+            withAnimation(expandCollapseAnimation) { isExpanded.toggle() }
         }
     }
 
@@ -144,6 +222,7 @@ struct BlockRowView: View {
             Image(systemName: "line.3.horizontal")
                 .font(.caption)
                 .foregroundStyle(Color.secondary.opacity(totalCount == 1 ? 0.2 : 0.6))
+                .accessibilityHidden(true)
                 .onContinuousHover { phase in
                     switch phase {
                     case .active:
@@ -155,15 +234,8 @@ struct BlockRowView: View {
                     }
                 }
 
-            // Status indicator
-            Circle()
-                .fill(placeholderStatus.color)
-                .frame(width: 10, height: 10)
-                .overlay(
-                    Image(systemName: placeholderStatus.icon)
-                        .font(.system(size: 6))
-                        .foregroundStyle(.white)
-                )
+            // Status indicator with icon support for Differentiate Without Color
+            statusIndicator
 
             // Block title (truncated with tooltip on hover)
             VStack(alignment: .leading, spacing: 2) {
@@ -191,14 +263,16 @@ struct BlockRowView: View {
                 .padding(.vertical, 2)
                 .background(Color(nsColor: .separatorColor).opacity(0.3))
                 .clipShape(Capsule())
+                .accessibilityHidden(true)
 
             // Expand/collapse
-            Button(action: { withAnimation(.easeInOut(duration: 0.2)) { isExpanded.toggle() } }) {
+            Button(action: { withAnimation(expandCollapseAnimation) { isExpanded.toggle() } }) {
                 Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
             .buttonStyle(.plain)
+            .accessibilityHidden(true) // Exposed via accessibilityAction on the row instead
 
             // Remove button (visible on hover)
             Button(action: onRemove) {
@@ -208,9 +282,39 @@ struct BlockRowView: View {
             }
             .buttonStyle(.plain)
             .opacity(isHovered ? 1 : 0)
+            .accessibilityHidden(true) // Exposed via accessibilityAction on the row instead
         }
         .padding(12)
-        .background(block.category.color.opacity(0.08))
+        .background(
+            block.category.color.opacity(
+                colorSchemeContrast == .increased ? 0.15 : 0.08
+            )
+        )
+    }
+
+    // MARK: - Status Indicator
+
+    /// Status indicator that shows icon alongside color.
+    /// When differentiateWithoutColor is on, icon is always prominently shown.
+    /// Otherwise, icon is shown subtly alongside color.
+    @ViewBuilder
+    private var statusIndicator: some View {
+        let showIcon = differentiateWithoutColor || true // Always show icon (subtle when not needed)
+        let iconOpacity: Double = differentiateWithoutColor ? 1.0 : 0.7
+
+        ZStack {
+            Circle()
+                .fill(placeholderStatus.statusColor(highContrast: colorSchemeContrast == .increased))
+                .frame(width: 16, height: 16)
+
+            if showIcon {
+                Image(systemName: placeholderStatus.accessibilityIcon)
+                    .font(.system(size: 8))
+                    .foregroundStyle(.white)
+                    .opacity(iconOpacity)
+            }
+        }
+        .accessibilityLabel(placeholderStatus.accessibilityDescription)
     }
 
     // MARK: - Input Fields
@@ -271,6 +375,38 @@ struct BlockRowView: View {
     }
 }
 
+// MARK: - BlockPlaceholderStatus Accessibility Extensions
+
+extension BlockPlaceholderStatus {
+    /// Icon used when Differentiate Without Color is enabled (distinct shapes per state)
+    var accessibilityIcon: String {
+        switch self {
+        case .unfilled:  return "xmark.circle.fill"
+        case .partial:   return "exclamationmark.triangle.fill"
+        case .complete:  return "checkmark.circle.fill"
+        }
+    }
+
+    /// Accessible description of this status
+    var accessibilityDescription: String {
+        switch self {
+        case .unfilled:  return "Unfilled placeholders"
+        case .partial:   return "Partially filled placeholders"
+        case .complete:  return "All placeholders filled"
+        }
+    }
+
+    /// Color adjusted for high contrast mode
+    func statusColor(highContrast: Bool) -> Color {
+        let opacity: Double = highContrast ? 1.0 : 0.9
+        switch self {
+        case .unfilled:  return Color.red.opacity(opacity)
+        case .partial:   return Color.yellow.opacity(opacity)
+        case .complete:  return Color.green.opacity(opacity)
+        }
+    }
+}
+
 // MARK: - Modifier Row View
 
 private struct ModifierRowView: View {
@@ -281,6 +417,8 @@ private struct ModifierRowView: View {
 
     @State private var isExpanded = true
     @State private var isHovered = false
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var placeholders: [String] {
         PromptStudioModel.placeholders(in: modifier.snippet)
@@ -300,7 +438,11 @@ private struct ModifierRowView: View {
                 Spacer()
 
                 if !placeholders.isEmpty {
-                    Button(action: { withAnimation { isExpanded.toggle() } }) {
+                    Button(action: {
+                        withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.15)) {
+                            isExpanded.toggle()
+                        }
+                    }) {
                         Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                             .font(.caption2)
                             .foregroundStyle(.tertiary)
@@ -388,6 +530,7 @@ private struct ModifierPickerView: View {
                                     .contentShape(Rectangle())
                                 }
                                 .buttonStyle(.plain)
+                                .accessibilityLabel("Add \(modifier.name) modifier")
                             }
                         } header: {
                             Text(category.rawValue)

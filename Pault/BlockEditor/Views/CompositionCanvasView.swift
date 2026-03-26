@@ -19,6 +19,7 @@
 import SwiftUI
 import AppKit
 import UniformTypeIdentifiers
+import Accessibility
 
 // MARK: - LibraryBlockTransfer
 // Thin Transferable wrapper for library-originated drags.
@@ -52,6 +53,9 @@ struct CompositionCanvasView: View {
 
     // Toast for Cmd+Shift+C copy action
     @State private var showCopyToast = false
+
+    // Accessibility environments
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     /// Current suggestion based on canvas state
     private var currentSuggestion: BlockSuggestion? {
@@ -193,8 +197,21 @@ struct CompositionCanvasView: View {
                         withAnimation { showSuggestion = true }
                     }
                 }
+                // Post polite VoiceOver announcement for block addition
+                let count = newCount
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    AccessibilityNotification.Announcement("Block added. \(count) block\(count == 1 ? "" : "s") on canvas.").post()
+                }
+            } else if newCount < oldCount {
+                // Post polite VoiceOver announcement for block removal
+                let count = newCount
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    AccessibilityNotification.Announcement("Block removed. \(count) block\(count == 1 ? "" : "s") on canvas.").post()
+                }
             }
         }
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Composition canvas, \(model.canvasBlocks.count) block\(model.canvasBlocks.count == 1 ? "" : "s")")
     }
 
     // MARK: - Keyboard Handlers
@@ -463,10 +480,12 @@ struct CompositionCanvasView: View {
                             modifierLibrary: model.modifierLibrary
                         )
                         .id(block.id)
-                        .transition(.asymmetric(
-                            insertion: .scale(scale: 0.95).combined(with: .opacity),
-                            removal: .scale(scale: 0.95).combined(with: .opacity)
-                        ))
+                        .transition(reduceMotion
+                            ? .opacity
+                            : .asymmetric(
+                                insertion: .scale(scale: 0.95).combined(with: .opacity),
+                                removal: .scale(scale: 0.95).combined(with: .opacity)
+                            ))
                         .draggable(block) {
                             BlockDragPreview(block: block)
                         }

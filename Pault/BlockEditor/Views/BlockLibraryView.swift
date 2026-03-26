@@ -288,6 +288,9 @@ private struct BlockLibraryRowView: View {
         .onHover { isHovered = $0 }
         .onTapGesture(count: 2) { onAdd() }
         .draggable(block)
+        .accessibilityLabel("\(block.title), \(category.rawValue)")
+        .accessibilityHint("Double-tap to add to canvas")
+        .accessibilityAction(named: "Add to Canvas") { onAdd() }
     }
 
     @ViewBuilder
