@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: "CONTEXT.md written -- ready for /gsd:plan-phase"
-stopped_at: Completed 02-01-PLAN.md (UndoManager integration, CompilationCache fix, AppConstants)
-last_updated: "2026-03-26T21:37:09.176Z"
+stopped_at: Completed 02-02-PLAN.md (DragDropTests, KeyboardNavigationTests, dirty navigation warning)
+last_updated: "2026-03-26T22:25:49.691Z"
 last_activity: 2026-03-25 -- Phase 2 context captured (21 areas, ~135 decisions)
 progress:
   total_phases: 8
   completed_phases: 1
   total_plans: 5
-  completed_plans: 3
+  completed_plans: 4
   percent: 10
 ---
 
@@ -51,6 +51,7 @@ Progress: [█░░░░░░░░░] 10%
 
 *Updated after each plan completion*
 | Phase 02-block-editor-polish P01 | 90 | 2 tasks | 5 files |
+| Phase 02-block-editor-polish P02-02 | 30 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -69,6 +70,8 @@ Recent decisions affecting current work:
 - [Phase 02]: UndoManager groupsByEvent=false requires explicit beginUndoGrouping/endUndoGrouping on all public structural operations
 - [Phase 02]: UndoRedoTests use XCTestCase async + MainActor.run to avoid macOS 26 Swift Concurrency + ObjC crash with @MainActor + UndoManager
 - [Phase 02]: NSApp.keyWindow.undoManager injection pattern for BlockEditorView (not @Environment) to avoid SwiftUI crash on macOS 26
+- [Phase 02-block-editor-polish]: Tests use XCTestCase async + MainActor.run pattern (consistent with UndoRedoTests) to avoid macOS 26 Swift Concurrency + ObjC UndoManager crash
+- [Phase 02-block-editor-polish]: Dirty navigation warning uses .alert in BlockEditorView onChange(prompt.id) with Save/Discard/Cancel and pendingPromptID state
 
 ### Pending Todos
 
@@ -82,6 +85,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-26T21:37:09.173Z
-Stopped at: Completed 02-01-PLAN.md (UndoManager integration, CompilationCache fix, AppConstants)
+Last session: 2026-03-26T22:25:49.688Z
+Stopped at: Completed 02-02-PLAN.md (DragDropTests, KeyboardNavigationTests, dirty navigation warning)
 Resume file: None
