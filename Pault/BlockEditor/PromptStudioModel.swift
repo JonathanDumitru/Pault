@@ -1029,6 +1029,46 @@ final class PromptStudioModel: ObservableObject {
         markDirty()
     }
 
+    /// Insert a block at a specific canvas index (for position-aware library drops).
+    /// Registers undo so the insertion can be reversed.
+    func insertOnCanvas(_ block: Block, at index: Int) {
+        let new = Block(title: block.title, category: block.category, valueType: block.valueType, snippet: block.snippet)
+        let clampedIndex = max(0, min(index, canvasBlocks.count))
+        canvasBlocks.insert(new, at: clampedIndex)
+
+        let placeholders = Self.placeholders(in: new.snippet)
+        if !placeholders.isEmpty {
+            var defaults: [String: String] = [:]
+            for name in placeholders { defaults[name] = "" }
+            blockInputs[new.id] = defaults
+        }
+
+        let insertedID = new.id
+        undoManager?.beginUndoGrouping()
+        undoManager?.registerUndo(withTarget: self) { target in
+            target.removeFromCanvas(byID: insertedID)
+        }
+        undoManager?.setActionName("Insert Block")
+        undoManager?.endUndoGrouping()
+
+        compileNow()
+        markDirty()
+    }
+
+    /// Move the selected block up (direction: -1) or down (direction: 1) by one position.
+    /// No-op if the block is already at the boundary.
+    func moveBlock(id: UUID, direction: Int) {
+        guard let currentIndex = canvasBlocks.firstIndex(where: { $0.id == id }) else { return }
+        let targetIndex = currentIndex + direction
+        guard targetIndex >= 0 && targetIndex < canvasBlocks.count else { return }
+
+        // Convert to IndexSet/destination for moveOnCanvas (which also registers undo)
+        let source = IndexSet(integer: currentIndex)
+        // When moving down, destination must be targetIndex + 1 (Array.move semantics)
+        let destination = direction > 0 ? targetIndex + 1 : targetIndex
+        moveOnCanvas(from: source, to: destination)
+    }
+
     /// Clear the undo history. Called on navigation away from prompt (not on save).
     func clearUndoHistory() {
         undoManager?.removeAllActions()

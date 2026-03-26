@@ -4,14 +4,25 @@
 //
 //  Individual block in the composition canvas with inputs and modifiers.
 //
+//  Features (02-02):
+//  - Lift effect (scale + elevated shadow) when isDragging
+//  - Grab cursor on drag handle via onContinuousHover
+//  - Dimmed drag handle when single block (totalCount == 1)
+//  - Right-click context menu: Duplicate, Delete, Move Up/Down, Expand/Collapse, Copy
+//  - Long titles truncated with .help() tooltip
+//  - Responds to .blockRowToggleExpand and .blockRowToggleAllExpanded notifications
+//
 
 import SwiftUI
+import AppKit
 
 /// A single block in the canvas with its placeholder inputs and modifiers
 struct BlockRowView: View {
     let block: Block
     let index: Int
+    let totalCount: Int
     let isSelected: Bool
+    let isDragging: Bool
     let placeholderStatus: BlockPlaceholderStatus
     let inputs: [String: String]
     let modifiers: [BlockModifier]
@@ -20,6 +31,9 @@ struct BlockRowView: View {
     let onInputChange: (String, String) -> Void
     let onModifierInputChange: (UUID, String, String) -> Void
     let onRemove: () -> Void
+    let onDuplicate: () -> Void
+    let onMoveUp: () -> Void
+    let onMoveDown: () -> Void
     let onAddModifier: (BlockModifier) -> Void
     let onRemoveModifier: (UUID) -> Void
     let modifierLibrary: [ModifierCategory: [BlockModifier]]
@@ -27,6 +41,7 @@ struct BlockRowView: View {
     @State private var isExpanded = true
     @State private var showModifierPicker = false
     @State private var isHovered = false
+    @State private var isDragHandleHovered = false
 
     private var placeholders: [String] {
         PromptStudioModel.placeholders(in: block.snippet)
@@ -52,30 +67,93 @@ struct BlockRowView: View {
             }
         }
         .background(
-            RoundedRectangle(cornerRadius: 8)
+            RoundedRectangle(cornerRadius: AppConstants.CornerRadius.medium)
                 .fill(Color(nsColor: .controlBackgroundColor))
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 8)
+            RoundedRectangle(cornerRadius: AppConstants.CornerRadius.medium)
                 .strokeBorder(
                     isSelected ? block.category.color : Color.clear,
                     lineWidth: 2
                 )
         )
-        .shadow(color: .black.opacity(isHovered ? 0.1 : 0.05), radius: isHovered ? 4 : 2)
+        // Lift effect when dragging
+        .scaleEffect(isDragging ? 1.03 : 1.0)
+        .shadow(
+            color: isDragging
+                ? Color.black.opacity(AppConstants.Shadow.elevated.colorOpacity)
+                : Color.black.opacity(isHovered ? AppConstants.Shadow.medium.colorOpacity : AppConstants.Shadow.subtle.colorOpacity),
+            radius: isDragging
+                ? AppConstants.Shadow.elevated.radius
+                : (isHovered ? AppConstants.Shadow.medium.radius : AppConstants.Shadow.subtle.radius),
+            x: 0,
+            y: isDragging ? AppConstants.Shadow.elevated.y : (isHovered ? AppConstants.Shadow.medium.y : AppConstants.Shadow.subtle.y)
+        )
+        .opacity(isDragging ? 0.85 : 1.0)
+        .animation(.easeInOut(duration: 0.15), value: isDragging)
         .contentShape(Rectangle())
         .onTapGesture { onSelect() }
         .onHover { isHovered = $0 }
+        // Right-click context menu
+        .contextMenu {
+            Button(action: onDuplicate) {
+                Label("Duplicate", systemImage: "plus.square.on.square")
+            }
+            Divider()
+            Button(action: onMoveUp) {
+                Label("Move Up", systemImage: "arrow.up")
+            }
+            .disabled(index == 0)
+            Button(action: onMoveDown) {
+                Label("Move Down", systemImage: "arrow.down")
+            }
+            .disabled(index == totalCount - 1)
+            Divider()
+            Button(action: {
+                withAnimation(.easeInOut(duration: 0.2)) { isExpanded.toggle() }
+            }) {
+                Label(isExpanded ? "Collapse" : "Expand", systemImage: isExpanded ? "chevron.up.square" : "chevron.down.square")
+            }
+            Button(action: {
+                NSPasteboard.general.clearContents()
+                NSPasteboard.general.setString(block.snippet, forType: .string)
+            }) {
+                Label("Copy Block Content", systemImage: "doc.on.doc")
+            }
+            Divider()
+            Button(role: .destructive, action: onRemove) {
+                Label("Delete", systemImage: "trash")
+            }
+        }
+        // Listen for keyboard-triggered toggle expand (from CompositionCanvasView)
+        .onReceive(NotificationCenter.default.publisher(for: .blockRowToggleExpand)) { notification in
+            if let id = notification.object as? UUID, id == block.id {
+                withAnimation(.easeInOut(duration: 0.2)) { isExpanded.toggle() }
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .blockRowToggleAllExpanded)) { _ in
+            withAnimation(.easeInOut(duration: 0.2)) { isExpanded.toggle() }
+        }
     }
 
     // MARK: - Block Header
 
     private var blockHeader: some View {
         HStack(spacing: 8) {
-            // Drag handle
+            // Drag handle — dimmed when only one block
             Image(systemName: "line.3.horizontal")
                 .font(.caption)
-                .foregroundStyle(.tertiary)
+                .foregroundStyle(Color.secondary.opacity(totalCount == 1 ? 0.2 : 0.6))
+                .onContinuousHover { phase in
+                    switch phase {
+                    case .active:
+                        isDragHandleHovered = true
+                        NSCursor.openHand.push()
+                    case .ended:
+                        isDragHandleHovered = false
+                        NSCursor.pop()
+                    }
+                }
 
             // Status indicator
             Circle()
@@ -87,12 +165,15 @@ struct BlockRowView: View {
                         .foregroundStyle(.white)
                 )
 
-            // Block title
+            // Block title (truncated with tooltip on hover)
             VStack(alignment: .leading, spacing: 2) {
                 Text(block.title)
                     .font(.callout)
                     .fontWeight(.semibold)
                     .foregroundStyle(.primary)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+                    .help(block.title)
 
                 Text(block.category.rawValue)
                     .font(.caption2)
@@ -119,7 +200,7 @@ struct BlockRowView: View {
             }
             .buttonStyle(.plain)
 
-            // Remove button
+            // Remove button (visible on hover)
             Button(action: onRemove) {
                 Image(systemName: "xmark.circle.fill")
                     .font(.body)
@@ -334,7 +415,9 @@ private struct ModifierPickerView: View {
     return BlockRowView(
         block: block,
         index: 0,
+        totalCount: 3,
         isSelected: true,
+        isDragging: false,
         placeholderStatus: .complete,
         inputs: ["goal": "Test goal", "priority": "High"],
         modifiers: [],
@@ -343,6 +426,9 @@ private struct ModifierPickerView: View {
         onInputChange: { _, _ in },
         onModifierInputChange: { _, _, _ in },
         onRemove: {},
+        onDuplicate: {},
+        onMoveUp: {},
+        onMoveDown: {},
         onAddModifier: { _ in },
         onRemoveModifier: { _ in },
         modifierLibrary: [:]
