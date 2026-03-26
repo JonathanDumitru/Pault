@@ -23,6 +23,10 @@ struct BlockEditorView: View {
     @State private var showOnboardingTip = false
     @AppStorage("hasSeenBlockEditorOnboarding") private var hasSeenOnboarding = false
 
+    // Dirty navigation warning
+    @State private var showDirtyNavigationAlert = false
+    @State private var pendingPromptID: UUID? = nil
+
     init(prompt: Prompt) {
         self.prompt = prompt
         self._model = StateObject(wrappedValue: PromptStudioModel(prompt: prompt))
@@ -91,12 +95,37 @@ struct BlockEditorView: View {
                 }
             }
         }
-        .onChange(of: prompt.id) { _, _ in
-            // Clear undo history when navigating to a different prompt
-            model.clearUndoHistory()
-            // Reload model when prompt changes
-            model.loadFromPrompt()
-            model.compileNow()
+        .onChange(of: prompt.id) { _, newID in
+            if model.isDirty {
+                // Show dirty navigation warning — store pending ID, then let user decide
+                pendingPromptID = newID
+                showDirtyNavigationAlert = true
+            } else {
+                // Clean — navigate immediately
+                model.clearUndoHistory()
+                model.loadFromPrompt()
+                model.compileNow()
+            }
+        }
+        .alert("Unsaved Changes", isPresented: $showDirtyNavigationAlert) {
+            Button("Save") {
+                model.saveToPrompt()
+                model.clearUndoHistory()
+                model.loadFromPrompt()
+                model.compileNow()
+                pendingPromptID = nil
+            }
+            Button("Discard", role: .destructive) {
+                model.clearUndoHistory()
+                model.loadFromPrompt()
+                model.compileNow()
+                pendingPromptID = nil
+            }
+            Button("Cancel", role: .cancel) {
+                pendingPromptID = nil
+            }
+        } message: {
+            Text("You have unsaved changes. Would you like to save before continuing?")
         }
         .onChange(of: model.canvasBlocks.count) { old, new in
             // Dismiss tip when user adds first block
