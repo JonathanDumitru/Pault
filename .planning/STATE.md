@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: "Phase 02 execution complete — ready for verification"
-stopped_at: Phase 02 all 3 plans complete — undo/redo, canvas UX, accessibility
-last_updated: "2026-03-26T23:00:00.000Z"
-last_activity: 2026-03-26 -- Phase 02 execution complete (3/3 plans, undo/redo + canvas UX + accessibility)
+status: verifying
+stopped_at: Completed 02-block-editor-polish 02-04-PLAN.md
+last_updated: "2026-03-26T23:28:45.644Z"
+last_activity: 2026-03-26 -- All 3 plans executed (undo/redo, canvas UX, accessibility)
 progress:
   total_phases: 8
-  completed_phases: 1
-  total_plans: 5
-  completed_plans: 4
-  percent: 10
+  completed_phases: 2
+  total_plans: 6
+  completed_plans: 6
+  percent: 25
 ---
 
 # Project State
@@ -52,6 +52,7 @@ Progress: [██░░░░░░░░] 25%
 *Updated after each plan completion*
 | Phase 02-block-editor-polish P01 | 90 | 2 tasks | 5 files |
 | Phase 02-block-editor-polish P02-02 | 30 | 2 tasks | 3 files |
+| Phase 02-block-editor-polish P04 | 5 | 1 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -72,6 +73,7 @@ Recent decisions affecting current work:
 - [Phase 02]: NSApp.keyWindow.undoManager injection pattern for BlockEditorView (not @Environment) to avoid SwiftUI crash on macOS 26
 - [Phase 02-block-editor-polish]: Tests use XCTestCase async + MainActor.run pattern (consistent with UndoRedoTests) to avoid macOS 26 Swift Concurrency + ObjC UndoManager crash
 - [Phase 02-block-editor-polish]: Dirty navigation warning uses .alert in BlockEditorView onChange(prompt.id) with Save/Discard/Cancel and pendingPromptID state
+- [Phase 02-block-editor-polish]: pendingFirstInputFocusBlockID pattern: model publishes UUID?, view consumes with 0.1s asyncAfter and clears — avoids @FocusState dropped on invisible views
 
 ### Pending Todos
 
@@ -85,6 +87,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-26T23:00:00.000Z
-Stopped at: Phase 02 execution complete — all 3 plans done, ready for verification
+Last session: 2026-03-26T23:28:45.641Z
+Stopped at: Completed 02-block-editor-polish 02-04-PLAN.md
 Resume file: None

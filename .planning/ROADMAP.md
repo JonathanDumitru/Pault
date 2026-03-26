@@ -13,7 +13,7 @@ Pault ships as a polished, premium macOS prompt library with a generous free tie
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Compliance & Test Infrastructure** - Fix hard blockers (privacy manifest, entitlements) and establish test foundation (completed 2026-03-15)
-- [ ] **Phase 2: Block Editor Polish** - Finish the remaining 5% of canvas UX with edge cases, accessibility, and performance
+- [x] **Phase 2: Block Editor Polish** - Finish the remaining 5% of canvas UX with edge cases, accessibility, and performance (completed 2026-03-26)
 - [ ] **Phase 3: StoreKit 2 Paywall** - Harden existing StoreKit 2 implementation for App Store compliance
 - [ ] **Phase 4: Pro Features -- AI Assist & API Runner** - Build shared AI infrastructure, prompt improvement, and prompt execution
 - [ ] **Phase 5: Pro Features -- Versioning, Analytics & Smart Collections** - Complete the remaining Pro tier features
@@ -168,7 +168,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Compliance & Test Infrastructure | 2/2 | Complete   | 2026-03-15 |
-| 2. Block Editor Polish | 3/4 | In Progress|  |
+| 2. Block Editor Polish | 4/4 | Complete   | 2026-03-26 |
 | 3. StoreKit 2 Paywall | 0/3 | Not started | - |
 | 4. Pro Features -- AI Assist & API Runner | 0/3 | Not started | - |
 | 5. Pro Features -- Versioning, Analytics & Smart Collections | 0/3 | Not started | - |
