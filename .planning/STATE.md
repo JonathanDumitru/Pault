@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: in-progress
-stopped_at: Completed 03-01-PLAN.md (ProFeature enum + centralized gating)
-last_updated: "2026-03-27T01:43:00Z"
-last_activity: 2026-03-27 -- Phase 03 Plan 01 executed (ProFeature enum, hardened StoreKit, centralized gating)
+stopped_at: Completed 03-02-PLAN.md (PaywallView compliance rebuild)
+last_updated: "2026-03-26T21:30:00Z"
+last_activity: 2026-03-26 -- Phase 03 Plan 02 executed (compliant PaywallView with dynamic CTA, comparison grid, Schedule 2 disclosures)
 progress:
   total_phases: 8
   completed_phases: 2
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-03-14)
 ## Current Position
 
 Phase: 3 of 8 (StoreKit 2 Paywall)
-Plan: 1 of 4 (03-01 complete)
-Status: Phase 3 in progress — Plan 01 complete
-Last activity: 2026-03-27 -- ProFeature enum created, all isProUnlocked checks centralized, block limit gate added
+Plan: 2 of 4 (03-02 complete)
+Status: Phase 3 in progress — Plans 01-02 complete
+Last activity: 2026-03-26 -- Compliant PaywallView with dynamic StoreKit CTA, Free vs Pro grid, Schedule 2 disclosures, and legal links
 
 Progress: [██░░░░░░░░] 28%
 
@@ -54,6 +54,7 @@ Progress: [██░░░░░░░░] 28%
 | Phase 02-block-editor-polish P02-02 | 30 | 2 tasks | 3 files |
 | Phase 02-block-editor-polish P04 | 5 | 1 tasks | 5 files |
 | Phase 03-storekit-2-paywall P01 | 25 | 2 tasks | 9 files |
+| Phase 03-storekit-2-paywall P02 | 15 | 1 task | 1 file |
 
 ## Accumulated Context
 
@@ -79,6 +80,9 @@ Recent decisions affecting current work:
 - [Phase 03-01]: 5-block limit gated on ALL 4 canvas insertion paths (slash palette, empty canvas drop, block list drop, per-row positional drop)
 - [Phase 03-01]: PromptDetailView uses paywallFeature state + dynamic PaywallView metadata instead of hardcoded feature strings
 - [Phase 03-01]: StoreKit VerificationResult always explicit switch — .verified proceeds, .unverified logs via Self.logger, never try? payloadValue
+- [Phase 03-02]: Dynamic CTA computed in loadProducts() using await subscription.isEligibleForIntroOffer — not a computed property (async restriction)
+- [Phase 03-02]: paymentMode switch uses default: not @unknown default: — Swift exhaustiveness requires it for non-open StoreKit enum
+- [Phase 03-02]: Free vs Pro comparison grid is hardcoded rows (not ProFeature.allCases) — free tier features not modeled in ProFeature enum
 
 ### Pending Todos
 
@@ -92,6 +96,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-27T01:43:00Z
-Stopped at: Completed 03-01-PLAN.md (ProFeature enum + centralized gating)
-Resume file: .planning/phases/03-storekit-2-paywall/03-01-SUMMARY.md
+Last session: 2026-03-26T21:30:00Z
+Stopped at: Completed 03-02-PLAN.md (PaywallView compliance rebuild)
+Resume file: .planning/phases/03-storekit-2-paywall/03-02-SUMMARY.md
