@@ -1,11 +1,66 @@
 {
-  "identifier" : "pault-storekit-config",
-  "type" : "Configuration",
-  "version" : 3,
-  "storeKitVersion" : 2,
+  "identifier" : "A3F1B2C7",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+
+  ],
+  "settings" : {
+    "_failTransactionsEnabled" : false,
+    "_locale" : "en_US",
+    "_storefront" : "USA",
+    "_storeKitErrors" : [
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Load Products"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Purchase"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Verification"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Store Sync"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Subscription Status"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Transaction"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Manage Subscriptions Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Refund Request Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Offer Code Redeem Sheet"
+      }
+    ]
+  },
   "subscriptionGroups" : [
     {
-      "id" : "pault-pro-group",
+      "id" : "D4E5F601",
       "localizations" : [
         {
           "description" : "Access all Pro features",
@@ -16,15 +71,19 @@
       "name" : "Pault Pro",
       "subscriptions" : [
         {
-          "adHocOffers" : [],
-          "codeOffers" : [],
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
           "displayPrice" : "59.99",
           "familyShareable" : false,
           "groupNumber" : 1,
-          "internalID" : "pault-pro-annual-id",
+          "internalID" : "B2C3D4E5",
           "introductoryOffer" : {
             "displayPrice" : "0",
-            "internalID" : "intro-offer-id",
+            "internalID" : "C3D4E5F6",
             "numberOfPeriods" : 1,
             "paymentMode" : "free",
             "subscriptionPeriod" : "P1W"
@@ -39,10 +98,14 @@
           "productID" : "com.pault.pro.annual",
           "recurringSubscriptionPeriod" : "P1Y",
           "referenceName" : "Pro Annual",
-          "subscriptionGroupID" : "pault-pro-group",
+          "subscriptionGroupID" : "D4E5F601",
           "type" : "RecurringSubscription"
         }
       ]
     }
-  ]
+  ],
+  "version" : {
+    "major" : 4,
+    "minor" : 0
+  }
 }

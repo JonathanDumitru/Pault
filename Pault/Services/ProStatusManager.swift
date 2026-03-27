@@ -59,7 +59,7 @@ final class ProStatusManager {
         availableProducts = (try? await Product.products(for: [Self.proProductID])) ?? []
     }
 
-    private func refreshStatus() async {
+    func refreshStatus() async {
         var hasPro = false
         for await result in Transaction.currentEntitlements {
             guard case .verified(let transaction) = result else {
