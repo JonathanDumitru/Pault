@@ -2,16 +2,17 @@
 import Foundation
 import StoreKit
 import Observation
+import os
 
 @MainActor
 @Observable
 final class ProStatusManager {
     static let shared = ProStatusManager()
 
-    static let proProductIDs = [
-        "com.pault.pro.monthly",
-        "com.pault.pro.annual"
-    ]
+    /// Single annual product — monthly offering removed.
+    static let proProductID = "com.pault.pro.annual"
+
+    private static let logger = Logger(subsystem: "com.pault", category: "StoreKit")
 
     private(set) var isProUnlocked: Bool = false
     private(set) var availableProducts: [Product] = []
@@ -33,10 +34,15 @@ final class ProStatusManager {
         let result = try await product.purchase()
         switch result {
         case .success(let verification):
-            let transaction = try verification.payloadValue
-            await transaction.finish()
-            await refreshStatus()
-            return true
+            switch verification {
+            case .verified(let transaction):
+                await transaction.finish()
+                await refreshStatus()
+                return true
+            case .unverified(let transaction, let error):
+                Self.logger.error("Unverified purchase \(transaction.id): \(error.localizedDescription)")
+                return false
+            }
         case .userCancelled, .pending:
             return false
         @unknown default:
@@ -50,24 +56,31 @@ final class ProStatusManager {
     }
 
     func loadProducts() async {
-        availableProducts = (try? await Product.products(for: Self.proProductIDs)) ?? []
+        availableProducts = (try? await Product.products(for: [Self.proProductID])) ?? []
     }
 
     private func refreshStatus() async {
         var hasPro = false
         for await result in Transaction.currentEntitlements {
-            if let transaction = try? result.payloadValue {
-                if Self.proProductIDs.contains(transaction.productID) { hasPro = true }
+            guard case .verified(let transaction) = result else {
+                if case .unverified(let transaction, let error) = result {
+                    Self.logger.error("Unverified entitlement \(transaction.id): \(error.localizedDescription)")
+                }
+                continue
             }
+            if transaction.productID == Self.proProductID { hasPro = true }
         }
         isProUnlocked = hasPro
     }
 
     private func listenForTransactions() async {
         for await result in Transaction.updates {
-            if let transaction = try? result.payloadValue {
+            switch result {
+            case .verified(let transaction):
                 await transaction.finish()
                 await refreshStatus()
+            case .unverified(let transaction, let error):
+                Self.logger.error("Unverified transaction update \(transaction.id): \(error.localizedDescription)")
             }
         }
     }
