@@ -1,0 +1,48 @@
+{
+  "identifier" : "pault-storekit-config",
+  "type" : "Configuration",
+  "version" : 3,
+  "storeKitVersion" : 2,
+  "subscriptionGroups" : [
+    {
+      "id" : "pault-pro-group",
+      "localizations" : [
+        {
+          "description" : "Access all Pro features",
+          "displayName" : "Pault Pro",
+          "locale" : "en_US"
+        }
+      ],
+      "name" : "Pault Pro",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [],
+          "codeOffers" : [],
+          "displayPrice" : "59.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "pault-pro-annual-id",
+          "introductoryOffer" : {
+            "displayPrice" : "0",
+            "internalID" : "intro-offer-id",
+            "numberOfPeriods" : 1,
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P1W"
+          },
+          "localizations" : [
+            {
+              "description" : "Full access to all Pro features including AI Assist, Versioning, Analytics, API Runner, Smart Collections, and Unlimited Blocks.",
+              "displayName" : "Pro Annual",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.pault.pro.annual",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Pro Annual",
+          "subscriptionGroupID" : "pault-pro-group",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ]
+}
