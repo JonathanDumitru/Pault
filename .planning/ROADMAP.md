@@ -86,12 +86,12 @@ Plans:
   5. User can run a compiled prompt against an LLM via proxy service with model selection and streaming response display
   6. Responses are saved with prompt/version linkage; user can browse response history and copy responses to clipboard
   7. All AI calls route through proxy service with subscription auth, graceful degradation when unreachable, and rate limiting feedback
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 04-01: Proxy service integration and shared AI infrastructure
-- [ ] 04-02: AI Assist features (rewrite, variables, tagging, scoring)
-- [ ] 04-03: API Runner (execution, response management, refinement loop)
+- [ ] 04-01-PLAN.md -- Cloudflare Worker proxy service and AIService rewiring to proxy routing
+- [ ] 04-02-PLAN.md -- AI Assist panel: streaming Improve, Variables, Tags, Score, Refine tabs
+- [ ] 04-03-PLAN.md -- API Runner: Run tab, response management, history, privacy manifest
 
 ### Phase 5: Pro Features -- Versioning, Analytics & Smart Collections
 **Goal**: Pro users have full prompt version history, usage analytics with visual dashboards, and dynamic smart collections
