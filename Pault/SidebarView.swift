@@ -149,7 +149,7 @@ struct SidebarView: View {
                 .padding(.vertical, 8)
 
             // Collections section (Pro)
-            if ProStatusManager.shared.isProUnlocked && !collections.isEmpty {
+            if ProFeature.isUnlocked(.smartCollections) && !collections.isEmpty {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Collections")
                         .font(.caption.bold())
@@ -175,7 +175,7 @@ struct SidebarView: View {
             }
 
             // New Collection button (Pro)
-            if ProStatusManager.shared.isProUnlocked {
+            if ProFeature.isUnlocked(.smartCollections) {
                 Button(action: { showingNewCollection = true }) {
                     Label("New Collection", systemImage: "plus")
                         .font(.caption)

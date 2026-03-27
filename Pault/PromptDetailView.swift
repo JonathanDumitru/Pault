@@ -33,6 +33,7 @@ struct PromptDetailView: View {
     @State private var syncTask: Task<Void, Never>?
     @State private var showResponsePanel: Bool = false
     @State private var showPaywall: Bool = false
+    @State private var paywallFeature: ProFeature = .aiAssist
     @State private var responseConfig: AIConfig = AIConfig.defaults[.claude] ?? AIConfig(provider: .claude, model: "claude-opus-4-6")
     @State private var showVariantB: Bool = false
     @State private var showABResult: Bool = false
@@ -123,7 +124,7 @@ struct PromptDetailView: View {
             debouncedSave()
         }
         .sheet(isPresented: $showPaywall) {
-            PaywallView(featureName: "API Runner", featureDescription: "Run prompts directly against any LLM without leaving Pault.", featureIcon: "play.circle.fill")
+            PaywallView(featureName: paywallFeature.displayName, featureDescription: paywallFeature.description, featureIcon: paywallFeature.sfSymbol)
         }
         .alert("AI Error", isPresented: Binding(
             get: { aiError != nil },
@@ -159,7 +160,7 @@ struct PromptDetailView: View {
             ModeSwitchDialogView(
                 isPresented: $showModeSwitchDialog,
                 hasExistingContent: !prompt.content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
-                isPro: ProStatusManager.shared.isProUnlocked,
+                isPro: ProFeature.isUnlocked(.aiAssist),
                 onParse: switchToBlocksWithParse,
                 onStartFresh: switchToBlocksStartFresh,
                 onShowPaywall: { showPaywall = true }
@@ -342,7 +343,7 @@ struct PromptDetailView: View {
 
             // AI Assist button (Pro)
             Button(action: {
-                guard ProStatusManager.shared.isProUnlocked else { showPaywall = true; return }
+                guard ProFeature.isUnlocked(.aiAssist) else { paywallFeature = .aiAssist; showPaywall = true; return }
                 showAIPanel.toggle()
                 if !hasDiscoveredAIAssist { hasDiscoveredAIAssist = true }
             }) {
@@ -352,7 +353,7 @@ struct PromptDetailView: View {
                         .foregroundStyle(showAIPanel ? .blue : .secondary)
                         .padding(12)
 
-                    if ProStatusManager.shared.isProUnlocked && !hasDiscoveredAIAssist {
+                    if ProFeature.isUnlocked(.aiAssist) && !hasDiscoveredAIAssist {
                         Circle()
                             .fill(.blue)
                             .frame(width: 8, height: 8)
@@ -365,7 +366,7 @@ struct PromptDetailView: View {
 
             // Run button (Pro)
             Button(action: {
-                guard ProStatusManager.shared.isProUnlocked else { showPaywall = true; return }
+                guard ProFeature.isUnlocked(.apiRunner) else { paywallFeature = .apiRunner; showPaywall = true; return }
                 showResponsePanel.toggle()
             }) {
                 Image(systemName: showResponsePanel ? "play.circle.fill" : "play.circle")
@@ -438,7 +439,7 @@ struct PromptDetailView: View {
     }
 
     private func activateABMode() {
-        guard ProStatusManager.shared.isProUnlocked else { showPaywall = true; return }
+        guard ProFeature.isUnlocked(.versioning) else { paywallFeature = .versioning; showPaywall = true; return }
         if prompt.variantB == nil {
             prompt.variantB = prompt.content   // seed B from A
             showVariantB = true

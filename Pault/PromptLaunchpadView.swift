@@ -85,7 +85,7 @@ struct PromptLaunchpadView: View {
                     showTemplateBrowser = true
                 }
 
-                if ProStatusManager.shared.isProUnlocked {
+                if ProFeature.isUnlocked(.aiAssist) {
                     launchpadCard(
                         icon: "sparkles",
                         title: "Generate with AI",
@@ -338,7 +338,7 @@ struct PromptLaunchpadView: View {
 
             Spacer()
 
-            if !ProStatusManager.shared.isProUnlocked {
+            if !ProFeature.isUnlocked(.aiAssist) {
                 // Pro nudge
                 VStack(spacing: 12) {
                     Image(systemName: "sparkles")

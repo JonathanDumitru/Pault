@@ -228,7 +228,7 @@ struct ContentView: View {
             .keyboardShortcut("n", modifiers: .command)
             .help("New Prompt (⌘N)")
 
-            if ProStatusManager.shared.isProUnlocked {
+            if ProFeature.isUnlocked(.analytics) {
                 Button {
                     showingAnalytics = true
                 } label: {

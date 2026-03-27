@@ -54,6 +54,10 @@ struct CompositionCanvasView: View {
     // Toast for Cmd+Shift+C copy action
     @State private var showCopyToast = false
 
+    // Paywall state for block limit gate
+    @State private var showPaywall = false
+    @State private var paywallFeature: ProFeature = .unlimitedBlocks
+
     // Accessibility environments
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -156,6 +160,11 @@ struct CompositionCanvasView: View {
             // Canvas-level drop destination for library blocks (fallback when empty)
             .dropDestination(for: Block.self) { items, _ in
                 for block in items {
+                    guard ProFeature.isUnlocked(.unlimitedBlocks) || model.canvasBlocks.count < ProFeature.freeBlockLimit else {
+                        paywallFeature = .unlimitedBlocks
+                        showPaywall = true
+                        return false
+                    }
                     withAnimation(AppConstants.StandardAnimation.spring) {
                         model.addToCanvas(block)
                     }
@@ -170,6 +179,12 @@ struct CompositionCanvasView: View {
                         .onTapGesture { slashState.hide() }
 
                     SlashCommandPaletteView(state: slashState, model: model) { block in
+                        // Check block limit for free users
+                        guard ProFeature.isUnlocked(.unlimitedBlocks) || model.canvasBlocks.count < ProFeature.freeBlockLimit else {
+                            paywallFeature = .unlimitedBlocks
+                            showPaywall = true
+                            return
+                        }
                         withAnimation(AppConstants.StandardAnimation.spring) {
                             model.addToCanvas(block)
                             // After insert, select, scroll, and drive focus into first input
@@ -213,6 +228,9 @@ struct CompositionCanvasView: View {
         }
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Composition canvas, \(model.canvasBlocks.count) block\(model.canvasBlocks.count == 1 ? "" : "s")")
+        .sheet(isPresented: $showPaywall) {
+            PaywallView(featureName: paywallFeature.displayName, featureDescription: paywallFeature.description, featureIcon: paywallFeature.sfSymbol)
+        }
     }
 
     // MARK: - Keyboard Handlers
@@ -377,6 +395,11 @@ struct CompositionCanvasView: View {
             .padding(.horizontal, 32)
             .dropDestination(for: Block.self) { items, _ in
                 for block in items {
+                    guard ProFeature.isUnlocked(.unlimitedBlocks) || model.canvasBlocks.count < ProFeature.freeBlockLimit else {
+                        paywallFeature = .unlimitedBlocks
+                        showPaywall = true
+                        return false
+                    }
                     withAnimation(AppConstants.StandardAnimation.spring) {
                         model.addToCanvas(block)
                         model.selectedCanvasBlockID = model.canvasBlocks.last?.id
@@ -499,6 +522,12 @@ struct CompositionCanvasView: View {
                         // Per-row drop destination for library blocks
                         .dropDestination(for: Block.self) { items, _ in
                             for item in items {
+                                guard ProFeature.isUnlocked(.unlimitedBlocks) || model.canvasBlocks.count < ProFeature.freeBlockLimit else {
+                                    paywallFeature = .unlimitedBlocks
+                                    showPaywall = true
+                                    dropTargetIndex = nil
+                                    return false
+                                }
                                 withAnimation(AppConstants.StandardAnimation.spring) {
                                     model.insertOnCanvas(item, at: index)
                                     model.selectedCanvasBlockID = model.canvasBlocks[safe: index]?.id

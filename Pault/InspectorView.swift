@@ -38,7 +38,7 @@ struct InspectorView: View {
                 infoSection
 
                 // Stats section (Pro only)
-                if ProStatusManager.shared.isProUnlocked {
+                if ProFeature.isUnlocked(.analytics) {
                     sectionDivider
                     statsSection
                 }

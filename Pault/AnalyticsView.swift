@@ -42,7 +42,7 @@ struct AnalyticsView: View {
     var body: some View {
         NavigationStack {
             Group {
-                if ProStatusManager.shared.isProUnlocked {
+                if ProFeature.isUnlocked(.analytics) {
                     analyticsContent
                 } else {
                     upgradePrompt
