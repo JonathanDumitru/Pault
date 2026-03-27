@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: in-progress
-stopped_at: Completed 03-02-PLAN.md (PaywallView compliance rebuild)
-last_updated: "2026-03-26T21:30:00Z"
-last_activity: 2026-03-26 -- Phase 03 Plan 02 executed (compliant PaywallView with dynamic CTA, comparison grid, Schedule 2 disclosures)
+stopped_at: Completed 03-03-PLAN.md (SKTestSession subscription lifecycle tests + ProFeature enum tests + Pault.storekit config)
+last_updated: "2026-03-27T02:00:00Z"
+last_activity: 2026-03-27 -- Phase 03 Plan 03 executed (Pault.storekit, ProStatusManagerTests 5 lifecycle tests, ProFeatureTests 6 enum tests)
 progress:
   total_phases: 8
   completed_phases: 2
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-03-14)
 ## Current Position
 
 Phase: 3 of 8 (StoreKit 2 Paywall)
-Plan: 2 of 4 (03-02 complete)
-Status: Phase 3 in progress — Plans 01-02 complete
-Last activity: 2026-03-26 -- Compliant PaywallView with dynamic StoreKit CTA, Free vs Pro grid, Schedule 2 disclosures, and legal links
+Plan: 3 of 4 (03-03 complete)
+Status: Phase 3 in progress — Plans 01-03 complete
+Last activity: 2026-03-27 -- SKTestSession lifecycle tests + ProFeature enum tests + Pault.storekit config
 
 Progress: [██░░░░░░░░] 28%
 
@@ -83,6 +83,10 @@ Recent decisions affecting current work:
 - [Phase 03-02]: Dynamic CTA computed in loadProducts() using await subscription.isEligibleForIntroOffer — not a computed property (async restriction)
 - [Phase 03-02]: paymentMode switch uses default: not @unknown default: — Swift exhaustiveness requires it for non-open StoreKit enum
 - [Phase 03-02]: Free vs Pro comparison grid is hardcoded rows (not ProFeature.allCases) — free tier features not modeled in ProFeature enum
+- [Phase 03-03]: Pault.storekit uses version {"major":4,"minor":0} object format — template had wrong integer version:3 which caused SKTestErrorCodeInvalidProductIdentifier
+- [Phase 03-03]: ProStatusManager.refreshStatus is internal (not private) — required for direct test invocation without sleep-based timing
+- [Phase 03-03]: SKTestSession tests use @MainActor class + direct async calls — not MainActor.run{} wrappers (which reject async closures in Xcode 26)
+- [Phase 03-03]: 800ms sleep after expireSubscription on macOS 26 beta — StoreKit propagation delay before currentEntitlements reflects expiry
 
 ### Pending Todos
 
@@ -96,6 +100,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-26T21:30:00Z
-Stopped at: Completed 03-02-PLAN.md (PaywallView compliance rebuild)
+Last session: 2026-03-27T02:00:00Z
+Stopped at: Completed 03-03-PLAN.md (SKTestSession tests + ProFeature tests + storekit config)
+Resume file: .planning/phases/03-storekit-2-paywall/03-03-SUMMARY.md
 Resume file: .planning/phases/03-storekit-2-paywall/03-02-SUMMARY.md
