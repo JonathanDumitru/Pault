@@ -67,12 +67,12 @@ Plans:
   3. Paywall displays dynamic introductory offer text (no hardcoded trial language), subscription terms, and Privacy Policy/Terms of Service links
   4. Transaction verification uses explicit verified/unverified handling (no silent `try?` swallowing)
   5. Feature gating uses a centralized ProFeature enum; free users see graceful upgrade prompts when discovering Pro features
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 03-01: Transaction verification and subscription lifecycle
-- [ ] 03-02: Paywall UI compliance and feature gating
-- [ ] 03-03: StoreKit configuration and subscription testing
+- [ ] 03-01-PLAN.md -- ProFeature enum, ProStatusManager hardening, and centralized feature gating
+- [ ] 03-02-PLAN.md -- PaywallView compliance rebuild with dynamic offers and legal disclosures
+- [ ] 03-03-PLAN.md -- StoreKit configuration file and subscription lifecycle tests
 
 ### Phase 4: Pro Features -- AI Assist & API Runner
 **Goal**: Pro users can improve prompts with AI assistance and execute prompts directly against LLMs with streaming responses
