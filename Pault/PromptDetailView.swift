@@ -18,6 +18,12 @@ import AppKit
 
 private let detailLogger = Logger(subsystem: "com.pault.app", category: "PromptDetail")
 
+enum DetailTab: String, CaseIterable {
+    case edit = "Edit"
+    case build = "Build"
+    case run = "Run"
+}
+
 struct PromptDetailView: View {
     @Environment(\.modelContext) private var modelContext
     @Bindable var prompt: Prompt
@@ -31,7 +37,7 @@ struct PromptDetailView: View {
 
     @State private var saveTask: Task<Void, Never>?
     @State private var syncTask: Task<Void, Never>?
-    @State private var showResponsePanel: Bool = false
+    @State private var selectedDetailTab: DetailTab = .edit
     @State private var showPaywall: Bool = false
     @State private var paywallFeature: ProFeature = .aiAssist
     @State private var responseConfig: AIConfig = AIConfig.defaults[.claude] ?? AIConfig(provider: .claude, model: "claude-opus-4-6")
@@ -80,12 +86,21 @@ struct PromptDetailView: View {
 
             Divider()
 
-            // Content area - switches between text and blocks mode
-            if prompt.editingMode == .blocks {
-                BlockEditorView(prompt: prompt)
+            // Content area - switches between tabs
+            switch selectedDetailTab {
+            case .edit:
+                if prompt.editingMode == .blocks {
+                    BlockEditorView(prompt: prompt)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    textEditorContent
+                }
+            case .build:
+                PromptPreviewView(prompt: prompt)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else {
-                textEditorContent
+            case .run:
+                RunTabView(prompt: prompt, config: responseConfig)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
         .overlay {
@@ -189,21 +204,24 @@ struct PromptDetailView: View {
 
             Spacer()
 
-            // Mode toggle: Text | Blocks
-            Picker("", selection: Binding(
-                get: { prompt.editingMode },
-                set: { newMode in handleModeChange(to: newMode) }
-            )) {
-                Label("Text", systemImage: "doc.text")
-                    .tag(EditingMode.text)
-                Label("Blocks", systemImage: "square.stack.3d.up")
-                    .tag(EditingMode.blocks)
+            // Tab Picker: Edit | Build | Run
+            Picker("", selection: $selectedDetailTab) {
+                ForEach(DetailTab.allCases, id: \.self) { tab in
+                    Text(tab.rawValue).tag(tab)
+                }
             }
             .pickerStyle(.segmented)
-            .frame(width: 160)
+            .frame(width: 180)
+            .onChange(of: selectedDetailTab) { oldTab, newTab in
+                if newTab == .run && !ProFeature.isUnlocked(.apiRunner) {
+                    selectedDetailTab = oldTab
+                    paywallFeature = .apiRunner
+                    showPaywall = true
+                }
+            }
 
-            // Sync state indicator (when in blocks mode)
-            if prompt.editingMode == .blocks, let syncState = prompt.blockSyncState {
+            // Sync state indicator (when in blocks mode and on Edit tab)
+            if selectedDetailTab == .edit && prompt.editingMode == .blocks, let syncState = prompt.blockSyncState {
                 HStack(spacing: 4) {
                     Circle()
                         .fill(syncState == .synced ? Color.green : Color.orange)
@@ -223,6 +241,24 @@ struct PromptDetailView: View {
     private var textEditorContent: some View {
         // Full-width editor (inspector is now managed by ContentView)
         VStack(alignment: .leading, spacing: 0) {
+            // Mode toggle: Text | Blocks (moved inside Edit tab)
+            HStack {
+                Spacer()
+                Picker("", selection: Binding(
+                    get: { prompt.editingMode },
+                    set: { newMode in handleModeChange(to: newMode) }
+                )) {
+                    Label("Text", systemImage: "doc.text")
+                        .tag(EditingMode.text)
+                    Label("Blocks", systemImage: "square.stack.3d.up")
+                        .tag(EditingMode.blocks)
+                }
+                .pickerStyle(.segmented)
+                .frame(width: 160)
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 12)
+
             // Contextual coaching tip
             if let tip = coachingTip {
                 HStack(spacing: 8) {
@@ -287,15 +323,8 @@ struct PromptDetailView: View {
                 AIAssistPanel(prompt: prompt, config: responseConfig)
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             }
-
-            // Streaming response panel (shown when run is active)
-            if showResponsePanel {
-                ResponsePanel(prompt: prompt, config: responseConfig)
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
-            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .animation(.easeInOut(duration: 0.2), value: showResponsePanel)
         .animation(.easeInOut(duration: 0.2), value: showAIPanel)
         .overlay(alignment: .bottomTrailing) {
             textEditorToolbarOverlay
@@ -367,11 +396,11 @@ struct PromptDetailView: View {
             // Run button (Pro)
             Button(action: {
                 guard ProFeature.isUnlocked(.apiRunner) else { paywallFeature = .apiRunner; showPaywall = true; return }
-                showResponsePanel.toggle()
+                selectedDetailTab = .run
             }) {
-                Image(systemName: showResponsePanel ? "play.circle.fill" : "play.circle")
+                Image(systemName: selectedDetailTab == .run ? "play.circle.fill" : "play.circle")
                     .font(.title2)
-                    .foregroundStyle(showResponsePanel ? .blue : .secondary)
+                    .foregroundStyle(selectedDetailTab == .run ? .blue : .secondary)
                     .padding(12)
             }
             .buttonStyle(.plain)

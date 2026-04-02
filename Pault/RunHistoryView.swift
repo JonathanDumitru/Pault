@@ -4,6 +4,7 @@ import SwiftData
 struct RunHistoryView: View {
     @Environment(\.modelContext) private var modelContext
     let prompt: Prompt
+    var onRunAgain: ((PromptRun) -> Void)? = nil
 
     // Fetch runs for this prompt, newest first
     var runs: [PromptRun] {
@@ -42,7 +43,8 @@ struct RunHistoryView: View {
                             isExpanded: expandedRunID == run.id,
                             onToggle: {
                                 expandedRunID = expandedRunID == run.id ? nil : run.id
-                            }
+                            },
+                            onRunAgain: onRunAgain
                         )
                     }
                 }
@@ -54,9 +56,12 @@ struct RunHistoryView: View {
 
 struct RunHistoryRowView: View {
     @Environment(\.modelContext) private var modelContext
-    let run: PromptRun
+    @Bindable var run: PromptRun
     let isExpanded: Bool
     let onToggle: () -> Void
+    var onRunAgain: ((PromptRun) -> Void)? = nil
+
+    @State private var showDeleteConfirmation = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -81,6 +86,11 @@ struct RunHistoryRowView: View {
                             .foregroundStyle(.tertiary)
                     }
                     Spacer()
+                    if let input = run.inputTokens, let output = run.outputTokens {
+                        Text("\(input)+\(output)")
+                            .font(.caption2)
+                            .foregroundStyle(.tertiary)
+                    }
                     Text("\(run.latencyMs)ms")
                         .font(.caption2)
                         .foregroundStyle(.secondary)
@@ -98,24 +108,69 @@ struct RunHistoryRowView: View {
                 .lineLimit(isExpanded ? nil : 2)
                 .fixedSize(horizontal: false, vertical: true)
 
-            // Expanded action buttons
+            // Expanded content
             if isExpanded {
-                HStack(spacing: 8) {
-                    Button(action: copyOutput) {
-                        Label("Copy", systemImage: "doc.on.doc")
+                VStack(alignment: .leading, spacing: 12) {
+                    // Star rating
+                    HStack(spacing: 4) {
+                        Text("Rating:")
                             .font(.caption2)
+                            .foregroundStyle(.secondary)
+                        
+                        ForEach(1...5, id: \.self) { index in
+                            Button(action: {
+                                if run.userRating == index {
+                                    run.userRating = nil
+                                } else {
+                                    run.userRating = index
+                                }
+                                try? modelContext.save()
+                            }) {
+                                Image(systemName: (run.userRating ?? 0) >= index ? "star.fill" : "star")
+                                    .font(.caption)
+                                    .foregroundStyle(.yellow)
+                            }
+                            .buttonStyle(.plain)
+                        }
                     }
-                    .buttonStyle(.plain)
-                    .foregroundStyle(.blue)
+                    .padding(.top, 4)
 
-                    Button(action: saveAsPrompt) {
-                        Label("Save as Prompt", systemImage: "plus.square")
-                            .font(.caption2)
+                    // Action buttons
+                    HStack(spacing: 12) {
+                        Button(action: copyOutput) {
+                            Label("Copy", systemImage: "doc.on.doc")
+                                .font(.caption2)
+                        }
+                        .buttonStyle(.plain)
+                        .foregroundStyle(.blue)
+
+                        Button(action: saveAsPrompt) {
+                            Label("Save as Prompt", systemImage: "plus.square")
+                                .font(.caption2)
+                        }
+                        .buttonStyle(.plain)
+                        .foregroundStyle(.blue)
+                        
+                        if let onRunAgain = onRunAgain {
+                            Button(action: { onRunAgain(run) }) {
+                                Label("Run Again", systemImage: "arrow.clockwise")
+                                    .font(.caption2)
+                            }
+                            .buttonStyle(.plain)
+                            .foregroundStyle(.blue)
+                        }
+                        
+                        Spacer()
+                        
+                        Button(action: { showDeleteConfirmation = true }) {
+                            Image(systemName: "trash")
+                                .font(.caption2)
+                                .foregroundStyle(.red)
+                        }
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
-                    .foregroundStyle(.blue)
                 }
-                .padding(.top, 2)
+                .padding(.top, 4)
             }
         }
         .padding(.horizontal, 10)
@@ -123,6 +178,22 @@ struct RunHistoryRowView: View {
         .background(Color.secondary.opacity(0.05))
         .clipShape(RoundedRectangle(cornerRadius: 6))
         .padding(.horizontal, 8)
+        .swipeActions(edge: .trailing) {
+            Button(role: .destructive) {
+                showDeleteConfirmation = true
+            } label: {
+                Label("Delete", systemImage: "trash")
+            }
+        }
+        .alert("Delete this run?", isPresented: $showDeleteConfirmation) {
+            Button("Cancel", role: .cancel) { }
+            Button("Delete", role: .destructive) {
+                modelContext.delete(run)
+                try? modelContext.save()
+            }
+        } message: {
+            Text("This action cannot be undone.")
+        }
     }
 
     private func copyOutput() {
