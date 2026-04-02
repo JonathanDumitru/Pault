@@ -94,8 +94,9 @@ struct RunTabView: View {
 
                             VStack(alignment: .leading, spacing: 0) {
                                 Text(streamingText + (isRunning ? "▊" : ""))
-                                    .font(.system(.body, design: .monospace))
+                                    .font(.system(.body, design: .monospaced))
                                     .frame(maxWidth: .infinity, alignment: .leading)
+
                                     .padding()
                                     .textSelection(.enabled)
                                 

@@ -31,6 +31,7 @@ struct QualityScore {
     var specificity: Double
     var completeness: Double
     var conciseness: Double
+    var tips: [String] = []
     var overall: Double { (clarity + specificity + completeness + conciseness) / 4 }
 }
 
@@ -90,6 +91,15 @@ actor AIService {
         return try await complete(system: system, user: prompt, config: config)
     }
 
+    func streamImprove(prompt: String, config: AIConfig) async throws -> AsyncThrowingStream<StreamEvent, Error> {
+        let system = """
+        You are an expert prompt engineer. \
+        Rewrite the prompt to be clearer, more specific, and more effective. \
+        Return ONLY the improved prompt text, no commentary.
+        """
+        return try await streamComplete(system: system, user: prompt, config: config)
+    }
+
     func generatePrompt(from description: String, config: AIConfig) async throws -> String {
         let system = """
         You are an expert prompt engineer. Based on the user's description, \
@@ -136,8 +146,9 @@ actor AIService {
         let system = """
         Rate the following prompt on four axes (0-10 each): \
         clarity, specificity, completeness, conciseness. \
+        Also provide 2-3 actionable improvement tips. \
         Return ONLY valid JSON: \
-        {"clarity": <n>, "specificity": <n>, "completeness": <n>, "conciseness": <n>}
+        {"clarity": <n>, "specificity": <n>, "completeness": <n>, "conciseness": <n>, "tips": ["tip1", "tip2"]}
         """
         let response = try await complete(system: system, user: prompt, config: config)
         let data = Data(response.utf8)
@@ -153,7 +164,8 @@ actor AIService {
             clarity: num("clarity"),
             specificity: num("specificity"),
             completeness: num("completeness"),
-            conciseness: num("conciseness")
+            conciseness: num("conciseness"),
+            tips: dict["tips"] as? [String] ?? []
         )
     }
 
@@ -190,7 +202,11 @@ actor AIService {
         for (key, value) in variables {
             resolved = resolved.replacingOccurrences(of: "{{\(key)}}", with: value)
         }
-        let request = try await buildStreamRequest(user: resolved, config: config)
+        return try await streamComplete(system: "You are a helpful assistant.", user: resolved, config: config)
+    }
+
+    private func streamComplete(system: String, user: String, config: AIConfig) async throws -> AsyncThrowingStream<StreamEvent, Error> {
+        let request = try await buildStreamRequest(system: system, user: user, config: config)
         return AsyncThrowingStream { continuation in
             Task {
                 do {
@@ -354,8 +370,7 @@ actor AIService {
         return request
     }
 
-    private func buildStreamRequest(user: String, config: AIConfig) async throws -> URLRequest {
-        let system = "You are a helpful assistant."
+    private func buildStreamRequest(system: String, user: String, config: AIConfig) async throws -> URLRequest {
         var request = try await buildRequest(system: system, user: user, config: config)
         
         if config.provider != .ollama {
