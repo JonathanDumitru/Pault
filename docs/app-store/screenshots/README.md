@@ -8,7 +8,7 @@ Place PNG screenshots in this folder to populate the stylized User Guide PDF scr
 - `02-editor-detail.png`
 - `03-menu-bar-popover.png`
 - `04-global-launcher.png`
-- `05-quick-paste.png`
+- `05-quick-copy.png`
 - `06-favorites-archive.png`
 
 ## Page mapping in the PDF
@@ -18,7 +18,7 @@ Place PNG screenshots in this folder to populate the stylized User Guide PDF scr
 - Menu Bar Quick Access page:
   - uses `03-menu-bar-popover.png`
 - Hotkey Launcher page:
-  - uses `04-global-launcher.png` or `05-quick-paste.png`
+  - uses `04-global-launcher.png` or `05-quick-copy.png`
 - Library States page:
   - uses `06-favorites-archive.png`
 

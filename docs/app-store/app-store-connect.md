@@ -1,6 +1,6 @@
 # App Store Connect Metadata
 
-Last updated: 2026-02-06
+Last updated: 2026-03-27
 
 ## Listing fields
 
@@ -26,7 +26,7 @@ Use Pault to:
 - Find prompts quickly with full-text search.
 - Open prompts from the menu bar while you work.
 - Trigger a launcher with a global hotkey for quick access.
-- Copy or paste prompts into your active app in one flow.
+- Copy prompts instantly from the menu bar or launcher.
 
 Why teams and power users pick Pault:
 - Local-first by default.
@@ -64,9 +64,9 @@ Caption: `Write, refine, and version your best prompts.`
 3. Menu bar popover browsing prompts.
 Caption: `Open your library from the menu bar anytime.`
 4. Global launcher window with quick search.
-Caption: `Find and run prompts in seconds with a hotkey.`
-5. Quick paste action flow into another app.
-Caption: `Paste prompts directly into your active app.`
+Caption: `Find and copy prompts in seconds with a hotkey.`
+5. Block editor canvas with compiled preview.
+Caption: `Compose prompts visually with reusable blocks.`
 6. Favorites and archive filters in sidebar.
 Caption: `Keep your library clean with favorites and archive views.`
 

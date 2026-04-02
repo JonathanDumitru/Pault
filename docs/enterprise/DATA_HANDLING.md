@@ -2,19 +2,24 @@
 
 ## Stored data
 Pault stores:
-- Prompt title and content.
-- Favorite and archived flags.
-- Tags (name + color) and prompt-tag relationships.
-- Timestamps (`createdAt`, `updatedAt`, `lastUsedAt`).
+- Prompt titles, prompt content, optional rich-text content, favorite/archive flags, and timestamps.
+- Template variables and tags.
+- Attachment metadata and, for embedded files, attachment copies on disk.
+- Prompt versions, prompt runs, and copy-event analytics records.
+- Prompt templates, smart collections, custom blocks, and block-editor composition metadata.
 
-## Storage location
-- Data is persisted via SwiftData in the app’s sandboxed container.
-- Preference values are stored in `UserDefaults` via `@AppStorage` (see `CONFIGURATION.md`).
+## Storage locations
+- SwiftData records are persisted in the app’s sandboxed container.
+- Preference values are stored in `UserDefaults`.
+- API keys are stored in Keychain.
+- Embedded attachment files are stored in Application Support; large referenced files remain in their original location and are reopened via bookmark data.
 
 ## Retention
 - There is no automatic retention or purge policy.
 - Archived prompts remain in the store until explicitly deleted.
+- Version history, runs, and analytics records also persist until deleted or the data store is reset.
 
 ## Backup and restore
-- There is no built-in export/import in the current app target.
-- Use macOS backup tooling (Time Machine or managed backup solutions) to capture the app container.
+- The app includes built-in JSON export/import for prompt-library backup.
+- The exporter does not preserve every stored model. It is not a full-fidelity restore path for attachments, versions, runs, templates, smart collections, custom blocks, or block compositions.
+- For full recovery, use standard backup tooling on the app container and attachment storage directories.

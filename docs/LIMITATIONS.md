@@ -1,9 +1,10 @@
 # Current limitations
 
-- Export/import is not implemented.
-- Global hotkey is fixed to ⌘⇧P and is not configurable yet.
-- Template variable names are limited to alphanumeric and underscore tokens matched as `{{name}}`.
-- PaultCore models (workflows, variables, usage logs) are not integrated with the macOS app target.
-- No iOS app target is included in this repository.
-- No application-layer encryption; relies on macOS device encryption.
-- No built-in retention or purge policy.
+- Import and export currently cover a JSON prompt bundle only. They do not restore every model in the app.
+- Export is lossy for rich text, attachments, prompt runs, version history, smart collections, templates, custom blocks, and block compositions.
+- The launcher currently supports copy workflows only; it does not expose edit, delete, archive, or paste actions.
+- The menu bar popover does not provide full prompt editing.
+- Free block-editor usage is limited to five blocks.
+- AI-assisted features require user-supplied provider credentials and working network access to the selected provider.
+- The app does not implement application-layer encryption for prompt content or exports.
+- There is no automatic retention or purge policy for prompts, versions, runs, or analytics events.

@@ -15,7 +15,9 @@ final class ProStatusManager {
     private static let logger = Logger(subsystem: "com.pault", category: "StoreKit")
 
     private(set) var isProUnlocked: Bool = false
+    private(set) var currentTransactionJWS: String?
     private(set) var availableProducts: [Product] = []
+    private var lastJWSRefresh: Date?
 
     nonisolated(unsafe) private var transactionListener: Task<Void, Error>?
 
@@ -61,6 +63,7 @@ final class ProStatusManager {
 
     func refreshStatus() async {
         var hasPro = false
+        var latestJWS: String?
         for await result in Transaction.currentEntitlements {
             guard case .verified(let transaction) = result else {
                 if case .unverified(let transaction, let error) = result {
@@ -68,9 +71,20 @@ final class ProStatusManager {
                 }
                 continue
             }
-            if transaction.productID == Self.proProductID { hasPro = true }
+            if transaction.productID == Self.proProductID {
+                hasPro = true
+                latestJWS = result.jwsRepresentation
+            }
         }
         isProUnlocked = hasPro
+        currentTransactionJWS = latestJWS
+        lastJWSRefresh = Date()
+    }
+
+    func refreshJWSIfNeeded() async {
+        if currentTransactionJWS == nil || lastJWSRefresh == nil || Date().timeIntervalSince(lastJWSRefresh!) > 60 {
+            await refreshStatus()
+        }
     }
 
     private func listenForTransactions() async {

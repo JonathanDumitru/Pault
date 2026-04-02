@@ -5,16 +5,22 @@ sequenceDiagram
     participant MB as Menu Bar
     participant HK as Hotkey Launcher
     participant CB as Clipboard
+    participant AI as AI Provider
 
     U->>MW: Create or edit prompt
-    MW->>SD: Debounced save (updatedAt)
+    MW->>SD: Debounced save or explicit block save
 
     U->>MB: Open menu bar
     MB->>SD: Query prompts
 
-    U->>HK: Press ⌘⇧P
+    U->>HK: Press configured hotkey
     HK->>SD: Query prompts
 
-    U->>HK: Copy or paste action
-    HK->>CB: Write clipboard (sets lastUsedAt)
+    U->>HK: Copy action
+    HK->>CB: Write clipboard and update usage
     CB-->>U: Clipboard available
+
+    U->>MW: Run AI action
+    MW->>AI: Send provider request
+    AI-->>MW: Stream response
+    MW->>SD: Persist PromptRun

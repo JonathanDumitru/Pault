@@ -1,48 +1,49 @@
 # Pault
-Pault is a local prompt library for macOS built with SwiftUI and SwiftData. It keeps prompts on-device and provides a main library window, menu bar access, and a global hotkey launcher.
 
-## What it does
-- Create and edit prompts (title + content).
-- Parse `{{variable}}` placeholders in prompt content and surface editable variable fields with live preview.
-- Organize with tags and mark favorites.
-- Archive prompts and filter by recent, favorites, archived, or tag.
-- Search by title, content, or tag.
-- Copy resolved prompt content (including filled template variables) and quick-paste to the frontmost app.
-- Access prompts from the menu bar popover.
-- Use a global hotkey (⌘⇧P) to open the launcher.
-- Show first-run onboarding for the three app surfaces.
+Pault is a macOS prompt workspace built with SwiftUI and SwiftData. It combines a local prompt library with a richer editor stack: template variables, attachments, version history, AI-assisted prompt workflows, and a visual block editor.
+
+## What it does today
+- Create prompts from scratch, from built-in templates, from clipboard text, or with AI-assisted generation.
+- Edit prompts in text mode or block mode.
+- Parse `{{variable}}` placeholders, store default values, and resolve them on copy and run.
+- Save prompt versions automatically and inspect version history from the inspector.
+- Attach files to prompts, including inline image insertion for supported image attachments.
+- Organize with tags, favorites, archive state, and Pro smart collections.
+- Access the same store from the main window, menu bar popover, and global launcher.
+- Access the same local library from the bundled `pault` terminal companion.
+- Run prompts against configured Claude, OpenAI, or Ollama providers when Pro features are unlocked.
+
+## Current app surfaces
+- Main window: full prompt management, launchpad, text editor, block editor, inspector, AI tools.
+- Menu bar popover: search, copy, favorite, archive, delete, and quick prompt creation.
+- Global launcher: keyboard-first search and copy actions.
+- Preferences: general app settings, hotkey configuration, appearance, data import/export, and AI provider setup.
 
 ## Platform
-- macOS 15+ (menu bar app, global hotkey, SwiftData, pasteboard/accessibility integration).
-- iOS is not implemented in this app target (see PaultCore for shared models).
+- macOS 15+.
+- iOS is not implemented in this app target.
 
 ## Docs
 - Docs index: `docs/README.md`
-- Architecture overview: `docs/ARCHITECTURE.md`
-- Data model reference: `docs/DATA_MODEL.md`
+- Architecture: `docs/ARCHITECTURE.md`
+- Data model: `docs/DATA_MODEL.md`
 - User guide: `docs/USER_GUIDE.md`
+- CLI: `docs/CLI.md`
 - Enterprise docs: `docs/enterprise/README.md`
 
 ## Repo layout
-- `Pault/ContentView.swift`: main window split view and toolbar actions.
-- `Pault/SidebarView.swift`: filters, search, and prompt list.
-- `Pault/PromptDetailView.swift`: editor with inspector toggle.
-- `Pault/InspectorView.swift`: tags, favorite/archive, timestamps.
-- `Pault/MenuBarContentView.swift`: menu bar library and quick actions.
-- `Pault/HotkeyLauncherView.swift`: global hotkey launcher.
-- `Pault/PreferencesView.swift`: app preferences and login item.
-- `Pault/Prompt.swift`: SwiftData prompt model.
-- `Pault/Tag.swift`: SwiftData tag model.
-- `Pault/TemplateVariable.swift`: SwiftData template variable model linked to prompts.
-- `Pault/TemplateEngine.swift`: variable parsing, resolution, and sync logic.
-- `Pault/TemplateVariablesView.swift`: variable input + resolved preview in the detail editor.
-- `Pault/PaultApp.swift`: app entry point and SwiftData setup.
-- `Pault/AppDelegate.swift`: menu bar + hotkey wiring.
-- `PaultCore/`: shared model scaffolding (not integrated in the app target yet).
+- `Pault/ContentView.swift`: main window and top-level prompt workflow.
+- `Pault/PromptDetailView.swift`: text editor, block-mode switching, AI/run overlays, template saving.
+- `Pault/BlockEditor/`: block editor models, services, and views.
+- `Pault/PromptLaunchpadView.swift`: prompt creation launchpad.
+- `Pault/MenuBarContentView.swift`: menu bar prompt access.
+- `Pault/HotkeyLauncherView.swift`: global launcher.
+- `Pault/PreferencesView.swift`: general, hotkey, appearance, data, and AI settings.
+- `Pault/Prompt.swift`: primary SwiftData prompt model.
+- `Pault/PromptService.swift`: CRUD, filtering, copy, tagging, version save orchestration.
+- `Pault/Services/AIService.swift`: provider-backed AI operations.
+- `Pault/ExportService.swift`: JSON import/export bundle support.
 
 ## Development
-- Open `Pault.xcodeproj` in Xcode 15+ (SwiftData required).
+- Open `Pault.xcodeproj` in Xcode 15+.
 - Build and run the `Pault` scheme.
-
-## Notes
-- Cleanup and tracking notes: `docs/NOTES.md`

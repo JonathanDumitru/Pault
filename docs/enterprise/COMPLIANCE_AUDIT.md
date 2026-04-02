@@ -1,40 +1,43 @@
 # Compliance and security audit checklist
 
-This checklist captures the current behavior of the macOS app target and points auditors to evidence in the codebase.
+This checklist captures the current behavior of the macOS app target and points auditors to code evidence.
 
 ## Data residency
-- Data is stored locally in the app sandbox using SwiftData.
-- Evidence: `Pault/PaultApp.swift`, `Pault/Prompt.swift`, `Pault/Tag.swift`, `Pault/TemplateVariable.swift`.
+- Core app data is stored locally in the app sandbox using SwiftData.
+- Embedded attachments are stored locally on disk under Application Support.
+- Evidence: `Pault/PaultApp.swift`, `Pault/Prompt.swift`, `Pault/Attachment.swift`, `Pault/AttachmentManager.swift`
 
 ## Network egress
-- No network frameworks or HTTP clients are referenced in the app target.
-- Evidence: repository search shows no `URLSession`, `URLRequest`, or network client usage.
+- The app contains HTTP client logic for AI provider integrations and connection tests.
+- Evidence: `Pault/Services/AIService.swift`
 
 ## Encryption at rest
-- The app does not implement application-layer encryption.
-- Relies on macOS encryption (FileVault) and disk policies.
-- Evidence: no crypto libraries or encryption routines in the app target.
+- The app does not implement application-layer encryption for prompt content or exports.
+- Credentials are stored in Keychain.
+- Evidence: `Pault/Services/KeychainService.swift`, repository search for encryption routines
 
 ## Data in transit
-- No network transfer of prompt data in the current build.
-- Clipboard usage exposes prompt content to the pasteboard.
-- Evidence: `Pault/ContentView.swift`, `Pault/MenuBarContentView.swift`, `Pault/HotkeyLauncherView.swift`.
+- Prompt content may be transmitted to Anthropic, OpenAI, or Ollama when the user invokes AI workflows.
+- Clipboard usage exposes copied prompt content to the macOS pasteboard.
+- Evidence: `Pault/Services/AIService.swift`, `Pault/PromptService.swift`
 
-## Permissions
-- Hotkey uses Carbon event manager (no prompt expected).
-- Paste simulation uses `CGEvent` and requires Accessibility permission.
-- Evidence: `Pault/GlobalHotkeyManager.swift`, `Pault/HotkeyLauncherView.swift`.
+## Permissions and user consent
+- Global hotkey registration uses Carbon.
+- Import/export and attachment selection use standard user-approved file panels.
+- Referenced attachments use security-scoped bookmarks.
+- Evidence: `Pault/GlobalHotkeyManager.swift`, `Pault/ExportService.swift`, `Pault/AttachmentsStripView.swift`, `Pault/AttachmentManager.swift`
 
 ## Retention and deletion
-- No retention policy is implemented.
-- Deletion removes the prompt from the local store.
-- Evidence: `Pault/ContentView.swift`, `Pault/MenuBarContentView.swift`.
+- No automatic retention policy is implemented.
+- The app includes delete operations for prompts and a full data reset path in settings.
+- Evidence: `Pault/PromptService.swift`, `Pault/PreferencesView.swift`
 
 ## Logging
-- Errors are logged through Apple unified logging (`os.Logger`); no remote logging.
-- Evidence: `Pault/PaultApp.swift`, `Pault/GlobalHotkeyManager.swift`, `Pault/PromptService.swift`.
+- Errors and operational messages are written through Apple unified logging.
+- No remote logging pipeline is implemented.
+- Evidence: `Pault/PaultApp.swift`, `Pault/Services/AIService.swift`, `Pault/PromptService.swift`, `Pault/AttachmentManager.swift`
 
 ## Backup and restore
-- No built-in export/import.
-- Backups rely on OS or enterprise tooling.
-- Evidence: `docs/DATA_STORE.md`.
+- The app includes built-in JSON export/import for prompts.
+- Export/import is partial and does not preserve every model.
+- Evidence: `Pault/ExportService.swift`, `Pault/PreferencesView.swift`, `docs/DATA_STORE.md`

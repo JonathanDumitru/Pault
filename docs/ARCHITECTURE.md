@@ -1,78 +1,87 @@
 # Architecture
 
 ## Overview
-Pault is a macOS SwiftUI app backed by SwiftData. It exposes three primary surfaces that all read/write the same local store: the main window, a menu bar popover, and a global hotkey launcher.
+Pault is a macOS SwiftUI app backed by SwiftData. It has three user-facing access points into one local data store:
+- Main window for full prompt management.
+- Menu bar popover for quick access and lightweight creation.
+- Global launcher for keyboard-first search and copy.
+
+The current app is no longer just a plain text prompt list. The main window includes a launchpad, a text editor with variables and attachments, a visual block editor, version history, Pro analytics, and provider-backed AI tooling.
 
 ## Core surfaces
-- **Main window** (`ContentView`): sidebar filters, search, and prompt editing with the inspector panel.
-- **Menu bar popover** (`MenuBarContentView`): quick list with copy/paste actions and lightweight prompt creation.
-- **Hotkey launcher** (`HotkeyLauncherView`): global search and actions opened with ⌘⇧P.
-- **Preferences** (`PreferencesView`): login item, dock visibility, and launcher defaults.
-- **Onboarding** (`OnboardingView`): first-run walkthrough shown from `ContentView` when `hasCompletedOnboarding` is false.
+- `ContentView`: main window shell with collapsible sidebar and inspector.
+- `PromptLaunchpadView`: new-prompt entry point for blank, template, clipboard, and AI-assisted creation.
+- `PromptDetailView`: title editing, text editing, block-mode switching, AI assist, response streaming, A/B testing, and template saving.
+- `BlockEditorView`: visual prompt composition with block library, canvas, compiled preview, and save-to-prompt flow.
+- `MenuBarContentView`: search, quick copy, favorite/archive/delete, and simple prompt creation.
+- `HotkeyLauncherView`: search and copy workflow driven by the global hotkey.
+- `PreferencesView`: general settings, hotkey configuration, appearance, data import/export, and AI provider settings.
 
 ## Data layer
-- SwiftData `ModelContainer` is created in `PaultApp` with `Prompt`, `Tag`, and `TemplateVariable`.
+- `PaultApp` creates one `ModelContainer` for `Prompt`, `Tag`, `TemplateVariable`, `Attachment`, `PromptRun`, `CopyEvent`, `PromptVersion`, `SmartCollection`, `PromptTemplate`, and `CustomBlock`.
 - If the persistent store fails to load, the app falls back to an in-memory store.
-- `PromptService` is the operation layer used by all three surfaces for CRUD, filtering, copy/paste, and tag mutations.
+- `PromptService` handles CRUD, filtering, copying, tagging, and version snapshot creation.
+- The block editor stores its canvas state as serialized snapshot data on `Prompt` rather than as a separate graph of SwiftData block entities.
 
 ## Key flows
-- **Editing**: title/content edits are debounced in `PromptDetailView` before saving.
-- **Template variables**: `TemplateEngine` scans prompt content for `{{variable}}`, syncs `TemplateVariable` rows, and resolves copied/pasted output with filled values.
-- **Tags**: managed via the inspector panel with color selection and in-place creation.
-- **Filtering**: sidebar supports all, recent, archived, and tag filters; search runs across title, content, and tags.
-- **Launcher**: hotkey opens a floating panel; copy/paste actions write to the clipboard and optionally simulate paste.
+- Prompt creation starts from the launchpad in the main window or a simpler sheet in the menu bar.
+- Text editing debounces saves and template-variable sync.
+- Block editing compiles canvas state back into `Prompt.content` and stores a block composition snapshot on save.
+- Version history is saved through `PromptService.saveSnapshot(...)` and surfaced from the inspector.
+- Copy actions resolve template variables, write plain text to the pasteboard, optionally write rich content, and log `CopyEvent` usage.
+- AI actions call provider APIs through `AIService` using user-supplied credentials stored in Keychain.
+- Prompt runs stream output into `ResponsePanel` and persist `PromptRun` records.
 
 ## Supporting components
-- **`SidebarView`**: sidebar filters, search field, prompt list with context menus and empty states.
-- **`InspectorView`**: tag management, favorite toggle, dates, and archive controls.
-- **`TemplateVariablesView`**: editable fields and resolved preview for variables parsed from prompt content.
-- **`TagPillView` / `TagPillsView`**: reusable tag pill components with `TagColors` enum for color mapping.
-- **`CopyToast`**: floating toast notification confirming clipboard copy actions.
-- **`AccessibilityHelper`**: centralized Accessibility permission checking and `CGEvent` paste simulation.
-- **`FlowLayout`**: custom SwiftUI `Layout` for wrapping tag pills.
+- `SidebarView`: search, recent/all/archived filters, and Pro smart collections.
+- `InspectorView`: tags, favorite state, basic details, Pro stats, and version history.
+- `TemplateVariablesView`: variable input and resolved preview.
+- `AttachmentsStripView` / `AttachmentManager`: attachment add/open/delete behavior and storage management.
+- `AnalyticsView` / `AnalyticsService`: usage ranking from `CopyEvent` and `PromptRun`.
+- `AIAssistPanel`: improve, variable suggestion, tag suggestion, quality score, and refinement workflows.
+- `TemplateSeedService`: first-run seeding of built-in prompt templates.
 
 ## Platform-specific behavior
-- Global hotkey registration uses Carbon (`GlobalHotkeyManager`).
-- Clipboard access uses `NSPasteboard`.
-- Paste simulation uses `CGEvent` via `AccessibilityHelper` and requires macOS Accessibility permission (prompted automatically on first use).
+- Global hotkey registration uses Carbon through `GlobalHotkeyManager`.
+- Clipboard writes use `NSPasteboard`.
+- Import and export use `NSOpenPanel` and `NSSavePanel`.
+- Large attachment references use security-scoped bookmarks; smaller attachments are copied into Application Support.
 
-## PaultCore note
-`PaultCore` is a separate Swift package containing expanded models (workflows, variables, usage logs) that is not currently integrated with the macOS app target.
-
-## System overview diagram
-Mermaid source and PNG export live in `docs/diagrams/`.
+## System overview
 
 ```mermaid
 flowchart LR
     User((User))
 
-    subgraph PaultApp["Pault macOS App"]
+    subgraph App["Pault macOS App"]
         Main["Main Window"]
-        Menu["Menu Bar Popover"]
-        Hotkey["Hotkey Launcher"]
+        Menu["Menu Bar"]
+        Launch["Hotkey Launcher"]
         Prefs["Preferences"]
-        Inspector["Inspector Panel"]
+        Blocks["Block Editor"]
+        AI["AI Panels"]
     end
 
     Store[("SwiftData Store")]
-    Clipboard[("macOS Clipboard")]
-    FrontApp["Frontmost App"]
+    Keychain[("Keychain")]
+    Clipboard[("Pasteboard")]
+    Files[("Attachment Storage")]
+    Providers["Claude / OpenAI / Ollama"]
 
     User --> Main
     User --> Menu
-    User --> Hotkey
+    User --> Launch
 
     Main <--> Store
     Menu <--> Store
-    Hotkey <--> Store
+    Launch <--> Store
+    Blocks <--> Store
 
     Main --> Clipboard
     Menu --> Clipboard
-    Hotkey --> Clipboard
+    Launch --> Clipboard
 
-    Clipboard --> FrontApp
-    Prefs --> PaultApp
-    Inspector --> Main
+    Main --> Files
+    Prefs --> Keychain
+    AI --> Providers
 ```
-
-PNG export target: `docs/diagrams/exports/system-overview.png` (generated via `scripts/render_mermaid.py`)

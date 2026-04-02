@@ -12,8 +12,11 @@ Pault is designed to run locally on your Mac. We do not operate a hosted user ac
 
 Data you create in the app may include:
 - Prompt titles and prompt content.
-- Tags, favorites, and archive state.
-- Local app preferences.
+- Rich-text content, template variables, tags, favorites, archive state, and timestamps.
+- Attachments and attachment metadata.
+- Prompt versions, prompt runs, copy-history events, templates, smart collections, custom blocks, and local app preferences.
+
+Data you enter in Settings may also include AI provider API keys, which are stored in your macOS Keychain rather than in the main app data store.
 
 ## How Data Is Stored
 
@@ -21,10 +24,13 @@ Prompt library data is stored on-device using local app storage on macOS. Data r
 
 ## Permissions and System Access
 
-Pault may request macOS permissions for:
-- Accessibility: used for optional paste automation into the active app.
+Pault currently relies on standard macOS system services for:
+- Clipboard writes when you copy prompt content.
+- User-approved file access through open/save panels and drag-and-drop.
+- Outbound network requests when you use optional AI provider features.
+- Keychain access for storing AI provider API keys.
 
-Pault only uses these permissions to enable user-initiated features.
+The current copy workflow does not rely on Accessibility-driven paste automation.
 
 ## Data Sharing
 

@@ -91,8 +91,13 @@ struct ResponsePanel: View {
                     variables: variables,
                     config: config
                 )
-                for try await token in stream {
-                    await MainActor.run { streamingText += token }
+                for try await event in stream {
+                    switch event {
+                    case .token(let token):
+                        await MainActor.run { streamingText += token }
+                    case .metadata:
+                        break // Handled via AIService.lastCallMetadata if needed
+                    }
                 }
                 let elapsed = Int(Date().timeIntervalSince(startTime) * 1000)
                 await MainActor.run {

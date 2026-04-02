@@ -1,12 +1,12 @@
 # Diagrams
 
-This directory contains Mermaid source files and PNG exports.
+This directory contains Mermaid source files and PNG exports. The Mermaid sources are intended to describe implemented behavior in the current app, not superseded design concepts.
 
 ## Sources
 - `system-overview.mmd`: Core app surfaces and data flow.
-- `prompt-lifecycle.mmd`: Prompt creation, save, and usage flow.
+- `prompt-lifecycle.mmd`: Prompt creation, save, launcher copy, and AI run flow.
 - `feature-surfaces.mmd`: Surface capabilities overview.
-- `permissions-flow.mmd`: Permission prompts for paste actions.
+- `permissions-flow.mmd`: Clipboard, file-access, and AI-network access flow.
 - `prompt-state.mmd`: Prompt state transitions.
 - `search-filter-flow.mmd`: Search and filter flow by surface.
 - `edit-save-flow.mmd`: Debounced save sequence.

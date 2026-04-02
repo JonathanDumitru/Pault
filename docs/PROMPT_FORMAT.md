@@ -1,33 +1,38 @@
-# Prompt file format (planned)
+# Prompt file format (proposal)
 
-This document describes a **planned** `.prompt` file format for future export/import support. The current macOS app target does **not** implement export or import yet.
+This document describes a proposed standalone `.prompt` file format for future single-prompt interchange. It is not the same as the JSON bundle currently used by the app’s shipped export/import feature.
 
-## File extension
+## Current shipped export/import
+- The current macOS app exports a JSON bundle of prompts through `ExportService`.
+- That bundle is the format used by `Settings > Data > Export All Prompts…` and `Import Prompts…`.
+- The shipped bundle preserves prompt text, tags, and template-variable values, but it is not full-fidelity for every app model.
+
+## Proposed standalone file extension
 - `.prompt`
 
-## Payload (proposed)
+## Proposed payload
 JSON dictionary with keys:
-- `id` (UUID string)
-- `title` (String)
-- `content` (String)
-- `isFavorite` (Bool)
-- `isArchived` (Bool)
-- `createdAt` (TimeInterval, seconds since Unix epoch)
-- `updatedAt` (TimeInterval, seconds since Unix epoch)
-- `tags` ([String], optional tag names)
+- `id` (`UUID` string)
+- `title` (`String`)
+- `content` (`String`)
+- `isFavorite` (`Bool`)
+- `isArchived` (`Bool`)
+- `createdAt` (`TimeInterval`)
+- `updatedAt` (`TimeInterval`)
+- `tags` (`[String]`, optional)
 - `templateVariables` (optional array), each with:
-  - `name` (String)
-  - `defaultValue` (String)
-  - `sortOrder` (Int)
+  - `name` (`String`)
+  - `defaultValue` (`String`)
+  - `sortOrder` (`Int`)
 
-## Encryption (proposed)
+## Proposed encryption
 - AES-GCM with a key derived from `SHA-256(password)`.
-- No salt or additional key derivation is currently planned.
+- No salt or stronger KDF is defined in the current proposal.
 
-## Export/import behavior (proposed)
-- Export is per prompt (one file per prompt).
-- Import should restore title/content, favorite/archive, and tags.
-- `id` and timestamps are optional restore fields (TBD).
+## Proposed behavior
+- Export one prompt per file.
+- Restore title, content, favorite/archive state, tags, and template variables.
+- Treat `id` and timestamps as optional restore fields.
 
-## Integration notes
-- If you plan to evolve the format, include a `version` field and keep old keys stable for backward compatibility.
+## Integration note
+- If this format is implemented, include a `version` field and keep old keys stable for backward compatibility.

@@ -1,11 +1,11 @@
 # Enterprise documentation
 
-This section focuses on operational, security, and compliance details needed by enterprise deployments of Pault.
+This section focuses on operational, security, compliance, and configuration details for the current macOS app build.
 
 ## Contents
-- `OVERVIEW.md`: Enterprise overview and audit scope.
-- `SECURITY_PRIVACY.md`: Data handling, privacy posture, and permissions.
-- `COMPLIANCE_AUDIT.md`: Audit checklist with evidence locations.
-- `DATA_HANDLING.md`: Storage, retention, and backup expectations.
-- `DEPLOYMENT_OPERATIONS.md`: Deployment, updates, and operations.
-- `CONFIGURATION.md`: Preferences inventory and managed settings notes.
+- `OVERVIEW.md`: High-level product and data-flow summary for audits.
+- `SECURITY_PRIVACY.md`: Local storage, network behavior, Keychain use, logging, and privacy posture.
+- `COMPLIANCE_AUDIT.md`: Audit checklist with code evidence locations.
+- `DATA_HANDLING.md`: Stored data categories, attachment handling, retention, backup, and restore expectations.
+- `DEPLOYMENT_OPERATIONS.md`: Deployment, updates, runtime behavior, and support notes.
+- `CONFIGURATION.md`: Preference keys, AI-related settings, and managed-settings notes.

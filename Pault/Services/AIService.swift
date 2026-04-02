@@ -47,12 +47,16 @@ struct CollectionSuggestion: Codable {
 
 enum AIError: LocalizedError {
     case missingAPIKey
+    case subscriptionRequired
+    case rateLimited(retryAfter: Int)
     case httpError(Int, Data)
     case parseError(Data)
 
     var errorDescription: String? {
         switch self {
         case .missingAPIKey: return "No API key configured for this provider."
+        case .subscriptionRequired: return "Pro subscription required for AI features."
+        case .rateLimited(let seconds): return "Rate limit reached. Try again in \(seconds)s."
         case .httpError(let code, _): return "HTTP error \(code)."
         case .parseError: return "Failed to parse the AI response."
         }
@@ -64,6 +68,10 @@ enum AIError: LocalizedError {
 actor AIService {
     static let shared = AIService()
     private let keychain = KeychainService()
+    
+    @MainActor
+    var lastCallMetadata: CallMetadata?
+
     private let session: URLSession = {
         let config = URLSessionConfiguration.default
         config.timeoutIntervalForRequest = 30
@@ -177,7 +185,7 @@ actor AIService {
         return suggestions
     }
 
-    func streamRun(prompt: String, variables: [String: String], config: AIConfig) async throws -> AsyncThrowingStream<String, Error> {
+    func streamRun(prompt: String, variables: [String: String], config: AIConfig) async throws -> AsyncThrowingStream<StreamEvent, Error> {
         var resolved = prompt
         for (key, value) in variables {
             resolved = resolved.replacingOccurrences(of: "{{\(key)}}", with: value)
@@ -187,17 +195,52 @@ actor AIService {
             Task {
                 do {
                     let (bytes, response) = try await self.session.bytes(for: request)
-                    if let http = response as? HTTPURLResponse, http.statusCode != 200 {
+                    guard let http = response as? HTTPURLResponse else {
+                        continuation.finish(throwing: AIError.httpError(-1, Data()))
+                        return
+                    }
+                    
+                    if http.statusCode == 401 {
+                        continuation.finish(throwing: AIError.subscriptionRequired)
+                        return
+                    }
+                    
+                    if http.statusCode == 429 {
+                        let retryAfter = Int(http.value(forHTTPHeaderField: "Retry-After") ?? "60") ?? 60
+                        continuation.finish(throwing: AIError.rateLimited(retryAfter: retryAfter))
+                        return
+                    }
+                    
+                    if http.statusCode != 200 {
                         continuation.finish(throwing: AIError.httpError(http.statusCode, Data()))
                         return
                     }
+                    
                     for try await line in bytes.lines {
                         guard line.hasPrefix("data: ") else { continue }
                         let payload = String(line.dropFirst(6))
                         if payload == "[DONE]" { break }
-                        guard let data = payload.data(using: .utf8),
-                              let token = self.parseStreamToken(data: data, config: config) else { continue }
-                        continuation.yield(token)
+                        
+                        guard let data = payload.data(using: .utf8) else { continue }
+                        
+                        // Try to parse as metadata first
+                        if let dict = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                           let meta = dict["metadata"] as? [String: Any],
+                           let input = meta["input_tokens"] as? Int,
+                           let output = meta["output_tokens"] as? Int,
+                           let cost = meta["estimated_cost_usd"] as? Double {
+                            let metadata = CallMetadata(inputTokens: input, outputTokens: output, estimatedCostUSD: cost)
+                            await MainActor.run {
+                                self.lastCallMetadata = metadata
+                            }
+                            continuation.yield(.metadata(inputTokens: input, outputTokens: output, estimatedCostUSD: cost))
+                            continue
+                        }
+                        
+                        // Otherwise parse as token
+                        if let token = self.parseStreamToken(data: data, config: config) {
+                            continuation.yield(.token(token))
+                        }
                     }
                     continuation.finish()
                 } catch {
@@ -207,15 +250,38 @@ actor AIService {
         }
     }
 
-    // MARK: - Private Helpers
+    // MARK: - Internal Helpers
 
-    private func complete(system: String, user: String, config: AIConfig) async throws -> String {
+    func complete(system: String, user: String, config: AIConfig) async throws -> String {
         let request = try await buildRequest(system: system, user: user, config: config)
         let (data, response) = try await session.data(for: request)
-        guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
-            let code = (response as? HTTPURLResponse)?.statusCode ?? -1
-            throw AIError.httpError(code, data)
+        guard let http = response as? HTTPURLResponse else {
+            throw AIError.httpError(-1, data)
         }
+        
+        if http.statusCode == 401 {
+            throw AIError.subscriptionRequired
+        }
+        
+        if http.statusCode == 429 {
+            let retryAfter = Int(http.value(forHTTPHeaderField: "Retry-After") ?? "60") ?? 60
+            throw AIError.rateLimited(retryAfter: retryAfter)
+        }
+        
+        guard http.statusCode == 200 else {
+            throw AIError.httpError(http.statusCode, data)
+        }
+        
+        // Extract metadata from headers
+        if let input = Int(http.value(forHTTPHeaderField: "X-Input-Tokens") ?? ""),
+           let output = Int(http.value(forHTTPHeaderField: "X-Output-Tokens") ?? ""),
+           let cost = Double(http.value(forHTTPHeaderField: "X-Estimated-Cost-USD") ?? "") {
+            let metadata = CallMetadata(inputTokens: input, outputTokens: output, estimatedCostUSD: cost)
+            await MainActor.run {
+                self.lastCallMetadata = metadata
+            }
+        }
+        
         return try parseCompletionResponse(data: data, config: config)
     }
 
@@ -230,18 +296,22 @@ actor AIService {
 
         let url: URL
         let body: [String: Any]
+        var headers: [String: String] = [:]
 
         switch config.provider {
         case .claude:
-            url = URL(string: "https://api.anthropic.com/v1/messages")!
+            url = URL(string: ProxyConfig.baseURL + "/v1/complete")!
             body = [
                 "model": config.model,
                 "max_tokens": 2048,
                 "system": system,
                 "messages": [["role": "user", "content": user]]
             ]
+            headers["X-Provider"] = "claude"
+            headers["X-Provider-Key"] = apiKey
+            
         case .openai:
-            url = URL(string: "https://api.openai.com/v1/chat/completions")!
+            url = URL(string: ProxyConfig.baseURL + "/v1/complete")!
             body = [
                 "model": config.model,
                 "messages": [
@@ -249,6 +319,9 @@ actor AIService {
                     ["role": "user", "content": user]
                 ]
             ]
+            headers["X-Provider"] = "openai"
+            headers["X-Provider-Key"] = apiKey
+
         case .ollama:
             let base = config.baseURL ?? "http://localhost:11434"
             url = URL(string: "\(base)/api/chat")!
@@ -261,18 +334,22 @@ actor AIService {
             ]
         }
 
+        if config.provider != .ollama {
+            await ProStatusManager.shared.refreshJWSIfNeeded()
+            guard let jws = await ProStatusManager.shared.currentTransactionJWS else {
+                throw AIError.subscriptionRequired
+            }
+            headers["X-Storekit-JWS"] = jws
+        }
+
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        switch config.provider {
-        case .claude:
-            request.setValue(apiKey, forHTTPHeaderField: "x-api-key")
-            request.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")
-        case .openai:
-            request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
-        case .ollama:
-            break
+        
+        for (key, value) in headers {
+            request.setValue(value, forHTTPHeaderField: key)
         }
+
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
         return request
     }
@@ -280,6 +357,14 @@ actor AIService {
     private func buildStreamRequest(user: String, config: AIConfig) async throws -> URLRequest {
         let system = "You are a helpful assistant."
         var request = try await buildRequest(system: system, user: user, config: config)
+        
+        if config.provider != .ollama {
+            var urlStr = request.url?.absoluteString ?? ""
+            urlStr = urlStr.replacingOccurrences(of: "/v1/complete", with: "/v1/stream")
+            request.url = URL(string: urlStr)
+            request.setValue("true", forHTTPHeaderField: "X-Streaming")
+        }
+
         if var body = request.httpBody,
            var dict = try? JSONSerialization.jsonObject(with: body) as? [String: Any] {
             dict["stream"] = true

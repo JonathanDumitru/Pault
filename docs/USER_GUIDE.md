@@ -1,115 +1,96 @@
 # User guide
 
-## Visual walkthrough placeholders
-Use these placeholders until final UI screenshots are captured. The file names match the existing screenshot plan in `docs/app-store/screenshot-capture.md`.
-
-### Placeholder 1: main library overview
-- **Future image path:** `docs/app-store/screenshots/01-library-overview.png`
-- **Capture target:** Main window with sidebar filters, search, and a selected prompt in the detail pane.
-- **What should be visible:** Recently Used / All Prompts / Archived filters, prompt list, editor area.
-
-### Placeholder 2: prompt detail editor
-- **Future image path:** `docs/app-store/screenshots/02-editor-detail.png`
-- **Capture target:** Prompt detail editor with realistic title/content and the inspector open.
-- **What should be visible:** Inline editing, variables section (if prompt contains `{{variable}}`), tags/favorite/archive controls.
-
-### Placeholder 3: menu bar popover
-- **Future image path:** `docs/app-store/screenshots/03-menu-bar-popover.png`
-- **Capture target:** Menu bar mini library open with search/filter state.
-- **What should be visible:** Favorites/All/Archived filter pills, prompt rows, quick actions.
-
-### Placeholder 4: global launcher
-- **Future image path:** `docs/app-store/screenshots/04-global-launcher.png`
-- **Capture target:** Hotkey launcher (`⌘⇧P`) with query text and ranked results.
-- **What should be visible:** Search field, highlighted selection, keyboard hint flow.
-
-### Placeholder 5: quick paste action
-- **Future image path:** `docs/app-store/screenshots/05-quick-paste.png`
-- **Capture target:** Action view after selecting a launcher result.
-- **What should be visible:** Copy/Paste action buttons and selected prompt context.
-
-### Placeholder 6: favorites + archived state
-- **Future image path:** `docs/app-store/screenshots/06-favorites-archive.png`
-- **Capture target:** One view showing favorite and archived workflow states.
-- **What should be visible:** A favorited prompt and archived-filter behavior.
-
 ## Getting started
-- Launch Pault to open the main window (sidebar + detail editor).
-- On first launch, a short onboarding flow introduces main window, menu bar, and hotkey launcher.
-- Use **⌘N** (or the **+** button) to create a new prompt.
+- Launch Pault to open the main window.
+- On first launch, Pault shows a short onboarding flow for the main library, menu bar access, and launcher.
+- Press `⌘N` or click `+` to open the prompt launchpad.
 
 ## Create a prompt
-- Main window: click **+** or press **⌘N** to create a new prompt.
-- Menu bar popover: click **New** to open the creation sheet.
-- In the menu bar sheet, at least one of title/content is required to enable **Create**.
-- In the main window flow, empty drafts are allowed and save as you edit.
 
-## Edit a prompt
+### Main window
+- Use the launchpad to create a prompt in one of four ways:
+- Blank prompt.
+- From template.
+- Paste from clipboard.
+- Generate with AI when Pro features are unlocked.
+
+### Menu bar
+- Open the menu bar popover and click `New` for a lightweight title-and-content sheet.
+
+## Edit a prompt in text mode
 - Select a prompt from the sidebar.
-- Edit the title or content directly in the editor.
-- Updates are saved after a short debounce.
+- Edit the title in the header and the body in the rich text editor.
+- Changes save automatically after a short debounce.
+- Use `{{variable_name}}` placeholders to create reusable variables.
+- When variables exist, Pault shows editable variable fields and a resolved preview below the editor.
+- Use the paperclip area to attach files. Images, media, PDFs, and common Office documents are supported.
+- Use the toolbar overlay to save the current prompt as a reusable template.
 
-## Template variables
-- Add placeholders in content using `{{variable_name}}` (letters, numbers, underscore).
-- When placeholders exist, a **Variables** section appears below the editor.
-- Fill variable values to generate a live resolved preview.
-- Use **Clear** in the Variables section to reset all filled values for that prompt.
-- Copy/paste actions resolve filled variables; unfilled variables remain as `{{variable_name}}`.
+## Switch to block mode
+- In the prompt header, switch from `Text` to `Blocks`.
+- You can start with an empty block canvas or, when the AI parse flow is available to you, ask Pault to parse existing text into blocks.
+- In block mode, use `⌘[` to open the block library and `⌘]` to open the compiled preview.
+- Free usage is limited to the first five blocks. Unlimited blocks are a Pro feature.
+- Saving the canvas writes the compiled result back into the prompt.
 
-## Tags
-- Open the inspector (info button or **⌘I**).
-- Add existing tags or create new ones with a color.
-- Click a tag pill in the sidebar list to filter by that tag.
+## Use AI tools
+- The sparkles control in the editor opens AI Assist.
+- AI Assist includes prompt improvement, variable suggestions, tag suggestions, quality scoring, and a refinement loop.
+- The run control streams provider output into the response panel and stores run history.
+- A/B mode lets you maintain a `B` variant and compare run outputs when the relevant Pro features are unlocked.
 
-## Favorites and archive
-- Toggle favorite from the context menu or inspector.
-- Archive prompts to remove them from the default list.
-- Use the **Archived** filter to view archived prompts.
+## Organize prompts
+- Use the sidebar for `Recently Used`, `All Prompts`, and `Archived`.
+- Click the info button or press `⌘I` to open the inspector.
+- In the inspector you can manage tags, mark a prompt as favorite, inspect timestamps, and open version history.
+- When Pro smart collections are enabled, saved and AI-curated collections appear in the sidebar.
 
-## Search and filters
-- Use the search field in the sidebar to match title, content, or tag name.
-- Filters include **Recently Used**, **All Prompts**, and **Archived**.
+## Version history
+- The inspector includes a collapsible `History` section.
+- Pault stores prompt snapshots automatically as you edit.
+- Open a version to inspect diffs against the current prompt.
+- The history list also lets you select two entries and open the older one for comparison against the current prompt.
 
 ## Menu bar access
 - Click the menu bar icon to open the mini library.
-- Use filters: **Favorites**, **All**, **Archived**.
-- Search, expand a prompt, and use **Copy**, **Paste**, **Favorite**, **Archive**, or **Delete**.
-- Create a new prompt from the popover.
+- Filter by `Favorites`, `All`, or `Archived`.
+- Search prompts, expand a row, and use `Copy`, `Favorite`, `Archive`, or `Delete`.
+- Use `New` to create a prompt without opening the full window.
 
-## Global hotkey launcher
-- Press **⌘⇧P** to open the launcher from anywhere.
-- Type to search, then press **Return** to perform the configured default action.
-- Use **↑/↓** to move selection.
-- Use **⌘1..⌘9** to instantly run the top nine results.
-- If default action is **Show options**, choose **Copy** or **Paste** in the action view.
-- The default action is configurable in Preferences: **Show options** (default), **Copy to clipboard**, or **Paste to app**.
-
-## Copy and paste feedback
-- A floating toast notification confirms when a prompt has been copied to the clipboard.
-- Delete actions require confirmation before removing a prompt.
-- Paste actions use Accessibility APIs. If needed, macOS prompts for permission on first paste attempt.
+## Global launcher
+- Press the configured global hotkey to open the launcher. The default is `⌘⇧P`.
+- Type to search prompts.
+- Use `↑` and `↓` to move selection.
+- Press `Return` to run the launcher’s default action.
+- Press `⌘1` through `⌘9` to trigger one of the top results immediately.
+- The launcher currently supports copy workflows only. If a prompt still has unfilled variables, the launcher will warn before copying.
 
 ## Preferences
-- Open **Settings** from the menu bar popover or the app menu.
-- **Launch at login** toggles automatic startup.
-- **Show dock icon** switches between accessory and regular app modes.
-- **Default action** controls what happens when you select a prompt in the launcher: show options, copy to clipboard, or paste into the frontmost app.
-- **Paste delay** controls the delay (in milliseconds) before simulating ⌘V after copying.
+- Open `Settings` from the app menu or the menu bar popover.
+- `General` includes launch at login, dock icon visibility, default launcher action, and version-history retention.
+- `Hotkey` lets you record a custom global shortcut and reset it to the default.
+- `Appearance` controls font size, compact mode, and accent color.
+- `Data` includes export, import, prompt/tag counts, and a destructive reset that clears prompts and tags.
+- `AI` stores provider API keys in Keychain and lets you test Claude, OpenAI, and Ollama connectivity.
 
-## Tips
-- Use short titles for faster scanning in the sidebar and launcher.
-- Add tags for long-term organization and favorites for quick access.
-- Empty state messages guide you when no prompts match your search or filter.
+## Export and import
+- Use `Settings > Data` to export all prompts to a JSON bundle.
+- Import restores prompt records, tag associations, and template-variable values when the file format matches the current importer.
+- Export is currently lossy for rich text, attachments, run history, version history, smart collections, templates, custom blocks, and block compositions.
 
 ## FAQ
-### Why don’t I see archived prompts?
-- Archived prompts are hidden from the default list. Switch to **Archived** in the sidebar.
 
-### Why doesn't the hotkey work?
-- Ensure Pault is running. If paste actions fail, macOS will automatically prompt for Accessibility permission. Grant access in **System Settings > Privacy & Security > Accessibility**.
+### Why don’t I see a prompt anymore?
+- Clear the search field.
+- Check whether the prompt is archived.
+- If you are viewing a smart collection, switch back to `All Prompts`.
 
-### Why do I still see `{{variable}}` after copying?
-- That variable currently has an empty value in the Variables section. Fill it to resolve on copy/paste.
+### Why didn’t the launcher copy immediately?
+- If the launcher default action is `Show options`, it opens the action step instead of copying.
+- If the prompt still has empty variables, Pault keeps you in the action step so you do not silently copy unresolved placeholders by accident.
 
-### Can I export or import prompts?
-- Not yet. Export/import is planned but not implemented in the current app target.
+### Can I change the global shortcut?
+- Yes. Open `Settings > Hotkey` and record a new shortcut.
+
+### Can I back up my prompt library?
+- Yes. Use `Settings > Data > Export All Prompts…` for a JSON backup, or back up the app container through standard macOS tooling.

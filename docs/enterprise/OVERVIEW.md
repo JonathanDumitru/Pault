@@ -1,30 +1,37 @@
 # Enterprise overview
 
-This overview summarizes the app’s current behavior for compliance and security audits. It focuses on what is implemented today.
+This overview summarizes the current behavior of the macOS app for compliance and security review.
 
 ## Scope
-- Pault is a local, macOS-only prompt library.
-- Data is stored on-device using SwiftData.
-- No network calls or telemetry exist in the current app target.
+- Pault is a macOS-only prompt workspace.
+- Core data is stored locally with SwiftData.
+- The app includes optional, user-triggered network egress for AI provider integrations.
+- No remote analytics or remote log shipping are implemented in the current app target.
 
-## Data types stored
-- Prompt titles and content.
-- Favorite and archived flags.
-- Tags (name + color) and prompt-tag relationships.
-- Timestamps (`createdAt`, `updatedAt`, `lastUsedAt`).
+## Stored data categories
+- Prompt titles, content, rich-text payloads, variables, tags, favorite/archive state, timestamps, and block-editor metadata.
+- Prompt attachments and attachment metadata.
+- Prompt version history, copy events, prompt-run history, templates, smart collections, and custom blocks.
+- Preference values in `UserDefaults`.
+- AI provider credentials in the user’s macOS Keychain.
 
 ## Data flows
-- User edits are saved locally after a short debounce.
-- Copy and paste actions write prompt content to the macOS clipboard.
-- Menu bar and hotkey surfaces read/write the same local store.
+- User edits save locally after a debounce or explicit block-editor save.
+- Copy actions write prompt output to the macOS pasteboard and log local `CopyEvent` usage.
+- AI-assisted features and prompt runs send prompt content to the selected provider endpoint when the user invokes them.
+- Import and export move prompt data through user-selected files.
 
-## Security posture (current)
-- Relies on macOS sandboxing and device-level encryption (FileVault) for data at rest.
-- Clipboard contents are visible to other apps while present in the pasteboard.
-- No encryption is applied at the application layer.
+## Security posture
+- Relies on macOS sandboxing and device-level protections such as FileVault for data at rest.
+- Uses Keychain for provider credentials.
+- Does not apply app-layer encryption to prompt content, attachments, or exported JSON bundles.
+- Clipboard contents remain visible to other apps while present on the pasteboard.
 
 ## Audit evidence locations
-- App entry point and SwiftData setup: `Pault/PaultApp.swift`.
-- Menu bar and hotkey behavior: `Pault/AppDelegate.swift`, `Pault/GlobalHotkeyManager.swift`.
-- Clipboard actions: `Pault/ContentView.swift`, `Pault/MenuBarContentView.swift`, `Pault/HotkeyLauncherView.swift`.
-- SwiftData models: `Pault/Prompt.swift`, `Pault/Tag.swift`.
+- App entry point and schema: `Pault/PaultApp.swift`
+- Prompt/editor flows: `Pault/ContentView.swift`, `Pault/PromptDetailView.swift`
+- Menu bar and launcher: `Pault/AppDelegate.swift`, `Pault/MenuBarContentView.swift`, `Pault/HotkeyLauncherView.swift`
+- AI networking: `Pault/Services/AIService.swift`
+- Keychain storage: `Pault/Services/KeychainService.swift`
+- Import/export: `Pault/ExportService.swift`
+- Attachment handling: `Pault/AttachmentManager.swift`, `Pault/AttachmentsStripView.swift`

@@ -1,17 +1,21 @@
-# Prompt format migrations (planned)
+# Prompt format migrations
 
-This document tracks compatibility decisions for the planned `.prompt` file format. Export/import is not implemented in the current macOS app target.
+This document tracks the planned standalone `.prompt` file format. It is separate from the JSON export/import bundle that the app currently ships through `ExportService`.
 
-## Version 1 (proposed)
-- No explicit `version` field (initial draft).
-- JSON keys: `id`, `title`, `content`, `isFavorite`, `isArchived`, `createdAt`, `updatedAt`, `tags`, `templateVariables`.
-- AES-GCM encryption with `SHA-256(password)` key derivation.
+## Current shipped import/export
+- The live app exports a JSON bundle with a root `version` field and an array of prompt records.
+- The importer currently expects that bundle format.
+- This shipped format is intended for app backup and restore, not for full-fidelity interchange of every SwiftData model.
 
-## Planned changes
-- Add a `version` field at the root to enable forward compatibility.
-- Preserve existing keys so older files remain readable.
+## Planned standalone `.prompt` format
+
+### Version 1 (proposed)
+- Single-prompt payload.
+- Keys: `id`, `title`, `content`, `isFavorite`, `isArchived`, `createdAt`, `updatedAt`, `tags`, `templateVariables`.
+- Optional encryption design remains proposal-only.
 
 ## Migration policy
-- Always accept older versions if possible.
-- New fields should be optional with safe defaults.
-- Avoid breaking key renames; prefer adding new keys instead.
+- Always accept older bundle versions when practical.
+- New keys should be optional with safe defaults.
+- Prefer additive changes over key renames.
+- Keep proposal docs clearly labeled when the format is not yet implemented.

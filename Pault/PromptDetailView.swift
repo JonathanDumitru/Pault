@@ -497,7 +497,11 @@ struct PromptDetailView: View {
         let start = Date()
         let stream = try await AIService.shared.streamRun(prompt: prompt, variables: variables, config: config)
         var result = ""
-        for try await token in stream { result += token }
+        for try await event in stream {
+            if case .token(let token) = event {
+                result += token
+            }
+        }
         return (result, Int(Date().timeIntervalSince(start) * 1000))
     }
 

@@ -1,17 +1,28 @@
 # Permissions and system prompts
 
-## Accessibility
-Pault uses simulated key events (`CGEvent`) to paste prompt content into the frontmost app. macOS requires Accessibility permission to allow this behavior.
+## macOS privacy prompts
 
-**Automatic prompting:** The app checks permission using `AXIsProcessTrustedWithOptions` (via `AccessibilityHelper.swift`) on the first paste attempt. If permission has not been granted, macOS will display the system Accessibility permission dialog automatically. No manual setup is needed for most users.
-
-To grant permission manually:
-- Open **System Settings > Privacy & Security**.
-- Select **Accessibility**.
-- Enable access for Pault.
+Pault does not currently rely on Accessibility permission for its active copy workflow. The current build uses the pasteboard and provider APIs, not simulated `⌘V` paste.
 
 ## Clipboard access
-Pault uses `NSPasteboard` to copy prompt content. No special permission prompt is required, but clipboard contents may be visible to other apps while present in the pasteboard.
+- Pault writes copied prompt text to `NSPasteboard`.
+- macOS does not show a special permission prompt for clipboard writes.
+- Clipboard contents may be visible to other apps while they remain on the pasteboard.
+
+## File access
+- Import and export use standard open/save panels.
+- Attachment import uses a user-selected file picker or drag-and-drop.
+- Small attachments are copied into Pault-managed storage.
+- Larger referenced attachments use security-scoped bookmarks so Pault can reopen the files later with read access.
+
+## Network access
+- AI features and provider connection tests make outbound network requests to the configured provider.
+- Claude and OpenAI use vendor API endpoints.
+- Ollama uses the configured base URL, which defaults to `http://localhost:11434`.
+
+## Keychain access
+- API keys entered in `Settings > AI` are stored in the user’s macOS Keychain via the Security framework.
 
 ## Global hotkey
-The global hotkey is registered using the Carbon event manager. No permission prompt is expected for registering the hotkey.
+- The global hotkey is registered through Carbon.
+- No system privacy prompt is expected for hotkey registration.

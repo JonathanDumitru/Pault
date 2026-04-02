@@ -37,8 +37,8 @@ Keep prompts structured with tags, favorites, and archive views.
 2. `Launch from anywhere`
 Open Pault from the menu bar or use a global hotkey for instant access.
 
-3. `Paste with one action`
-Copy or paste prompt content directly into your active app.
+3. `Copy with one action`
+Copy prompt content from the menu bar or launcher without opening a full editor.
 
 Feature image:
 `docs/marketing/images/landing-feature-cards.png`
@@ -72,4 +72,3 @@ Body:
 
 Button:
 `Get Pault for macOS`
-

@@ -8,7 +8,7 @@ Capture these six screens in the same theme and data set:
 2. Prompt detail editor with real prompt content.
 3. Menu bar popover open.
 4. Global launcher search results.
-5. Copy and paste action row.
+5. Block editor canvas with compiled preview.
 6. Favorites + archived views.
 
 ## Capture rules
@@ -25,7 +25,7 @@ Capture these six screens in the same theme and data set:
 - `02-editor-detail.png`
 - `03-menu-bar-popover.png`
 - `04-global-launcher.png`
-- `05-quick-paste.png`
+- `05-block-editor.png`
 - `06-favorites-archive.png`
 
 ## macOS capture command
@@ -37,4 +37,3 @@ screencapture -i ~/Desktop/01-library-overview.png
 ```
 
 Repeat for each shot and upload all required size sets in App Store Connect.
-

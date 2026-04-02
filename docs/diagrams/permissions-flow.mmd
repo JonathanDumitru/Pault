@@ -1,8 +1,11 @@
 flowchart TD
-    PasteAction["User selects Paste action"] --> Check{"Accessibility granted?"}
-    Check -- "No" --> Prompt["macOS permission prompt"]
-    Prompt --> Grant["User grants access"]
-    Grant --> Paste["Simulate \u2318V via CGEvent"]
-    Check -- "Yes" --> Paste
+    CopyAction["User selects Copy action"] --> Clipboard["Write resolved content to NSPasteboard"]
+    Clipboard --> Pasteboard["Clipboard contents available to other apps"]
 
-    CopyAction["User selects Copy action"] --> Clipboard["Write to NSPasteboard"]
+    ImportAction["User imports prompts or attachments"] --> Panel["User-approved open panel or drag/drop"]
+    Panel --> Access["macOS grants file access for selected items"]
+
+    AIAction["User runs AI feature"] --> Config{"Provider configured?"}
+    Config -- "No" --> Settings["Enter API key or base URL in Settings"]
+    Config -- "Yes" --> Network["Send request to Claude, OpenAI, or Ollama"]
+    Settings --> Network
