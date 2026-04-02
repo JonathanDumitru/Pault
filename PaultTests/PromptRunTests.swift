@@ -52,4 +52,14 @@ struct PromptRunTests {
         #expect(results[0].variantLabel == "A")
         #expect(results[1].variantLabel == "B")
     }
+
+    // 1. test_promptRunPersistsWithTokenMetadata -- Verifies PromptRun stores inputTokens and outputTokens from proxy metadata (R5.2)
+    @Test func promptRunPersistsWithTokenMetadata() throws {
+        Issue.record("Wave 0 stub -- implement in Plan 04-03")
+    }
+
+    // 2. test_promptRunStarRating_persistsOnReload -- Verifies userRating persists across model context save/load (R5.2)
+    @Test func promptRunStarRating_persistsOnReload() throws {
+        Issue.record("Wave 0 stub -- implement in Plan 04-03")
+    }
 }

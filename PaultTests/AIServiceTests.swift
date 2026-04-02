@@ -34,4 +34,34 @@ final class AIServiceTests: XCTestCase {
             XCTAssertNotNil(AIConfig.defaults[provider], "Missing default for provider: \(provider.rawValue)")
         }
     }
+
+    // 1. test_proxyUnreachable_showsInlineError -- Verifies graceful error when proxy is unreachable (R2.5)
+    func test_proxyUnreachable_showsInlineError() async throws {
+        XCTFail("Wave 0 stub -- implement in Plan 04-01")
+    }
+
+    // 2. test_rateLimitResponse_parsesRetryAfter -- Verifies 429 response parsing extracts Retry-After value (R2.5)
+    func test_rateLimitResponse_parsesRetryAfter() async throws {
+        XCTFail("Wave 0 stub -- implement in Plan 04-01")
+    }
+
+    // 3. test_ollamaBypassesProxy_directLocalhost -- Verifies Ollama provider routes directly to localhost, not proxy (R2.5)
+    func test_ollamaBypassesProxy_directLocalhost() async throws {
+        XCTFail("Wave 0 stub -- implement in Plan 04-01")
+    }
+
+    // 4. test_streamImprove_returnsStreamEvents -- Verifies streamImprove returns StreamEvent tokens (R2.1)
+    func test_streamImprove_returnsStreamEvents() async throws {
+        XCTFail("Wave 0 stub -- implement in Plan 04-02")
+    }
+
+    // 5. test_claudeRoutesViaProxy_withHeaders -- Verifies Claude requests include X-Provider, X-Provider-Key, X-Storekit-JWS headers (R2.5)
+    func test_claudeRoutesViaProxy_withHeaders() async throws {
+        XCTFail("Wave 0 stub -- implement in Plan 04-01")
+    }
+
+    // 6. test_qualityScoreReturnsTips -- Verifies QualityScore includes tips array (R2.4)
+    func test_qualityScoreReturnsTips() async throws {
+        XCTFail("Wave 0 stub -- implement in Plan 04-02")
+    }
 }
