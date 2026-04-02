@@ -1,0 +1,28 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "pault-proxy",
+	"main": "src/index.ts",
+	"compatibility_date": "2024-09-23",
+	"observability": {
+		"enabled": true
+	},
+	"kv_namespaces": [
+		{
+			"binding": "RESPONSE_CACHE",
+			"id": "placeholder-id"
+		}
+	],
+	"unsafe": {
+		"bindings": [
+			{
+				"name": "AI_LIMITER",
+				"type": "ratelimit",
+				"namespace_id": "placeholder-id",
+				"simple": {
+					"limit": 30,
+					"period": 60
+				}
+			}
+		]
+	}
+}
