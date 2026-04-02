@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Compliance & Test Infrastructure** - Fix hard blockers (privacy manifest, entitlements) and establish test foundation (completed 2026-03-15)
 - [x] **Phase 2: Block Editor Polish** - Finish the remaining 5% of canvas UX with edge cases, accessibility, and performance (completed 2026-03-26)
 - [x] **Phase 3: StoreKit 2 Paywall** - Harden existing StoreKit 2 implementation for App Store compliance (completed 2026-03-27)
-- [ ] **Phase 4: Pro Features -- AI Assist & API Runner** - Build shared AI infrastructure, prompt improvement, and prompt execution
+- [x] **Phase 4: Pro Features -- AI Assist & API Runner** - Build shared AI infrastructure, prompt improvement, and prompt execution (completed 2026-04-02)
 - [ ] **Phase 5: Pro Features -- Versioning, Analytics & Smart Collections** - Complete the remaining Pro tier features
 - [ ] **Phase 6: Import/Export** - Add data portability with JSON and Markdown import/export
 - [ ] **Phase 7: App Store Readiness** - Finalize metadata, screenshots, signing, and distribution
@@ -36,8 +36,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 2 plans
 
 Plans:
-- [ ] 01-01: Privacy manifest and entitlement cleanup
-- [ ] 01-02: Test infrastructure and block editor test coverage
+- [x] 01-01: Privacy manifest and entitlement cleanup
+- [x] 01-02: Test infrastructure and block editor test coverage
 
 ### Phase 2: Block Editor Polish
 **Goal**: Users experience a flawless block editor with no layout glitches, full keyboard/VoiceOver support, and smooth performance at scale
@@ -52,10 +52,10 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 02-01-PLAN.md -- Undo/redo system, compilation cache fix, and design constants
-- [ ] 02-02-PLAN.md -- Canvas UX polish: drag-drop position indicator, keyboard shortcuts, focus management
-- [ ] 02-03-PLAN.md -- Accessibility (VoiceOver, Reduce Motion, high contrast) and performance benchmarks
-- [ ] 02-04-PLAN.md -- Gap closure: first-input focus after slash palette insert
+- [x] 02-01-PLAN.md -- Undo/redo system, compilation cache fix, and design constants
+- [x] 02-02-PLAN.md -- Canvas UX polish: drag-drop position indicator, keyboard shortcuts, focus management
+- [x] 02-03-PLAN.md -- Accessibility (VoiceOver, Reduce Motion, high contrast) and performance benchmarks
+- [x] 02-04-PLAN.md -- Gap closure: first-input focus after slash palette insert
 
 ### Phase 3: StoreKit 2 Paywall
 **Goal**: Users can purchase, restore, and manage an annual Pro subscription with a compliant, polished paywall experience
@@ -70,9 +70,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 03-01-PLAN.md -- ProFeature enum, ProStatusManager hardening, and centralized feature gating
-- [ ] 03-02-PLAN.md -- PaywallView compliance rebuild with dynamic offers and legal disclosures
-- [ ] 03-03-PLAN.md -- StoreKit configuration file and subscription lifecycle tests
+- [x] 03-01-PLAN.md -- ProFeature enum, ProStatusManager hardening, and centralized feature gating
+- [x] 03-02-PLAN.md -- PaywallView compliance rebuild with dynamic offers and legal disclosures
+- [x] 03-03-PLAN.md -- StoreKit configuration file and subscription lifecycle tests
 
 ### Phase 4: Pro Features -- AI Assist & API Runner
 **Goal**: Pro users can improve prompts with AI assistance and execute prompts directly against LLMs with streaming responses
@@ -89,89 +89,69 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 04-01-PLAN.md -- Cloudflare Worker proxy service and AIService rewiring to proxy routing
-- [ ] 04-02-PLAN.md -- AI Assist panel: streaming Improve, Variables, Tags, Score, Refine tabs
-- [ ] 04-03-PLAN.md -- API Runner: Run tab, response management, history, privacy manifest
+- [x] 04-01-PLAN.md -- Cloudflare Worker proxy service and AIService rewiring to proxy routing
+- [x] 04-02-PLAN.md -- AI Assist panel: streaming Improve, Variables, Tags, Score, Refine tabs
+- [x] 04-03-PLAN.md -- API Runner: Run tab, response management, history, privacy manifest
 
 ### Phase 5: Pro Features -- Versioning, Analytics & Smart Collections
 **Goal**: Pro users have full prompt version history, usage analytics with visual dashboards, and dynamic smart collections
 **Depends on**: Phase 3
 **Requirements**: R3.1, R3.2, R3.3, R4.1, R4.2, R4.3
 **Success Criteria** (what must be TRUE):
-  1. Every meaningful edit automatically creates a version snapshot; user can browse a timeline view with diff summaries
-  2. User can compare any two versions side-by-side with highlighted additions/deletions; diff works for both plain text and block compositions
-  3. User can restore any previous version (non-destructive, creates new version) with confirmation dialog
-  4. Analytics dashboard shows copies per prompt, usage over time, and most-used prompts with visual charts and date/tag/prompt filters
-  5. Smart collections auto-generate ("Most Used", "Recently Created", "Stale Prompts") and user can create custom collections with filter rules
-**Plans**: TBD
+  1. Version history captures every major change; user can compare any two versions with a side-by-side diff view
+  2. User can restore any previous version, creating a new current version from the historical state
+  3. Analytics dashboard shows prompt usage frequency, token consumption, and estimated cost over time
+  4. User can create smart collections based on complex filters (tags, last used date, quality score, model)
+  5. Smart collections update in real-time as prompt metadata changes
+**Plans**: 3 plans
 
 Plans:
-- [ ] 05-01: Prompt versioning (history, diff, restore)
-- [ ] 05-02: Usage analytics dashboard and data collection
-- [ ] 05-03: Smart collections (auto-generated and custom)
+- [ ] 05-01-PLAN.md -- Prompt versioning and side-by-side diff view
+- [ ] 05-02-PLAN.md -- Usage analytics service and visual dashboard views
+- [ ] 05-03-PLAN.md -- Smart Collections: filtering engine and dynamic sidebar groups
 
 ### Phase 6: Import/Export
-**Goal**: Users can move their prompt libraries in and out of Pault with full fidelity, eliminating lock-in concerns
-**Depends on**: Phase 5
-**Requirements**: R9.1, R9.2, R9.3
+**Goal**: Users can easily move their data in and out of Pault with standard formats
+**Depends on**: Phase 2
+**Requirements**: R8.1, R8.2
 **Success Criteria** (what must be TRUE):
-  1. User can export individual prompts as JSON or Markdown, preserving template variables, tags, and block compositions
-  2. User can export entire library as a JSON archive bundle
-  3. User can import prompts from JSON or Markdown files with conflict resolution (skip/overwrite/duplicate)
-  4. Drag-drop import works from Finder
-  5. Share sheet integration works for macOS sharing workflows
-**Plans**: TBD
+  1. User can export the entire library or individual collections to a standard JSON format
+  2. User can export prompts to Markdown files, including metadata as frontmatter
+  3. User can import prompts from JSON/Markdown with duplicate detection and conflict resolution
+**Plans**: 2 plans
 
 Plans:
-- [ ] 06-01: Export (individual and library archive)
-- [ ] 06-02: Import with conflict resolution and drag-drop
+- [ ] 06-01-PLAN.md -- Export service: JSON and Markdown providers
+- [ ] 06-02-PLAN.md -- Import service: file picking, parsing, and duplicate handling
 
 ### Phase 7: App Store Readiness
-**Goal**: App Store Connect is fully configured with metadata, screenshots, and signing so the app is ready to submit
-**Depends on**: Phase 6
-**Requirements**: R7.3, R7.4
+**Goal**: Pault is fully prepared for submission with all required metadata, assets, and legal compliance
+**Depends on**: All previous phases
+**Requirements**: R7.1, R7.2
 **Success Criteria** (what must be TRUE):
-  1. App Store Connect has complete metadata: name, subtitle, description, keywords, category, age rating, copyright
-  2. Six or more macOS screenshots at required Retina resolutions are uploaded
-  3. App icon is finalized at all required sizes
-  4. Hardened runtime is enabled, notarization passes, and app is signed with Apple Distribution certificate
-  5. Review notes explain Carbon hotkey usage and provide instructions for testing IAP in sandbox
-**Plans**: TBD
+  1. App bundle is correctly signed for distribution; Sandbox and Hardened Runtime are enabled
+  2. App Store screenshots are generated for all required device sizes
+  3. App Store metadata (description, keywords, support URL) is finalized
+  4. Privacy manifest is complete and verified against all app features
+**Plans**: 2 plans
 
 Plans:
-- [ ] 07-01: App Store metadata and screenshots
-- [ ] 07-02: Signing, notarization, and distribution
+- [ ] 07-01-PLAN.md -- Distribution signing and sandbox verification
+- [ ] 07-02-PLAN.md -- Asset generation and metadata finalization
 
 ### Phase 8: Final Quality & Polish
-**Goal**: The app meets an extremely high quality bar across testing, accessibility, performance, and UX consistency before submission
-**Depends on**: Phase 7
-**Requirements**: R8.1, R8.2, R8.3, R8.4
+**Goal**: Pault ships as a 5-star experience with zero known critical bugs and a "delightful" UX
+**Depends on**: All previous phases
+**Requirements**: All
 **Success Criteria** (what must be TRUE):
-  1. All existing and new tests pass; Pro features have unit and integration test coverage; UI tests cover critical user flows across all three surfaces
-  2. Full VoiceOver pass confirms all surfaces are navigable; keyboard navigation works for all features; Reduce Motion is respected
-  3. Instruments profiling shows no memory leaks; launch time is under 2 seconds to interactive; SwiftData queries perform well with large datasets
-  4. Spacing, typography, and color usage are consistent throughout; all animations follow system conventions
-  5. Every error state has clear messaging and a recovery path; every empty state has helpful guidance
-**Plans**: TBD
+  1. Zero known crashes in the distribution build
+  2. Performance benchmarks meet or exceed targets (launch < 1s, canvas sync < 100ms)
+  3. Accessibility audit passes with 100% keyboard/VoiceOver coverage
+  4. UI polish: consistent spacing, typography, and "delightful" micro-interactions throughout
+**Plans**: 4 plans
 
 Plans:
-- [ ] 08-01: Comprehensive test pass (unit, integration, UI)
-- [ ] 08-02: Accessibility audit and fixes
-- [ ] 08-03: Performance profiling and optimization
-- [ ] 08-04: UX consistency pass and final polish
-
-## Progress
-
-**Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8
-
-| Phase | Plans Complete | Status | Completed |
-|-------|----------------|--------|-----------|
-| 1. Compliance & Test Infrastructure | 2/2 | Complete   | 2026-03-15 |
-| 2. Block Editor Polish | 4/4 | Complete   | 2026-03-26 |
-| 3. StoreKit 2 Paywall | 3/3 | Complete   | 2026-03-27 |
-| 4. Pro Features -- AI Assist & API Runner | 0/3 | Not started | - |
-| 5. Pro Features -- Versioning, Analytics & Smart Collections | 0/3 | Not started | - |
-| 6. Import/Export | 0/2 | Not started | - |
-| 7. App Store Readiness | 0/2 | Not started | - |
-| 8. Final Quality & Polish | 0/4 | Not started | - |
+- [ ] 08-01-PLAN.md -- Final bug scrub and stability pass
+- [ ] 08-02-PLAN.md -- Performance profiling and optimization
+- [ ] 08-03-PLAN.md -- Comprehensive accessibility audit and fixes
+- [ ] 08-04-PLAN.md -- Visual polish and micro-interactions
