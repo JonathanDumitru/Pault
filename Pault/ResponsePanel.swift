@@ -13,6 +13,7 @@ struct ResponsePanel: View {
     @State private var errorMessage: String? = nil
     @State private var runTask: Task<Void, Never>? = nil
     @State private var startTime: Date = Date()
+    @State private var runMetadata: (inputTokens: Int, outputTokens: Int, costUSD: Double)? = nil
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -29,6 +30,12 @@ struct ResponsePanel: View {
                         .foregroundStyle(.secondary)
                         .font(.caption)
                 } else if !streamingText.isEmpty {
+                    if let meta = runMetadata {
+                        Text("\(meta.outputTokens) tokens • ~$\(meta.costUSD, specifier: "%.4f")")
+                            .font(.caption2)
+                            .foregroundStyle(.tertiary)
+                    }
+
                     Button(action: copyResponse) {
                         Label("Copy", systemImage: "doc.on.doc")
                     }
@@ -76,6 +83,7 @@ struct ResponsePanel: View {
         guard !isRunning else { return }
         isRunning = true
         streamingText = ""
+        runMetadata = nil
         errorMessage = nil
         startTime = Date()
 
@@ -95,8 +103,8 @@ struct ResponsePanel: View {
                     switch event {
                     case .token(let token):
                         await MainActor.run { streamingText += token }
-                    case .metadata:
-                        break // Handled via AIService.lastCallMetadata if needed
+                    case .metadata(let input, let output, let cost):
+                        await MainActor.run { runMetadata = (input, output, cost) }
                     }
                 }
                 let elapsed = Int(Date().timeIntervalSince(startTime) * 1000)
@@ -124,6 +132,8 @@ struct ResponsePanel: View {
             model: config.model,
             provider: config.provider.rawValue,
             latencyMs: latencyMs,
+            inputTokens: runMetadata?.inputTokens,
+            outputTokens: runMetadata?.outputTokens,
             variantLabel: variantLabel
         )
         run.prompt = prompt
