@@ -87,45 +87,10 @@ struct PromptDetailView: View {
             Divider()
 
             // Content area - switches between tabs
-            switch selectedDetailTab {
-            case .edit:
-                if prompt.editingMode == .blocks {
-                    BlockEditorView(prompt: prompt)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else {
-                    textEditorContent
-                }
-            case .build:
-                PromptPreviewView(prompt: prompt)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            case .run:
-                RunTabView(prompt: prompt, config: responseConfig)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            }
+            contentForTab(selectedDetailTab)
         }
         .overlay {
-            // Parsing progress overlay
-            if isParsingTextToBlocks {
-                ZStack {
-                    Color.black.opacity(0.3)
-                        .ignoresSafeArea()
-
-                    VStack(spacing: 16) {
-                        ProgressView()
-                            .scaleEffect(1.5)
-
-                        Text("Analyzing prompt structure...")
-                            .font(.headline)
-
-                        Text("AI is parsing your text into blocks")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                    .padding(32)
-                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16))
-                }
-                .transition(.opacity)
-            }
+            parsingOverlay
         }
         .animation(.easeInOut(duration: 0.2), value: prompt.editingMode)
         .animation(.easeInOut(duration: 0.3), value: isParsingTextToBlocks)
@@ -138,55 +103,24 @@ struct PromptDetailView: View {
         .onChange(of: prompt.tags) { _, _ in
             debouncedSave()
         }
-        .sheet(isPresented: $showPaywall) {
-            PaywallView(featureName: paywallFeature.displayName, featureDescription: paywallFeature.description, featureIcon: paywallFeature.sfSymbol)
-        }
-        .alert("AI Error", isPresented: Binding(
-            get: { aiError != nil },
-            set: { if !$0 { aiError = nil } }
-        )) {
-            Button("OK") { aiError = nil }
-        } message: {
-            if let msg = aiError { Text(msg) }
-        }
-        .sheet(isPresented: $showABResult) {
-            if let a = abRunA, let b = abRunB {
-                ABTestResultView(prompt: prompt, runA: a, runB: b)
-            }
-        }
-        .sheet(isPresented: $showSaveAsTemplate) {
-            SaveAsTemplateSheet(
-                name: $templateName,
-                category: $templateCategory,
-                onSave: {
-                    let template = PromptTemplate(
-                        name: templateName,
-                        content: prompt.content,
-                        category: templateCategory
-                    )
-                    modelContext.insert(template)
-                    try? modelContext.save()
-                    showSaveAsTemplate = false
-                },
-                onCancel: { showSaveAsTemplate = false }
-            )
-        }
-        .sheet(isPresented: $showModeSwitchDialog) {
-            ModeSwitchDialogView(
-                isPresented: $showModeSwitchDialog,
-                hasExistingContent: !prompt.content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
-                isPro: ProFeature.isUnlocked(.aiAssist),
-                onParse: switchToBlocksWithParse,
-                onStartFresh: switchToBlocksStartFresh,
-                onShowPaywall: { showPaywall = true }
-            )
-        }
-        .sheet(isPresented: $showBlocksToTextWarning) {
-            BlocksToTextWarningView(
-                isPresented: $showBlocksToTextWarning,
-                onConfirm: switchToText
-            )
-        }
+        .modifier(PromptDetailSheets(
+            showPaywall: $showPaywall,
+            paywallFeature: $paywallFeature,
+            aiError: $aiError,
+            showABResult: $showABResult,
+            abRunA: abRunA,
+            abRunB: abRunB,
+            prompt: prompt,
+            showSaveAsTemplate: $showSaveAsTemplate,
+            templateName: $templateName,
+            templateCategory: $templateCategory,
+            modelContext: modelContext,
+            showModeSwitchDialog: $showModeSwitchDialog,
+            switchToBlocksWithParse: switchToBlocksWithParse,
+            switchToBlocksStartFresh: switchToBlocksStartFresh,
+            showBlocksToTextWarning: $showBlocksToTextWarning,
+            switchToText: switchToText
+        ))
     }
 
     // MARK: - Toolbar
@@ -391,7 +325,8 @@ struct PromptDetailView: View {
                 }
             }
             .buttonStyle(.plain)
-            .help("AI Assist (Pro)")
+            .keyboardShortcut("i", modifiers: [.command, .shift])
+            .help("AI Assist (Pro) (⌘⇧I)")
 
             // Run button (Pro)
             Button(action: {
@@ -404,7 +339,8 @@ struct PromptDetailView: View {
                     .padding(12)
             }
             .buttonStyle(.plain)
-            .help("Run prompt (Pro)")
+            .keyboardShortcut(.return, modifiers: .command)
+            .help("Run prompt (Pro) (⌘↩)")
 
             // Save as Template button
             Button(action: {
@@ -422,6 +358,50 @@ struct PromptDetailView: View {
         .padding(8)
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 10))
         .padding(16)
+    }
+
+    @ViewBuilder
+    private func contentForTab(_ tab: DetailTab) -> some View {
+        switch tab {
+        case .edit:
+            if prompt.editingMode == .blocks {
+                BlockEditorView(prompt: prompt)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                textEditorContent
+            }
+        case .build:
+            PromptPreviewView(prompt: prompt, showInspector: $showInspector)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        case .run:
+            RunTabView(prompt: prompt, config: responseConfig)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+    }
+
+    @ViewBuilder
+    private var parsingOverlay: some View {
+        if isParsingTextToBlocks {
+            ZStack {
+                Color.black.opacity(0.3)
+                    .ignoresSafeArea()
+
+                VStack(spacing: 16) {
+                    ProgressView()
+                        .scaleEffect(1.5)
+
+                    Text("Analyzing prompt structure...")
+                        .font(.headline)
+
+                    Text("AI is parsing your text into blocks")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .padding(32)
+                .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16))
+            }
+            .transition(.opacity)
+        }
     }
 
     // MARK: - Mode Switching
@@ -565,6 +545,80 @@ struct PromptDetailView: View {
                 TemplateEngine.syncVariables(for: prompt, in: modelContext)
             }
         }
+    }
+}
+
+// MARK: - Sheets & Alerts Modifier
+
+private struct PromptDetailSheets: ViewModifier {
+    @Binding var showPaywall: Bool
+    @Binding var paywallFeature: ProFeature
+    @Binding var aiError: String?
+    @Binding var showABResult: Bool
+    var abRunA: PromptRun?
+    var abRunB: PromptRun?
+    var prompt: Prompt
+    @Binding var showSaveAsTemplate: Bool
+    @Binding var templateName: String
+    @Binding var templateCategory: String
+    var modelContext: ModelContext
+    @Binding var showModeSwitchDialog: Bool
+    var switchToBlocksWithParse: () -> Void
+    var switchToBlocksStartFresh: () -> Void
+    @Binding var showBlocksToTextWarning: Bool
+    var switchToText: () -> Void
+
+    func body(content: Content) -> some View {
+        content
+            .sheet(isPresented: $showPaywall) {
+                PaywallView(featureName: paywallFeature.displayName, featureDescription: paywallFeature.description, featureIcon: paywallFeature.sfSymbol)
+            }
+            .alert("AI Error", isPresented: Binding(
+                get: { aiError != nil },
+                set: { if !$0 { aiError = nil } }
+            )) {
+                Button("OK") { aiError = nil }
+            } message: {
+                if let msg = aiError { Text(msg) }
+            }
+            .sheet(isPresented: $showABResult) {
+                if let a = abRunA, let b = abRunB {
+                    ABTestResultView(prompt: prompt, runA: a, runB: b)
+                }
+            }
+            .sheet(isPresented: $showSaveAsTemplate) {
+                SaveAsTemplateSheet(
+                    name: $templateName,
+                    category: $templateCategory,
+                    onSave: {
+                        let template = PromptTemplate(
+                            name: templateName,
+                            content: prompt.content,
+                            category: templateCategory
+                        )
+                        modelContext.insert(template)
+                        try? modelContext.save()
+                        showSaveAsTemplate = false
+                    },
+                    onCancel: { showSaveAsTemplate = false }
+                )
+            }
+            .sheet(isPresented: $showModeSwitchDialog) {
+                ModeSwitchDialogView(
+                    isPresented: $showModeSwitchDialog,
+                    hasExistingContent: !prompt.content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+                    isPro: ProFeature.isUnlocked(.aiAssist),
+                    onParse: switchToBlocksWithParse,
+                    onStartFresh: switchToBlocksStartFresh,
+                    onShowPaywall: { showPaywall = true }
+                )
+            }
+            .sheet(isPresented: $showBlocksToTextWarning) {
+                BlocksToTextWarningView(
+                    isPresented: $showBlocksToTextWarning,
+                    onConfirm: switchToText
+                )
+            }
     }
 }
 

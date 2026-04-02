@@ -430,7 +430,7 @@ private struct ScoreTabContent: View {
                             Text(String(format: "%.1f", score.overall))
                                 .font(.title2)
                                 .fontWeight(.bold)
-                                .foregroundStyle(.accent)
+                                .foregroundStyle(Color.accentColor)
                             Text("/ 10")
                                 .font(.caption2)
                                 .foregroundStyle(.secondary)
@@ -528,7 +528,7 @@ struct AIErrorBar: View {
                 }
                 .buttonStyle(.plain)
                 .font(.caption2)
-                .foregroundStyle(.accent)
+                .foregroundStyle(Color.accentColor)
             }
             
             Button(action: onDismiss) {

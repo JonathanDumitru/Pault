@@ -2,15 +2,16 @@ import Foundation
 import SwiftUI
 
 struct ProxyConfig {
-    @AppStorage("proxy.baseURL") private static var storedBaseURL: String = "https://pault-proxy.PLACEHOLDER.workers.dev"
-    
     static var baseURL: String {
-        get { storedBaseURL }
-        set { storedBaseURL = newValue }
+        UserDefaults.standard.string(forKey: "ai.proxy.baseURL") ?? "https://pault-proxy.PLACEHOLDER.workers.dev"
+    }
+    
+    static var enableCaching: Bool {
+        UserDefaults.standard.object(forKey: "ai.proxy.enableCaching") as? Bool ?? true
     }
     
     static var isConfigured: Bool {
-        !storedBaseURL.contains("PLACEHOLDER")
+        !baseURL.contains("PLACEHOLDER")
     }
 }
 

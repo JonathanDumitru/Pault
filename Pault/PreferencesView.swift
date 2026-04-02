@@ -133,6 +133,9 @@ private struct AISettingsTab: View {
     @AppStorage("ai.model.ollama") private var ollamaModel: String = "llama3"
     @AppStorage("ai.baseURL.ollama") private var ollamaBaseURL: String = "http://localhost:11434"
 
+    @AppStorage("ai.proxy.baseURL") private var proxyBaseURL: String = "https://pault-proxy.PLACEHOLDER.workers.dev"
+    @AppStorage("ai.proxy.enableCaching") private var enableCaching: Bool = true
+
     @State private var claudeKey: String = ""
     @State private var openAIKey: String = ""
 
@@ -148,6 +151,20 @@ private struct AISettingsTab: View {
 
     var body: some View {
         Form {
+            Section("Proxy Infrastructure") {
+                HStack {
+                    Text("Proxy URL")
+                    Spacer()
+                    TextField("https://proxy.pault.app", text: $proxyBaseURL)
+                        .frame(width: 250)
+                }
+                Toggle("Enable response caching", isOn: $enableCaching)
+                
+                Text("Proxy is required for Anthropic and OpenAI calls in the App Store build.")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+
             // Claude
             Section("Claude") {
                 HStack {
