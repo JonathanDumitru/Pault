@@ -17,7 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: StoreKit 2 Paywall** - Harden existing StoreKit 2 implementation for App Store compliance (completed 2026-03-27)
 - [x] **Phase 4: Pro Features -- AI Assist & API Runner** - Build shared AI infrastructure, prompt improvement, and prompt execution (completed 2026-04-02)
 - [x] **Phase 5: Pro Features -- Versioning, Analytics & Smart Collections** - Complete the remaining Pro tier features (completed 2026-04-09)
-- [ ] **Phase 6: Import/Export** - Add data portability with JSON and Markdown import/export
+- [x] **Phase 6: Import/Export** - Add data portability with JSON and Markdown import/export (completed 2026-04-09)
 - [ ] **Phase 7: App Store Readiness** - Finalize metadata, screenshots, signing, and distribution
 - [ ] **Phase 8: Final Quality & Polish** - Comprehensive testing, accessibility audit, performance profiling, UX consistency
 
