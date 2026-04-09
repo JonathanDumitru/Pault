@@ -91,51 +91,82 @@ struct VariableExportRecord: Codable {
 
 enum ExportService {
 
-    // MARK: Export
+    // MARK: - buildRecord
 
-    /// Encodes prompts into a JSON bundle and presents NSSavePanel.
+    /// Maps all Prompt fields (including v2 metadata) to a PromptExportRecord.
+    static func buildRecord(from prompt: Prompt) -> PromptExportRecord {
+        PromptExportRecord(
+            id: prompt.id.uuidString,
+            title: prompt.title,
+            content: prompt.content,
+            isFavorite: prompt.isFavorite,
+            isArchived: prompt.isArchived,
+            createdAt: prompt.createdAt.timeIntervalSince1970,
+            updatedAt: prompt.updatedAt.timeIntervalSince1970,
+            tags: prompt.tags.map(\.name),
+            templateVariables: prompt.templateVariables
+                .sorted { $0.sortOrder < $1.sortOrder }
+                .map { v in
+                    VariableExportRecord(
+                        name: v.name,
+                        defaultValue: v.defaultValue,
+                        sortOrder: v.sortOrder
+                    )
+                },
+            blockCompositionData: prompt.blockCompositionData,
+            qualityScore: prompt.qualityScore,
+            lastUsedAt: prompt.lastUsedAt?.timeIntervalSince1970,
+            editingModeRaw: prompt.editingModeRaw,
+            variantB: prompt.variantB,
+            attachmentFileNames: prompt.attachments.isEmpty ? nil : prompt.attachments
+                .sorted { $0.sortOrder < $1.sortOrder }
+                .map(\.filename)
+        )
+    }
+
+    // MARK: - exportAll (backward-compatible: now produces v2 bundles)
+
+    /// Encodes prompts into a v2 JSON bundle and presents NSSavePanel.
     /// Returns `true` if the file was written successfully, `false` if cancelled or an error occurred.
     @discardableResult
     static func exportAll(prompts: [Prompt]) -> Bool {
-        let records = prompts.map { prompt in
-            PromptExportRecord(
-                id: prompt.id.uuidString,
-                title: prompt.title,
-                content: prompt.content,
-                isFavorite: prompt.isFavorite,
-                isArchived: prompt.isArchived,
-                createdAt: prompt.createdAt.timeIntervalSince1970,
-                updatedAt: prompt.updatedAt.timeIntervalSince1970,
-                tags: prompt.tags.map(\.name),
-                templateVariables: prompt.templateVariables
-                    .sorted { $0.sortOrder < $1.sortOrder }
-                    .map { v in
-                        VariableExportRecord(
-                            name: v.name,
-                            defaultValue: v.defaultValue,
-                            sortOrder: v.sortOrder
-                        )
-                    }
-            )
-        }
+        exportLibraryJSON(prompts: prompts, collectionName: nil)
+    }
 
+    // MARK: - exportLibraryJSON
+
+    /// Exports prompts as a v2 JSON bundle to a user-chosen file.
+    /// - Parameters:
+    ///   - prompts: Prompts to export.
+    ///   - collectionName: Optional collection scope label (nil = library-wide).
+    @discardableResult
+    static func exportLibraryJSON(prompts: [Prompt], collectionName: String? = nil) -> Bool {
+        let records = prompts.map { buildRecord(from: $0) }
         let bundle = PromptExportBundle(
-            version: 1,
+            version: 2,
             exportedAt: Date().timeIntervalSince1970,
-            prompts: records
+            prompts: records,
+            collectionName: collectionName
         )
 
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
 
         guard let data = try? encoder.encode(bundle) else {
-            exportLogger.error("exportAll: Failed to encode prompts to JSON")
+            exportLogger.error("exportLibraryJSON: Failed to encode prompts to JSON")
             return false
+        }
+
+        let defaultName: String
+        if let name = collectionName {
+            defaultName = "\(MarkdownFrontmatterParser.slugify(name, existing: [])).json"
+        } else {
+            defaultName = "pault-prompts.json"
         }
 
         let panel = NSSavePanel()
         panel.title = "Export Prompts"
-        panel.nameFieldStringValue = "pault-prompts.json"
+        panel.nameFieldStringValue = defaultName
         panel.allowedContentTypes = [.json]
         panel.canCreateDirectories = true
 
@@ -143,15 +174,74 @@ enum ExportService {
 
         do {
             try data.write(to: url, options: .atomic)
-            exportLogger.info("exportAll: Exported \(records.count) prompts to \(url.lastPathComponent)")
+            exportLogger.info("exportLibraryJSON: Exported \(records.count) prompts to \(url.lastPathComponent)")
             return true
         } catch {
-            exportLogger.error("exportAll: Write failed — \(error.localizedDescription)")
+            exportLogger.error("exportLibraryJSON: Write failed — \(error.localizedDescription)")
             return false
         }
     }
 
-    // MARK: Import
+    // MARK: - exportMarkdown
+
+    /// Exports each prompt as an individual Markdown file with YAML frontmatter.
+    /// Uses NSOpenPanel (folder picker) to let the user choose the destination folder.
+    @discardableResult
+    static func exportMarkdown(prompts: [Prompt]) -> Bool {
+        let panel = NSOpenPanel()
+        panel.title = "Choose Export Folder"
+        panel.prompt = "Export Here"
+        panel.canChooseDirectories = true
+        panel.canChooseFiles = false
+        panel.canCreateDirectories = true
+        panel.allowsMultipleSelection = false
+
+        guard panel.runModal() == .OK, let folder = panel.url else { return false }
+
+        var usedSlugs: Set<String> = []
+        var writtenCount = 0
+
+        for prompt in prompts {
+            let record = buildRecord(from: prompt)
+            let slug = MarkdownFrontmatterParser.slugify(record.title, existing: usedSlugs)
+            usedSlugs.insert(slug)
+
+            let markdown = MarkdownFrontmatterParser.serialize(record: record)
+            let fileURL = folder.appendingPathComponent("\(slug).md")
+
+            do {
+                try markdown.write(to: fileURL, atomically: true, encoding: .utf8)
+                writtenCount += 1
+            } catch {
+                exportLogger.error("exportMarkdown: Failed to write \(slug).md — \(error.localizedDescription)")
+            }
+        }
+
+        exportLogger.info("exportMarkdown: Wrote \(writtenCount) of \(prompts.count) prompts to \(folder.lastPathComponent)")
+        return writtenCount > 0
+    }
+
+    // MARK: - copyAsMarkdown
+
+    /// Copies a single prompt as Markdown with YAML frontmatter to the system clipboard.
+    @discardableResult
+    static func copyAsMarkdown(prompt: Prompt) -> Bool {
+        let record = buildRecord(from: prompt)
+        let markdown = MarkdownFrontmatterParser.serialize(record: record)
+
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+        let success = pasteboard.setString(markdown, forType: .string)
+
+        if success {
+            exportLogger.info("copyAsMarkdown: Copied prompt '\(prompt.title)' to clipboard")
+        } else {
+            exportLogger.error("copyAsMarkdown: Failed to write to clipboard")
+        }
+        return success
+    }
+
+    // MARK: - Import
 
     /// Presents NSOpenPanel, decodes bundle, inserts non-duplicate prompts into SwiftData context.
     /// Returns the count of newly inserted prompts, or nil if cancelled/failed.
@@ -175,7 +265,7 @@ enum ExportService {
         }
     }
 
-    // MARK: Private
+    // MARK: - Private
 
     private static func insert(_ records: [PromptExportRecord], into context: ModelContext) -> Int {
         // Fetch existing IDs to detect duplicates
