@@ -20,6 +20,16 @@ struct SmartCollectionEditorView: View {
     @State private var isGenerating = false
     @State private var generationError: String?
 
+    // Extended filter fields (Plan 05-03)
+    @State private var qualityScoreMinEnabled = false
+    @State private var qualityScoreMin: Int = 0
+    @State private var qualityScoreMaxEnabled = false
+    @State private var qualityScoreMax: Int = 100
+    @State private var modelFilter: String = ""
+    @State private var lastUsedWithinEnabled = false
+    @State private var lastUsedWithinDays: Int = 7
+    @State private var contentContains: String = ""
+
     var body: some View {
         NavigationStack {
             Form {
@@ -30,7 +40,7 @@ struct SmartCollectionEditorView: View {
 
                 Section("Filter Rules") {
                     Toggle("Favorites only", isOn: $onlyFavorites)
-                    Picker("Last used within", selection: $recentDays) {
+                    Picker("Created within", selection: $recentDays) {
                         Text("Any time").tag(nil as Int?)
                         Text("7 days").tag(7 as Int?)
                         Text("30 days").tag(30 as Int?)
@@ -43,6 +53,29 @@ struct SmartCollectionEditorView: View {
                             ))
                         }
                     }
+                }
+
+                Section("Quality Score") {
+                    Toggle("Minimum score", isOn: $qualityScoreMinEnabled)
+                    if qualityScoreMinEnabled {
+                        Stepper("Min: \(qualityScoreMin)", value: $qualityScoreMin, in: 0...100, step: 5)
+                    }
+                    Toggle("Maximum score", isOn: $qualityScoreMaxEnabled)
+                    if qualityScoreMaxEnabled {
+                        Stepper("Max: \(qualityScoreMax)", value: $qualityScoreMax, in: 0...100, step: 5)
+                    }
+                }
+
+                Section("Model & Usage") {
+                    TextField("Model (e.g. claude-opus-4-6)", text: $modelFilter)
+                    Toggle("Last used within days", isOn: $lastUsedWithinEnabled)
+                    if lastUsedWithinEnabled {
+                        Stepper("Days: \(lastUsedWithinDays)", value: $lastUsedWithinDays, in: 1...365)
+                    }
+                }
+
+                Section("Content Search") {
+                    TextField("Content contains...", text: $contentContains)
                 }
 
                 Section {
@@ -76,12 +109,21 @@ struct SmartCollectionEditorView: View {
                 }
             }
         }
-        .frame(width: 340, height: 480)
+        .frame(width: 360, height: 560)
     }
 
     private func createSavedFilter() {
         let tags = allTags.filter { selectedTagIDs.contains($0.id) }
-        let filter = SmartCollectionFilter(tags: tags, onlyFavorites: onlyFavorites, recentDays: recentDays)
+        let filter = SmartCollectionFilter(
+            tags: tags,
+            onlyFavorites: onlyFavorites,
+            recentDays: recentDays,
+            qualityScoreMin: qualityScoreMinEnabled ? qualityScoreMin : nil,
+            qualityScoreMax: qualityScoreMaxEnabled ? qualityScoreMax : nil,
+            model: modelFilter.isEmpty ? nil : modelFilter,
+            lastUsedWithin: lastUsedWithinEnabled ? lastUsedWithinDays : nil,
+            contentContains: contentContains.isEmpty ? nil : contentContains
+        )
         let nextOrder = (try? modelContext.fetch(FetchDescriptor<SmartCollection>()))?.map(\.sortOrder).max().map { $0 + 1 } ?? 0
         let collection = SmartCollection(name: name, icon: icon, filter: filter, sortOrder: nextOrder)
         modelContext.insert(collection)

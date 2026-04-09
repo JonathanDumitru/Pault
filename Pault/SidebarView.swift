@@ -19,6 +19,7 @@ enum SidebarFilter: Hashable {
 
 struct SidebarView: View {
     @Environment(\.openWindow) private var openWindow
+    @Environment(\.modelContext) private var modelContext
     @Query(sort: [SortDescriptor(\Prompt.updatedAt, order: .reverse)]) private var allPrompts: [Prompt]
     @Query(sort: [SortDescriptor(\Tag.name, order: .forward)]) private var allTags: [Tag]
     @AppStorage("useCompactMode") private var useCompactMode: Bool = true  // Default to compact for collapsible
@@ -95,6 +96,16 @@ struct SidebarView: View {
         allPrompts.filter { $0.isArchived }.count
     }
 
+    /// Maps each SmartCollection ID to its matching prompt count (evaluated in real-time).
+    private var collectionCounts: [UUID: Int] {
+        var counts: [UUID: Int] = [:]
+        let service = PromptService(modelContext: modelContext)
+        for collection in collections {
+            counts[collection.id] = service.filterPrompts(allPrompts, collection: collection).count
+        }
+        return counts
+    }
+
     private var emptyStateMessage: String {
         switch selectedFilter {
         case .all: return "No prompts yet"
@@ -158,13 +169,22 @@ struct SidebarView: View {
                         .padding(.bottom, 2)
 
                     ForEach(collections) { collection in
-                        FilterRow(
-                            title: collection.name,
-                            icon: collection.icon,
-                            count: nil,
-                            isSelected: selectedFilter == .smartCollection(collection)
-                        ) {
-                            selectedFilter = .smartCollection(collection)
+                        VStack(alignment: .leading, spacing: 2) {
+                            FilterRow(
+                                title: collection.name,
+                                icon: collection.icon,
+                                count: collectionCounts[collection.id],
+                                isSelected: selectedFilter == .smartCollection(collection)
+                            ) {
+                                selectedFilter = .smartCollection(collection)
+                            }
+                            // Show lastRefreshed for AI-curated collections
+                            if collection.ruleType == .aiCurated, let refreshed = collection.lastRefreshed {
+                                Text("Refreshed \(refreshed, style: .relative) ago")
+                                    .font(.caption2)
+                                    .foregroundStyle(.tertiary)
+                                    .padding(.leading, 36)
+                            }
                         }
                     }
                 }
@@ -252,6 +272,10 @@ struct SidebarView: View {
         }
         .frame(minWidth: AppConstants.Panels.sidebarMinWidth)
         .background(Color(nsColor: .windowBackgroundColor))
+        .task {
+            // Seed preset collections on first Pro unlock (idempotent — guard inside)
+            SmartCollection.seedPresetCollections(in: modelContext)
+        }
         .sheet(isPresented: $showingNewCollection) {
             SmartCollectionEditorView()
         }

@@ -191,11 +191,19 @@ final class PromptService {
     func filterPrompts(_ prompts: [Prompt], collection: SmartCollection) -> [Prompt] {
         switch collection.ruleType {
         case .aiCurated:
+            // "Most Used" preset: use top IDs by usage count
+            if collection.isPreset && collection.name == "Most Used" {
+                let topIDs = Set(AnalyticsService(modelContext: modelContext).topPromptIDsByUsage(limit: 10))
+                return prompts.filter { topIDs.contains($0.id) && !$0.isArchived }
+            }
             let ids = Set(collection.promptIDs)
             return prompts.filter { ids.contains($0.id) }
+
         case .savedFilter:
             guard let filter = collection.filter else { return [] }
             var result = prompts.filter { !$0.isArchived }
+
+            // Existing filters
             if filter.onlyFavorites { result = result.filter(\.isFavorite) }
             if let days = filter.recentDays {
                 let cutoff = Calendar.current.date(byAdding: .day, value: -days, to: Date()) ?? Date()
@@ -205,6 +213,31 @@ final class PromptService {
                 let ids = Set(filter.tagIDs)
                 result = result.filter { $0.tags.contains(where: { ids.contains($0.id) }) }
             }
+
+            // Extended filters (Plan 05-03) — all AND-combined
+            if let minScore = filter.qualityScoreMin {
+                result = result.filter { ($0.qualityScore ?? 0) >= minScore }
+            }
+            if let maxScore = filter.qualityScoreMax {
+                result = result.filter { ($0.qualityScore ?? 100) <= maxScore }
+            }
+            if let model = filter.model, !model.isEmpty {
+                let matchingIDs = AnalyticsService(modelContext: modelContext).promptIDsRunWith(model: model)
+                result = result.filter { matchingIDs.contains($0.id) }
+            }
+            if let withinDays = filter.lastUsedWithin {
+                let cutoff = Calendar.current.date(byAdding: .day, value: -withinDays, to: Date()) ?? Date()
+                // "Stale Prompts" preset: INVERT — prompts NOT used in the last N days
+                if collection.isPreset && collection.name == "Stale Prompts" {
+                    result = result.filter { $0.lastUsedAt == nil || ($0.lastUsedAt ?? .distantFuture) < cutoff }
+                } else {
+                    result = result.filter { ($0.lastUsedAt ?? .distantPast) >= cutoff }
+                }
+            }
+            if let text = filter.contentContains, !text.isEmpty {
+                result = result.filter { $0.content.localizedCaseInsensitiveContains(text) }
+            }
+
             return result
         }
     }
