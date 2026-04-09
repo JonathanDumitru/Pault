@@ -7,7 +7,31 @@ import SwiftUI
 import SwiftData
 
 struct PromptDiffView: View {
-    let version: PromptVersion
+
+    // MARK: - Target enum for version-vs-current vs version-to-version
+
+    enum Target {
+        /// Compare a historical version against the current prompt state.
+        case versionToCurrent(PromptVersion)
+        /// Compare two historical versions against each other (older left, newer right).
+        case versionToVersion(older: PromptVersion, newer: PromptVersion)
+    }
+
+    // MARK: - Init
+
+    /// Version-vs-current (existing convenience init).
+    init(version: PromptVersion, prompt: Prompt) {
+        self._prompt = Bindable(wrappedValue: prompt)
+        self.target = .versionToCurrent(version)
+    }
+
+    /// Target-based init used by PromptVersionHistoryView compare mode.
+    init(target: Target, prompt: Prompt) {
+        self._prompt = Bindable(wrappedValue: prompt)
+        self.target = target
+    }
+
+    let target: Target
     @Bindable var prompt: Prompt
 
     @Environment(\.modelContext) private var modelContext
@@ -33,6 +57,27 @@ struct PromptDiffView: View {
     @State private var cachedSnapshot: VersionSnapshot?
 
     private var service: PromptService { PromptService(modelContext: modelContext) }
+
+    /// The primary version being inspected (older version for V2V, the single version for V2C).
+    private var version: PromptVersion {
+        switch target {
+        case .versionToCurrent(let v): return v
+        case .versionToVersion(let older, _): return older
+        }
+    }
+
+    /// The "new" content for diffing: current prompt content for V2C, newer version content for V2V.
+    private var newContent: String {
+        switch target {
+        case .versionToCurrent: return prompt.content
+        case .versionToVersion(_, let newer): return newer.content
+        }
+    }
+
+    private var isVersionToVersion: Bool {
+        if case .versionToVersion = target { return true }
+        return false
+    }
 
     private var dateString: String {
         version.savedAt.formatted(date: .abbreviated, time: .shortened)
@@ -109,20 +154,22 @@ struct PromptDiffView: View {
 
             Divider()
 
-            // Bottom toolbar
-            HStack {
-                Spacer()
-                Button("Restore This Version") {
-                    showRestorePreview = true
+            // Bottom toolbar — restore only available for version-vs-current comparisons
+            if !isVersionToVersion {
+                HStack {
+                    Spacer()
+                    Button("Restore This Version") {
+                        showRestorePreview = true
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(.blue)
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(.blue)
+                .padding()
             }
-            .padding()
         }
         .frame(minWidth: 600, minHeight: 480)
         .onAppear {
-            diffs = DiffEngine.diff(old: version.content, new: prompt.content)
+            diffs = DiffEngine.diff(old: version.content, new: newContent)
             cachedSnapshot = version.snapshot
         }
         .sheet(isPresented: $showRestorePreview) {
@@ -187,9 +234,15 @@ struct PromptDiffView: View {
 
                 Divider()
 
-                // Right panel: current content
+                // Right panel: current content (or newer version for V2V)
                 VStack(alignment: .leading, spacing: 4) {
-                    Label("Current Version", systemImage: "doc.text")
+                    let rightLabel: String = {
+                        if case .versionToVersion(_, let newer) = target {
+                            return newer.savedAt.formatted(date: .abbreviated, time: .shortened)
+                        }
+                        return "Current Version"
+                    }()
+                    Label(rightLabel, systemImage: "doc.text")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .padding(.horizontal)
@@ -374,7 +427,7 @@ struct PromptDiffView: View {
 
     private func performRestore() {
         // Snapshot current state before restore
-        service.saveSnapshot(for: prompt, changeNote: "Before restore from \(dateString)", limit: versionHistoryLimit)
+        service.saveSnapshot(for: prompt, changeNote: "Before restore from \(dateString)", source: .restore, limit: versionHistoryLimit)
 
         if restoreTitle { prompt.title = version.title }
         if restoreContent {
@@ -407,7 +460,7 @@ struct PromptDiffView: View {
         }
 
         prompt.updatedAt = Date()
-        service.saveSnapshot(for: prompt, changeNote: "Restored from \(dateString)", limit: versionHistoryLimit)
+        service.saveSnapshot(for: prompt, changeNote: "Restored from \(dateString)", source: .restore, limit: versionHistoryLimit)
         showRestorePreview = false
         dismiss()
     }

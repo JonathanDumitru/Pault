@@ -30,6 +30,8 @@ final class PromptService {
         let trimmedContent = content.trimmingCharacters(in: .whitespacesAndNewlines)
         let prompt = Prompt(title: trimmedTitle, content: trimmedContent)
         modelContext.insert(prompt)
+        // Record lifecycle event for analytics
+        AnalyticsService(modelContext: modelContext).recordEvent(.created, for: prompt.id)
         save("createPrompt")
         return prompt
     }
@@ -45,7 +47,10 @@ final class PromptService {
     }
 
     func deletePrompt(_ prompt: Prompt) {
-        AttachmentManager.deleteFiles(for: prompt.id)
+        let promptID = prompt.id
+        AttachmentManager.deleteFiles(for: promptID)
+        // Record lifecycle event before deletion (while promptID is still valid)
+        AnalyticsService(modelContext: modelContext).recordEvent(.deleted, for: promptID)
         modelContext.delete(prompt)
         save("deletePrompt")
     }
@@ -206,7 +211,7 @@ final class PromptService {
 
     // MARK: - Versioning
 
-    func saveSnapshot(for prompt: Prompt, changeNote: String? = nil, limit: Int = 50) {
+    func saveSnapshot(for prompt: Prompt, changeNote: String? = nil, source: VersionSource = .manual, limit: Int = 50) {
         // Dedup guard: skip if nothing changed vs latest version
         let promptID = prompt.id
         let descriptor = FetchDescriptor<PromptVersion>(
@@ -253,9 +258,13 @@ final class PromptService {
             content: prompt.content,
             changeNote: changeNote,
             isFavorite: prompt.isFavorite,
-            snapshotData: try? JSONEncoder().encode(snapshot)
+            snapshotData: try? JSONEncoder().encode(snapshot),
+            source: source
         )
         modelContext.insert(version)
+
+        // Record edit event for analytics
+        AnalyticsService(modelContext: modelContext).recordEvent(.edited, for: promptID)
 
         // Prune: keep only the most recent `limit` versions for this prompt.
         // NOTE: Optional relationship traversal in #Predicate is unreliable;

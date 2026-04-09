@@ -19,6 +19,19 @@ final class AnalyticsService {
         self.modelContext = modelContext
     }
 
+    // MARK: - Event Recording
+
+    /// Records a lifecycle event for a prompt. All event types route through here.
+    func recordEvent(_ type: UsageEventType, for promptID: UUID) {
+        let event = CopyEvent(promptID: promptID, type: type)
+        modelContext.insert(event)
+    }
+
+    /// Thin wrapper — preserves existing call sites unchanged.
+    func recordCopy(for promptID: UUID) {
+        recordEvent(.copy, for: promptID)
+    }
+
     // MARK: - Copy Stats
 
     func copyCount(for promptID: UUID, since: Date? = nil) -> Int {
@@ -104,5 +117,83 @@ final class AnalyticsService {
             result.append((date: day, count: grouped[day] ?? 0))
         }
         return result
+    }
+
+    // MARK: - All-Event Daily Aggregation
+
+    /// Aggregates ALL event types by day for the last N days.
+    /// Returns an array sorted by date ascending, with zero-count days filled in.
+    func dailyEvents(days: Int = 30) -> [(date: Date, count: Int)] {
+        let now = Date()
+        guard let since = Calendar.current.date(byAdding: .day, value: -days, to: now) else {
+            return []
+        }
+        let descriptor = FetchDescriptor<CopyEvent>(
+            predicate: #Predicate { $0.timestamp >= since },
+            sortBy: [SortDescriptor(\.timestamp)]
+        )
+        guard let events = try? modelContext.fetch(descriptor) else { return [] }
+
+        let calendar = Calendar.current
+        var grouped: [Date: Int] = [:]
+        for event in events {
+            let day = calendar.startOfDay(for: event.timestamp)
+            grouped[day, default: 0] += 1
+        }
+
+        var result: [(date: Date, count: Int)] = []
+        for daysBack in (0..<days).reversed() {
+            let day = calendar.startOfDay(
+                for: calendar.date(byAdding: .day, value: -daysBack, to: now) ?? now
+            )
+            result.append((date: day, count: grouped[day] ?? 0))
+        }
+        return result
+    }
+
+    // MARK: - Token Aggregation
+
+    /// Aggregates input and output tokens from PromptRun records over the last N days.
+    func tokenTotals(days: Int = 30) -> (input: Int, output: Int, hasPartialData: Bool) {
+        let now = Date()
+        guard let since = Calendar.current.date(byAdding: .day, value: -days, to: now) else {
+            return (0, 0, false)
+        }
+        let descriptor = FetchDescriptor<PromptRun>(
+            predicate: #Predicate { $0.createdAt >= since }
+        )
+        guard let runs = try? modelContext.fetch(descriptor) else {
+            return (0, 0, false)
+        }
+
+        var totalInput = 0
+        var totalOutput = 0
+        var hasPartialData = false
+
+        for run in runs {
+            if let input = run.inputTokens {
+                totalInput += input
+            } else {
+                hasPartialData = true
+            }
+            if let output = run.outputTokens {
+                totalOutput += output
+            } else {
+                hasPartialData = true
+            }
+        }
+
+        return (totalInput, totalOutput, hasPartialData)
+    }
+
+    // MARK: - Model Filter (used by Smart Collections)
+
+    /// Returns the set of promptIDs that have been run with the specified model.
+    func promptIDsRunWith(model: String) -> Set<UUID> {
+        let descriptor = FetchDescriptor<PromptRun>(
+            predicate: #Predicate { $0.model == model }
+        )
+        guard let runs = try? modelContext.fetch(descriptor) else { return [] }
+        return Set(runs.compactMap { $0.prompt?.id })
     }
 }
