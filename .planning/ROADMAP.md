@@ -106,9 +106,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 05-01-PLAN.md -- Prompt versioning and side-by-side diff view
-- [ ] 05-02-PLAN.md -- Usage analytics service and visual dashboard views
-- [ ] 05-03-PLAN.md -- Smart Collections: filtering engine and dynamic sidebar groups
+- [ ] 05-01-PLAN.md -- VersionSource tracking, date headers, source badges, V2V diff with sync scrolling
+- [ ] 05-02-PLAN.md -- Extended event tracking, Swift Charts analytics dashboard, token consumption
+- [ ] 05-03-PLAN.md -- Smart collection filter extension, count badges, preset collections
 
 ### Phase 6: Import/Export
 **Goal**: Users can easily move their data in and out of Pault with standard formats
