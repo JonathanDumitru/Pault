@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: in-progress
-stopped_at: Completed 05-01-PLAN.md
-last_updated: "2026-04-09T06:40:00Z"
-last_activity: 2026-04-09 -- Phase 5 Plan 01: Prompt versioning with VersionSource, V2V diff, sync scrolling
+status: completed
+stopped_at: Completed 05-03-PLAN.md
+last_updated: "2026-04-09T15:21:39.239Z"
+last_activity: 2026-04-09 -- Phase 5 Plan 01 complete
 progress:
   total_phases: 8
   completed_phases: 4
   total_plans: 16
-  completed_plans: 12
+  completed_plans: 13
   percent: 44
 ---
 
@@ -61,6 +61,7 @@ Progress: [████▌░░░░░] 44%
 | Phase 04 P02 | 15 | 2 tasks | 8 files |
 | Phase 04 P03 | 15 | 2 tasks | 6 files |
 | Phase 05 P02 | 9 | 2 tasks | 6 files |
+| Phase 05-pro-features-versioning-analytics-smart-collections P03 | 3 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -106,6 +107,9 @@ Recent decisions affecting current work:
 - [Phase 05-01]: PromptDiffView.Target is a nested enum (not top-level DiffTarget) — scoped to the view, avoids namespace pollution
 - [Phase 05-01]: SyncedScrollPanel only propagates scroll during .interacting phase; falls back to independent scrolling on macOS 14
 - [Phase 05-01]: InspectorView shows upgrade prompt for free users in version history section (discoverability over hiding)
+- [Phase 05-03]: Most Used preset special-cased in filterPrompts by isPreset+name check; avoids new CollectionRuleType
+- [Phase 05-03]: Stale Prompts lastUsedWithin inversion detected by isPreset+name rather than new SmartCollectionFilter invertLastUsed field
+- [Phase 05-03]: qualityScore stored as 0-100 Int (overall Double * 10) for simpler filter comparisons
 
 ## Accumulated Context
 
@@ -186,7 +190,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-09T06:36:42.500Z
-Stopped at: Completed 05-02-PLAN.md
+Last session: 2026-04-09T15:21:39.236Z
+Stopped at: Completed 05-03-PLAN.md
 Resume file: None
 Resume file: .planning/phases/03-storekit-2-paywall/03-02-SUMMARY.md
