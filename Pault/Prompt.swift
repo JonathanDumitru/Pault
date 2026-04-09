@@ -24,6 +24,7 @@ final class Prompt {
     var updatedAt: Date
     var lastUsedAt: Date?
     var variantB: String?    // A/B testing: alternate prompt content; nil = no variant active
+    var qualityScore: Int?   // Persisted from AI quality scoring (0–10 × 10, stored as 0–100)
 
     // MARK: - Block Editor Properties
 

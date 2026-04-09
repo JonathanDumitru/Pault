@@ -473,9 +473,14 @@ private struct ScoreTabContent: View {
         Task {
             do {
                 let result = try await AIService.shared.qualityScore(prompt: prompt.content, config: config)
-                await MainActor.run { score = result; isLoading = false }
+                await MainActor.run {
+                    score = result
+                    isLoading = false
+                    // Persist overall score (0–10 scale → 0–100 Int) to the Prompt model
+                    prompt.qualityScore = Int(result.overall * 10)
+                }
             } catch {
-                await MainActor.run { 
+                await MainActor.run {
                     isLoading = false
                     handleAIError(error, outError: &self.error)
                 }
