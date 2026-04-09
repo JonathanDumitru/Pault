@@ -204,7 +204,7 @@ struct AIAssistPanel: View {
     }
 
     private func acceptImprovement() {
-        PromptService(modelContext: modelContext).saveSnapshot(for: prompt)
+        PromptService(modelContext: modelContext).saveSnapshot(for: prompt, source: .aiImprove)
         prompt.content = streamingImproveText
         streamingImproveText = ""
         originalText = ""
@@ -293,7 +293,7 @@ private struct VariablesTabContent: View {
     }
 
     private func insert(_ suggestion: VariableSuggestion) {
-        PromptService(modelContext: modelContext).saveSnapshot(for: prompt)
+        PromptService(modelContext: modelContext).saveSnapshot(for: prompt, source: .aiVariableAccept)
         // Strip wrapping {{ }} if already present, then re-wrap consistently
         let raw = suggestion.placeholder
             .replacingOccurrences(of: "{{", with: "")
@@ -382,7 +382,7 @@ private struct TagsTabContent: View {
     }
 
     private func attachTag(named name: String) {
-        PromptService(modelContext: modelContext).saveSnapshot(for: prompt)
+        PromptService(modelContext: modelContext).saveSnapshot(for: prompt, source: .aiAutoTag)
         let tag: Tag
         if let existing = allTags.first(where: { $0.name.lowercased() == name.lowercased() }) {
             tag = existing
