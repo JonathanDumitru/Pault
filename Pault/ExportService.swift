@@ -16,9 +16,18 @@ struct PromptExportBundle: Codable {
     let version: Int
     let exportedAt: Double
     let prompts: [PromptExportRecord]
+    let collectionName: String?
+
+    init(version: Int, exportedAt: Double, prompts: [PromptExportRecord], collectionName: String? = nil) {
+        self.version = version
+        self.exportedAt = exportedAt
+        self.prompts = prompts
+        self.collectionName = collectionName
+    }
 }
 
 struct PromptExportRecord: Codable {
+    // v1 fields
     let id: String
     let title: String
     let content: String
@@ -28,6 +37,48 @@ struct PromptExportRecord: Codable {
     let updatedAt: Double
     let tags: [String]
     let templateVariables: [VariableExportRecord]
+
+    // v2 optional fields — nil when decoding v1 bundles (missing keys decode as nil)
+    let blockCompositionData: Data?
+    let qualityScore: Int?
+    let lastUsedAt: Double?
+    let editingModeRaw: String?
+    let variantB: String?
+    let attachmentFileNames: [String]?
+
+    init(
+        id: String,
+        title: String,
+        content: String,
+        isFavorite: Bool,
+        isArchived: Bool,
+        createdAt: Double,
+        updatedAt: Double,
+        tags: [String],
+        templateVariables: [VariableExportRecord],
+        blockCompositionData: Data? = nil,
+        qualityScore: Int? = nil,
+        lastUsedAt: Double? = nil,
+        editingModeRaw: String? = nil,
+        variantB: String? = nil,
+        attachmentFileNames: [String]? = nil
+    ) {
+        self.id = id
+        self.title = title
+        self.content = content
+        self.isFavorite = isFavorite
+        self.isArchived = isArchived
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.tags = tags
+        self.templateVariables = templateVariables
+        self.blockCompositionData = blockCompositionData
+        self.qualityScore = qualityScore
+        self.lastUsedAt = lastUsedAt
+        self.editingModeRaw = editingModeRaw
+        self.variantB = variantB
+        self.attachmentFileNames = attachmentFileNames
+    }
 }
 
 struct VariableExportRecord: Codable {
