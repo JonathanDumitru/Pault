@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Phase 6 context gathered
-last_updated: "2026-04-09T15:55:24.114Z"
+stopped_at: Phase 06 Plan 01 complete — ExportService v2 + MarkdownFrontmatterParser
+last_updated: "2026-04-09T16:20:17.672Z"
 last_activity: 2026-04-09 -- Phase 5 Plan 01 complete
 progress:
   total_phases: 8
   completed_phases: 4
-  total_plans: 16
-  completed_plans: 13
+  total_plans: 18
+  completed_plans: 14
   percent: 44
 ---
 
@@ -62,6 +62,7 @@ Progress: [████▌░░░░░] 44%
 | Phase 04 P03 | 15 | 2 tasks | 6 files |
 | Phase 05 P02 | 9 | 2 tasks | 6 files |
 | Phase 05-pro-features-versioning-analytics-smart-collections P03 | 3 | 2 tasks | 6 files |
+| Phase 06-import-export P01 | 6 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -110,6 +111,9 @@ Recent decisions affecting current work:
 - [Phase 05-03]: Most Used preset special-cased in filterPrompts by isPreset+name check; avoids new CollectionRuleType
 - [Phase 05-03]: Stale Prompts lastUsedWithin inversion detected by isPreset+name rather than new SmartCollectionFilter invertLastUsed field
 - [Phase 05-03]: qualityScore stored as 0-100 Int (overall Double * 10) for simpler filter comparisons
+- [Phase 06-01]: MarkdownImportRecord uses optional Date? for createdAt/updatedAt since plain Markdown has no date metadata
+- [Phase 06-01]: exportAll backward compat: delegates to exportLibraryJSON(collectionName: nil) — callers unchanged, produces v2 bundles
+- [Phase 06-01]: YAML string values always double-quoted to handle colons, brackets, hashes safely in frontmatter
 
 ## Accumulated Context
 
@@ -190,7 +194,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-09T15:55:24.110Z
-Stopped at: Phase 6 context gathered
-Resume file: .planning/phases/06-import-export/06-CONTEXT.md
+Last session: 2026-04-09T16:20:17.669Z
+Stopped at: Phase 06 Plan 01 complete — ExportService v2 + MarkdownFrontmatterParser
+Resume file: None
 Resume file: .planning/phases/03-storekit-2-paywall/03-02-SUMMARY.md
