@@ -121,8 +121,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 06-01-PLAN.md -- Export service: JSON and Markdown providers
-- [ ] 06-02-PLAN.md -- Import service: file picking, parsing, and duplicate handling
+- [ ] 06-01-PLAN.md -- v2 DTOs, MarkdownFrontmatterParser, JSON/Markdown export, Copy as Markdown
+- [ ] 06-02-PLAN.md -- ImportOrchestrator, preview sheet with conflict resolution, UI wiring (menus, drag-drop, share)
 
 ### Phase 7: App Store Readiness
 **Goal**: Pault is fully prepared for submission with all required metadata, assets, and legal compliance
