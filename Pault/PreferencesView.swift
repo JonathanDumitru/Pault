@@ -379,10 +379,6 @@ private struct DataTab: View {
     @Query private var tags: [Tag]
 
     @State private var showClearConfirm = false
-    @State private var importResult: String? = nil
-    @State private var showImportResult = false
-    @State private var importError: String? = nil
-    @State private var showImportError = false
     @State private var exportSuccess = false
     @State private var showExportError = false
 
@@ -420,25 +416,8 @@ private struct DataTab: View {
                 }
 
                 Button("Import Prompts…") {
-                    if let count = ExportService.importPrompts(into: modelContext) {
-                        importResult = count == 0
-                            ? "No new prompts to import (all already exist)."
-                            : "Imported \(count) prompt\(count == 1 ? "" : "s")."
-                        showImportResult = true
-                    } else {
-                        importError = "The selected file could not be imported. It may be corrupted or in an unsupported format."
-                        showImportError = true
-                    }
-                }
-                .alert("Import Complete", isPresented: $showImportResult, presenting: importResult) { _ in
-                    Button("OK") { }
-                } message: { result in
-                    Text(result)
-                }
-                .alert("Import Failed", isPresented: $showImportError, presenting: importError) { _ in
-                    Button("OK") { }
-                } message: { msg in
-                    Text(msg)
+                    // Post notification to trigger the new preview-based import flow in ContentView
+                    NotificationCenter.default.post(name: .importPrompts, object: nil)
                 }
 
                 Text("Exports include plain text only. Rich text formatting and inline images are not preserved.")

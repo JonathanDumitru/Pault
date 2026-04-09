@@ -186,6 +186,23 @@ struct SidebarView: View {
                                     .padding(.leading, 36)
                             }
                         }
+                        .contextMenu {
+                            Menu("Export") {
+                                Button("As JSON...") {
+                                    let service = PromptService(modelContext: modelContext)
+                                    let matched = service.filterPrompts(allPrompts, collection: collection)
+                                    ExportService.exportLibraryJSON(
+                                        prompts: matched,
+                                        collectionName: collection.name
+                                    )
+                                }
+                                Button("As Markdown...") {
+                                    let service = PromptService(modelContext: modelContext)
+                                    let matched = service.filterPrompts(allPrompts, collection: collection)
+                                    ExportService.exportMarkdown(prompts: matched)
+                                }
+                            }
+                        }
                     }
                 }
                 .padding(.horizontal, 8)
@@ -261,6 +278,15 @@ struct SidebarView: View {
                             Button("Copy", systemImage: "doc.on.doc") { onCopy?(prompt) }
                             Button(prompt.isFavorite ? "Unfavorite" : "Favorite", systemImage: "star") { onToggleFavorite?(prompt) }
                             Button(prompt.isArchived ? "Unarchive" : "Archive", systemImage: "archivebox") { onToggleArchive?(prompt) }
+                            Divider()
+                            Menu("Export") {
+                                Button("As JSON...") {
+                                    ExportService.exportLibraryJSON(prompts: [prompt])
+                                }
+                                Button("As Markdown...") {
+                                    ExportService.exportMarkdown(prompts: [prompt])
+                                }
+                            }
                             Divider()
                             Button("Delete", systemImage: "trash", role: .destructive) { onDelete?(prompt) }
                         }

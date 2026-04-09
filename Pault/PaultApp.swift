@@ -17,6 +17,11 @@ extension Notification.Name {
     static let insertInlineImage = Notification.Name("com.pault.insertInlineImage")
     static let openAboutWindow = Notification.Name("com.pault.openAboutWindow")
     static let toggleLauncher = Notification.Name("com.pault.toggleLauncher")
+
+    // Import/Export
+    static let exportLibraryJSON = Notification.Name("com.pault.exportLibraryJSON")
+    static let exportLibraryMarkdown = Notification.Name("com.pault.exportLibraryMarkdown")
+    static let importPrompts = Notification.Name("com.pault.importPrompts")
 }
 
 @main
@@ -97,6 +102,24 @@ struct PaultApp: App {
                     NotificationCenter.default.post(name: .createNewPrompt, object: nil)
                 }
                 .keyboardShortcut("n", modifiers: .command)
+            }
+            CommandGroup(after: .newItem) {
+                Divider()
+
+                Button("Export Library as JSON...") {
+                    NotificationCenter.default.post(name: .exportLibraryJSON, object: nil)
+                }
+
+                Button("Export Library as Markdown...") {
+                    NotificationCenter.default.post(name: .exportLibraryMarkdown, object: nil)
+                }
+
+                Divider()
+
+                Button("Import Prompts...") {
+                    NotificationCenter.default.post(name: .importPrompts, object: nil)
+                }
+                .keyboardShortcut("i", modifiers: [.command, .option])
             }
             CommandGroup(replacing: .appInfo) {
                 Button("About Pault") {

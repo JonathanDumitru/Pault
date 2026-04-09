@@ -11,6 +11,7 @@
 
 import SwiftUI
 import SwiftData
+import UniformTypeIdentifiers
 
 #if os(macOS)
 import AppKit
@@ -30,6 +31,12 @@ struct ContentView: View {
     @State private var showOnboarding: Bool = false
     @State private var showingAnalytics: Bool = false
     @State private var showCreationLaunchpad: Bool = false
+
+    // Import/Export state
+    @State private var importSession: ImportSession? = nil
+    @State private var importResult: ImportResult? = nil
+    @State private var isDropTargeted: Bool = false
+    @State private var isExporting: Bool = false
 
     // Panel visibility state with persistence
     @AppStorage("showSidebar") private var showSidebar: Bool = false
@@ -93,6 +100,59 @@ struct ContentView: View {
                 guard let promptID = notification.userInfo?["promptID"] as? UUID else { return }
                 selectedPrompt = prompts.first(where: { $0.id == promptID })
             }
+            // Export library as JSON
+            .onReceive(NotificationCenter.default.publisher(for: .exportLibraryJSON)) { _ in
+                isExporting = true
+                ExportService.exportLibraryJSON(prompts: prompts)
+                isExporting = false
+            }
+            // Export library as Markdown
+            .onReceive(NotificationCenter.default.publisher(for: .exportLibraryMarkdown)) { _ in
+                isExporting = true
+                ExportService.exportMarkdown(prompts: prompts)
+                isExporting = false
+            }
+            // Import prompts via NSOpenPanel
+            .onReceive(NotificationCenter.default.publisher(for: .importPrompts)) { _ in
+                presentImportPanel()
+            }
+            // Import preview sheet
+            .sheet(item: $importSession) { session in
+                ImportPreviewSheet(session: Binding(
+                    get: { importSession },
+                    set: { importSession = $0 }
+                ), onComplete: { result in
+                    importResult = result
+                    // Auto-dismiss banner after 5 seconds
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                        importResult = nil
+                    }
+                })
+                .environment(\.modelContext, modelContext)
+            }
+            // Drag-drop file import
+            .onDrop(of: [UTType.fileURL], isTargeted: $isDropTargeted) { providers in
+                var urls: [URL] = []
+                let group = DispatchGroup()
+                for provider in providers {
+                    group.enter()
+                    _ = provider.loadObject(ofClass: URL.self) { url, _ in
+                        if let url = url {
+                            urls.append(url)
+                        }
+                        group.leave()
+                    }
+                }
+                group.notify(queue: .main) {
+                    let jsonURLs = urls.filter { $0.pathExtension.lowercased() == "json" }
+                    let mdURLs = urls.filter { ["md", "markdown"].contains($0.pathExtension.lowercased()) }
+                    guard !jsonURLs.isEmpty || !mdURLs.isEmpty else { return }
+                    if let session = ImportOrchestrator.prepare(jsonURLs: jsonURLs, markdownURLs: mdURLs, context: modelContext) {
+                        importSession = session
+                    }
+                }
+                return !providers.isEmpty
+            }
             // Auto-collapse handler
             .onChange(of: autoCollapse.shouldCollapse) { _, shouldCollapse in
                 if shouldCollapse {
@@ -119,6 +179,60 @@ struct ContentView: View {
     // MARK: - Main Content
 
     private var mainContent: some View {
+        ZStack(alignment: .top) {
+            mainContentLayout
+
+            // Import result summary banner (top-aligned, auto-dismiss)
+            if let result = importResult {
+                ImportResultBanner(result: result) {
+                    importResult = nil
+                }
+                .transition(.move(edge: .top).combined(with: .opacity))
+                .zIndex(10)
+            }
+
+            // Export spinner overlay (centered)
+            if isExporting {
+                Color.black.opacity(0.2)
+                    .ignoresSafeArea()
+                    .overlay {
+                        VStack(spacing: 12) {
+                            ProgressView()
+                                .scaleEffect(1.2)
+                            Text("Exporting...")
+                                .font(.headline)
+                        }
+                        .padding(24)
+                        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
+                    }
+                    .zIndex(20)
+            }
+
+            // Drop indicator overlay
+            if isDropTargeted {
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(Color.accentColor, lineWidth: 3)
+                    .background(Color.accentColor.opacity(0.1), in: RoundedRectangle(cornerRadius: 12))
+                    .overlay {
+                        VStack(spacing: 8) {
+                            Image(systemName: "arrow.down.doc")
+                                .font(.largeTitle)
+                                .foregroundStyle(Color.accentColor)
+                            Text("Drop to Import")
+                                .font(.headline)
+                                .foregroundStyle(Color.accentColor)
+                        }
+                    }
+                    .padding(20)
+                    .zIndex(15)
+            }
+        }
+        .animation(.easeInOut(duration: 0.2), value: importResult != nil)
+        .animation(.easeInOut(duration: 0.15), value: isExporting)
+        .animation(.easeInOut(duration: 0.15), value: isDropTargeted)
+    }
+
+    private var mainContentLayout: some View {
         VStack(spacing: 0) {
             // Top toolbar
             mainToolbar
@@ -296,6 +410,65 @@ struct ContentView: View {
         guard let prompt = selectedPrompt else { return }
         service.copyToClipboard(prompt)
         withAnimation { showCopyToast = true }
+    }
+
+    private func presentImportPanel() {
+        let panel = NSOpenPanel()
+        panel.title = "Import Prompts"
+        panel.allowedContentTypes = [.json, .plainText]
+        panel.allowsMultipleSelection = true
+        panel.canChooseDirectories = false
+        panel.canChooseFiles = true
+        guard panel.runModal() == .OK else { return }
+
+        let jsonURLs = panel.urls.filter { $0.pathExtension.lowercased() == "json" }
+        let mdURLs = panel.urls.filter { ["md", "markdown"].contains($0.pathExtension.lowercased()) }
+
+        if let session = ImportOrchestrator.prepare(jsonURLs: jsonURLs, markdownURLs: mdURLs, context: modelContext) {
+            importSession = session
+        }
+    }
+}
+
+// MARK: - ImportResultBanner
+
+private struct ImportResultBanner: View {
+    let result: ImportResult
+    let onDismiss: () -> Void
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "checkmark.circle.fill")
+                .foregroundStyle(.green)
+
+            Text(summaryText)
+                .font(.subheadline)
+
+            Spacer()
+
+            Button(action: onDismiss) {
+                Image(systemName: "xmark")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8))
+        .padding(.horizontal, 16)
+        .padding(.top, 8)
+        .onTapGesture { onDismiss() }
+        .accessibilityLabel("Import result: \(summaryText)")
+    }
+
+    private var summaryText: String {
+        var parts: [String] = []
+        if result.imported > 0 { parts.append("\(result.imported) imported") }
+        if result.overwritten > 0 { parts.append("\(result.overwritten) overwritten") }
+        if result.skipped > 0 { parts.append("\(result.skipped) skipped") }
+        if result.errors > 0 { parts.append("\(result.errors) errors") }
+        return parts.isEmpty ? "Nothing to import" : parts.joined(separator: ", ")
     }
 }
 

@@ -354,10 +354,47 @@ struct PromptDetailView: View {
             }
             .buttonStyle(.plain)
             .help("Save as Template")
+
+            // Share button (ShareLink with compiled text)
+            ShareLink(item: compiledText) {
+                Image(systemName: "square.and.arrow.up")
+                    .font(.title2)
+                    .foregroundStyle(.secondary)
+                    .padding(12)
+            }
+            .buttonStyle(.plain)
+            .help("Share prompt text")
+
+            // Copy as Markdown button
+            Button(action: { ExportService.copyAsMarkdown(prompt: prompt) }) {
+                Image(systemName: "arrow.down.doc")
+                    .font(.title2)
+                    .foregroundStyle(.secondary)
+                    .padding(12)
+            }
+            .buttonStyle(.plain)
+            .help("Copy as Markdown")
         }
         .padding(8)
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 10))
         .padding(16)
+        .contextMenu {
+            Menu("Export") {
+                Button("As JSON...") {
+                    ExportService.exportLibraryJSON(prompts: [prompt])
+                }
+                Button("As Markdown...") {
+                    ExportService.exportMarkdown(prompts: [prompt])
+                }
+            }
+            Button("Copy as Markdown") {
+                ExportService.copyAsMarkdown(prompt: prompt)
+            }
+        }
+    }
+
+    private var compiledText: String {
+        TemplateEngine.resolve(content: prompt.content, variables: prompt.templateVariables)
     }
 
     @ViewBuilder
