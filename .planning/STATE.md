@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: completed
-stopped_at: Completed 05-02-PLAN.md
-last_updated: "2026-04-09T06:36:42.503Z"
-last_activity: 2026-04-02 -- AI Assist panel + RunTabView + Streaming/Diff engine + Keyboard shortcuts
+status: in-progress
+stopped_at: Completed 05-01-PLAN.md
+last_updated: "2026-04-09T06:40:00Z"
+last_activity: 2026-04-09 -- Phase 5 Plan 01: Prompt versioning with VersionSource, V2V diff, sync scrolling
 progress:
   total_phases: 8
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 16
-  completed_plans: 11
-  percent: 38
+  completed_plans: 12
+  percent: 44
 ---
 
 # Project State
@@ -25,12 +25,12 @@ See: .planning/PROJECT.md (updated 2026-03-14)
 
 ## Current Position
 
-Phase: 4 of 8 (Pro Features -- AI Assist & API Runner)
-Plan: 4 of 4 (Phase 4 complete)
-Status: Phase 4 complete — Plans 00-03 complete
-Last activity: 2026-04-02 -- AI Assist panel + RunTabView + Streaming/Diff engine + Keyboard shortcuts
+Phase: 5 of 8 (Pro Features -- Versioning, Analytics & Smart Collections)
+Plan: 1 of 4 (Phase 5 in progress)
+Status: Phase 5 Plan 01 complete — Prompt versioning with VersionSource, V2V diff, sync scrolling
+Last activity: 2026-04-09 -- Phase 5 Plan 01 complete
 
-Progress: [████░░░░░░] 38%
+Progress: [████▌░░░░░] 44%
 
 ## Performance Metrics
 
@@ -102,6 +102,10 @@ Recent decisions affecting current work:
 - [Phase 05-02]: formatTokenCount is module-level func in PromptStatsView.swift (not private) so AnalyticsView can reference it without duplication
 - [Phase 05-02]: drilldownPromptID: UUID? pattern used instead of drilldownPrompt: Prompt? to avoid Identifiable conformance conflict with SwiftData PersistentModel
 - [Phase 05-02]: PromptDiffView.Target enum added to support both V2C and V2V comparison modes (fixed pre-existing compile error)
+- [Phase 05-01]: VersionSource: String enum with rawValues matching stored DB strings; computed versionSource get/set on @Model follows editingModeRaw/editingMode pattern
+- [Phase 05-01]: PromptDiffView.Target is a nested enum (not top-level DiffTarget) — scoped to the view, avoids namespace pollution
+- [Phase 05-01]: SyncedScrollPanel only propagates scroll during .interacting phase; falls back to independent scrolling on macOS 14
+- [Phase 05-01]: InspectorView shows upgrade prompt for free users in version history section (discoverability over hiding)
 
 ## Accumulated Context
 
