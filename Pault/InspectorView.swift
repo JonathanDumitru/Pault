@@ -208,14 +208,25 @@ struct InspectorView: View {
         VStack(alignment: .leading, spacing: 6) {
             Button(action: { withAnimation { showHistory.toggle() } }) {
                 HStack {
-                    Text("History")
+                    Text("Version History")
                         .font(.caption)
                         .fontWeight(.semibold)
                         .foregroundStyle(.secondary)
 
-                    Text("(\(prompt.versions.count))")
-                        .font(.caption2)
-                        .foregroundStyle(.tertiary)
+                    if ProFeature.isUnlocked(.versioning) {
+                        Text("(\(prompt.versions.count))")
+                            .font(.caption2)
+                            .foregroundStyle(.tertiary)
+                    } else {
+                        Text("Pro")
+                            .font(.caption2)
+                            .fontWeight(.medium)
+                            .foregroundStyle(.purple)
+                            .padding(.horizontal, 5)
+                            .padding(.vertical, 1)
+                            .background(Color.purple.opacity(0.12))
+                            .clipShape(Capsule())
+                    }
 
                     Spacer()
 
@@ -227,8 +238,16 @@ struct InspectorView: View {
             .buttonStyle(.plain)
 
             if showHistory {
-                PromptVersionHistoryView(prompt: prompt)
-                    .transition(.opacity.combined(with: .move(edge: .top)))
+                if ProFeature.isUnlocked(.versioning) {
+                    PromptVersionHistoryView(prompt: prompt)
+                        .transition(.opacity.combined(with: .move(edge: .top)))
+                } else {
+                    Text("Upgrade to Pro to access version history.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .padding(.vertical, 4)
+                        .transition(.opacity.combined(with: .move(edge: .top)))
+                }
             }
         }
         .padding(.horizontal, 12)
