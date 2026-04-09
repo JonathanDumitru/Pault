@@ -326,7 +326,7 @@ enum ExportService {
         return inserted
     }
 
-    private static func resolveTag(named name: String, in context: ModelContext) -> Tag {
+    static func resolveTag(named name: String, in context: ModelContext) -> Tag {
         let lower = name.lowercased()
         let descriptor = FetchDescriptor<Tag>(predicate: #Predicate { $0.name == lower })
         if let existing = try? context.fetch(descriptor), let tag = existing.first {
