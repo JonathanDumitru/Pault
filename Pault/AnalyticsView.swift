@@ -2,16 +2,25 @@
 //  AnalyticsView.swift
 //  Pault
 //
-//  Top-level analytics sheet showing top prompts ranked by combined usage.
+//  Top-level analytics sheet showing daily usage chart, token totals,
+//  and top prompts ranked by combined usage.
 //
 
 import SwiftUI
 import SwiftData
+import Charts
+
+// MARK: - AnalyticsView
 
 struct AnalyticsView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @Query private var allPrompts: [Prompt]
+
+    @State private var dateRange: Int = 30
+    @State private var drilldownPromptID: UUID? = nil
+
+    private let rangeOptions = [7, 30, 90]
 
     private struct AnalyticsEntry: Identifiable {
         let id: UUID
@@ -21,8 +30,12 @@ struct AnalyticsView: View {
         var total: Int { copyCount + runCount }
     }
 
+    private var service: AnalyticsService {
+        AnalyticsService(modelContext: modelContext)
+    }
+
     private var topEntries: [AnalyticsEntry] {
-        let svc = AnalyticsService(modelContext: modelContext)
+        let svc = service
         let runCounts = svc.allRunCounts()   // single PromptRun table scan
         return allPrompts
             .map { prompt in
@@ -57,12 +70,34 @@ struct AnalyticsView: View {
                 }
             }
         }
-        .frame(width: 480, height: 420)
+        .frame(width: 480, height: 560)
     }
 
+    // MARK: - Analytics Content
+
     private var analyticsContent: some View {
-        let entries = topEntries   // compute once to avoid double evaluation
-        return Group {
+        let entries = topEntries
+        return VStack(spacing: 0) {
+            // Date range picker
+            Picker("Range", selection: $dateRange) {
+                ForEach(rangeOptions, id: \.self) { days in
+                    Text("\(days)d").tag(days)
+                }
+            }
+            .pickerStyle(.segmented)
+            .padding(.horizontal)
+            .padding(.vertical, 10)
+
+            // Daily events chart
+            dailyChart
+
+            // Token consumption summary
+            tokenSummary
+
+            Divider()
+                .padding(.top, 8)
+
+            // Ranked prompt list
             if entries.isEmpty {
                 ContentUnavailableView {
                     Label("No Usage Data", systemImage: "chart.bar")
@@ -73,37 +108,48 @@ struct AnalyticsView: View {
                 List {
                     Section {
                         ForEach(Array(entries.enumerated()), id: \.element.id) { index, entry in
-                            HStack(spacing: 12) {
-                                Text("\(index + 1)")
-                                    .font(.body.monospacedDigit())
-                                    .foregroundStyle(.secondary)
-                                    .frame(width: 24, alignment: .trailing)
-
-                                Text(entry.title)
-                                    .lineLimit(1)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                                HStack(spacing: 4) {
-                                    Image(systemName: "doc.on.doc")
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                    Text("\(entry.copyCount)")
+                            Button {
+                                // Navigate to per-prompt drill-down
+                                drilldownPromptID = entry.id
+                            } label: {
+                                HStack(spacing: 12) {
+                                    Text("\(index + 1)")
                                         .font(.body.monospacedDigit())
                                         .foregroundStyle(.secondary)
-                                }
-                                .frame(width: 52, alignment: .trailing)
+                                        .frame(width: 24, alignment: .trailing)
 
-                                HStack(spacing: 4) {
-                                    Image(systemName: "play.circle")
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                    Text("\(entry.runCount)")
-                                        .font(.body.monospacedDigit())
-                                        .foregroundStyle(.secondary)
+                                    Text(entry.title)
+                                        .lineLimit(1)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .foregroundStyle(.primary)
+
+                                    HStack(spacing: 4) {
+                                        Image(systemName: "doc.on.doc")
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                        Text("\(entry.copyCount)")
+                                            .font(.body.monospacedDigit())
+                                            .foregroundStyle(.secondary)
+                                    }
+                                    .frame(width: 52, alignment: .trailing)
+
+                                    HStack(spacing: 4) {
+                                        Image(systemName: "play.circle")
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                        Text("\(entry.runCount)")
+                                            .font(.body.monospacedDigit())
+                                            .foregroundStyle(.secondary)
+                                    }
+                                    .frame(width: 52, alignment: .trailing)
+
+                                    Image(systemName: "chevron.right")
+                                        .font(.caption2)
+                                        .foregroundStyle(.tertiary)
                                 }
-                                .frame(width: 52, alignment: .trailing)
+                                .padding(.vertical, 2)
                             }
-                            .padding(.vertical, 2)
+                            .buttonStyle(.plain)
                         }
                     } header: {
                         HStack(spacing: 12) {
@@ -115,6 +161,8 @@ struct AnalyticsView: View {
                                 .frame(width: 52, alignment: .trailing)
                             Text("Runs")
                                 .frame(width: 52, alignment: .trailing)
+                            Text("")
+                                .frame(width: 12)
                         }
                         .font(.caption)
                         .foregroundStyle(.secondary)
@@ -123,7 +171,97 @@ struct AnalyticsView: View {
                 .listStyle(.inset)
             }
         }
+        .sheet(isPresented: Binding(
+            get: { drilldownPromptID != nil },
+            set: { if !$0 { drilldownPromptID = nil } }
+        )) {
+            if let pid = drilldownPromptID,
+               let prompt = allPrompts.first(where: { $0.id == pid }) {
+                NavigationStack {
+                    PromptStatsView(prompt: prompt)
+                        .navigationTitle(prompt.title.isEmpty ? "Untitled" : prompt.title)
+                        .toolbar {
+                            ToolbarItem(placement: .confirmationAction) {
+                                Button("Done") { drilldownPromptID = nil }
+                            }
+                        }
+                }
+                .frame(width: 360, height: 420)
+            }
+        }
     }
+
+    // MARK: - Daily Chart
+
+    private var dailyChart: some View {
+        let data = service.dailyEvents(days: dateRange)
+        let stride: Calendar.Component = dateRange == 7 ? .day : (dateRange == 30 ? .day : .weekOfYear)
+        let strideCount = dateRange == 7 ? 1 : (dateRange == 30 ? 5 : 14)
+
+        return Chart(data, id: \.date) { entry in
+            AreaMark(
+                x: .value("Date", entry.date),
+                y: .value("Events", entry.count)
+            )
+            .foregroundStyle(Color.accentColor.opacity(0.10))
+            .interpolationMethod(.catmullRom)
+
+            LineMark(
+                x: .value("Date", entry.date),
+                y: .value("Events", entry.count)
+            )
+            .foregroundStyle(Color.accentColor)
+            .interpolationMethod(.catmullRom)
+        }
+        .chartXAxis {
+            AxisMarks(values: .stride(by: stride, count: strideCount)) { value in
+                AxisGridLine()
+                AxisTick()
+                AxisValueLabel(format: .dateTime.month().day())
+            }
+        }
+        .chartYAxis {
+            AxisMarks(position: .leading) { value in
+                AxisGridLine()
+                AxisValueLabel()
+            }
+        }
+        .frame(height: 120)
+        .padding(.horizontal)
+        .padding(.bottom, 4)
+    }
+
+    // MARK: - Token Summary
+
+    private var tokenSummary: some View {
+        let totals = service.tokenTotals(days: dateRange)
+        let prefix = totals.hasPartialData ? "~" : ""
+        return HStack(spacing: 16) {
+            Label {
+                Text("\(prefix)\(formatTokenCount(totals.input)) input")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            } icon: {
+                Image(systemName: "arrow.up.circle")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            Label {
+                Text("\(prefix)\(formatTokenCount(totals.output)) output")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            } icon: {
+                Image(systemName: "arrow.down.circle")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            Spacer()
+        }
+        .padding(.horizontal)
+        .padding(.bottom, 6)
+    }
+
+    // MARK: - Upgrade Prompt
 
     private var upgradePrompt: some View {
         VStack(spacing: 16) {
@@ -156,6 +294,8 @@ struct AnalyticsView: View {
         .padding()
     }
 }
+
+// MARK: - Preview
 
 #Preview {
     AnalyticsView()
