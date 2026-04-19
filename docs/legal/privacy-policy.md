@@ -1,6 +1,6 @@
 # Privacy Policy for Pault
 
-Last updated: February 6, 2026
+Last updated: [Launch Date]
 
 ## Overview
 
@@ -32,6 +32,25 @@ Pault currently relies on standard macOS system services for:
 
 The current copy workflow does not rely on Accessibility-driven paste automation.
 
+## AI Proxy Service
+
+When you use AI Assist or API Runner features, prompt text is transmitted over an encrypted HTTPS connection to an AI proxy service operated by Pault. The proxy forwards your prompt to a third-party AI provider (such as Anthropic Claude or OpenAI) on your behalf. Pault's proxy does not store prompt content or AI responses server-side. Requests are authenticated using your active Pault Pro subscription via StoreKit subscription verification.
+
+By using AI features, you acknowledge that your prompt content will be transmitted to the applicable third-party AI provider and processed under that provider's terms of service and privacy policy.
+
+### Bring Your Own Key (BYOK)
+
+Pault Pro users may optionally configure their own AI provider API keys in Settings. These keys are stored exclusively in your macOS Keychain and are never transmitted to or stored by Pault's servers. When BYOK mode is active, Pault routes your request directly to the AI provider using your key; the Pault proxy is bypassed. You are solely responsible for your own API key usage, including associated costs and compliance with the third-party provider's terms of service.
+
+## App Store Privacy Labels
+
+For transparency, the following data type classifications apply to Pault's App Store privacy nutrition label:
+
+| Data Type | Linked to Identity | Used for Tracking | Purpose |
+|-----------|-------------------|-------------------|---------|
+| Other User Content (prompt text transmitted to AI proxy) | No | No | App Functionality |
+| Other Data Types (local app data) | No | No | App Functionality |
+
 ## Data Sharing
 
 We do not sell personal information. We do not share your prompt library data with third parties for advertising.
@@ -50,6 +69,8 @@ We may update this policy from time to time. If material changes are made, we wi
 
 ## Contact
 
-For privacy questions, contact:
+For privacy questions: privacy@pault.app
 
-`privacy@pault.app`
+For support: support@pault.app
+
+For general inquiries: hello@pault.app
