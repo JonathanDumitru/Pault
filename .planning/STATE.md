@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Phase 7 context gathered
-last_updated: "2026-04-18T16:01:03.876Z"
+stopped_at: Completed 07-01-PLAN.md tasks (awaiting human-verify checkpoint)
+last_updated: "2026-04-19T03:51:40.792Z"
 last_activity: 2026-04-09 -- Phase 5 Plan 01 complete
 progress:
   total_phases: 8
   completed_phases: 5
-  total_plans: 18
-  completed_plans: 15
+  total_plans: 20
+  completed_plans: 16
   percent: 44
 ---
 
@@ -65,6 +65,7 @@ Progress: [████▌░░░░░] 44%
 | Phase 06-import-export P01 | 6 | 2 tasks | 4 files |
 | Phase 06-import-export P02 | 14 | 2 tasks | 8 files |
 | Phase 06-import-export P02 | 14 | 3 tasks | 8 files |
+| Phase 07-app-store-readiness P01 | 15 | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -122,6 +123,8 @@ Recent decisions affecting current work:
 - [Phase 06-02]: DiffView renamed to ImportDiffView in ImportPreviewSheet to avoid conflict with existing DiffView in RefinementLoopView.swift
 - [Phase 06-02]: Pault.Tag disambiguation required in ImportOrchestratorTests — Tag type ambiguous with possible Foundation type
 - [Phase 06-02]: PreferencesView Import button posts .importPrompts notification — delegates to ContentView preview flow instead of direct ExportService call
+- [Phase 07-01]: ExportOptions-AppStore.plist uses destination=export (not upload) — user uploads manually via Xcode Organizer
+- [Phase 07-01]: build-release.sh runs test suite as safety gate before archive step in both --appstore and --dmg paths
 
 ## Accumulated Context
 
@@ -202,7 +205,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-18T16:01:03.861Z
-Stopped at: Phase 7 context gathered
-Resume file: .planning/phases/07-app-store-readiness/07-CONTEXT.md
+Last session: 2026-04-19T03:51:40.789Z
+Stopped at: Completed 07-01-PLAN.md tasks (awaiting human-verify checkpoint)
+Resume file: None
 Resume file: .planning/phases/03-storekit-2-paywall/03-02-SUMMARY.md
