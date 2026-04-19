@@ -159,5 +159,10 @@ struct PaultApp: App {
         // Seed built-in prompt templates on first launch
         let seedContext = ModelContext(sharedModelContainer)
         TemplateSeedService.seed(into: seedContext)
+
+        // Populate screenshot seed data when running in screenshot mode
+        if ProcessInfo.processInfo.arguments.contains("--screenshot-mode") {
+            ScreenshotDataSeeder.seed(context: seedContext)
+        }
     }
 }
