@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 07-01-PLAN.md tasks (awaiting human-verify checkpoint)
-last_updated: "2026-04-19T03:51:40.792Z"
+stopped_at: Phase 7 Plan 02 complete — awaiting human-verify checkpoint for screenshot quality
+last_updated: "2026-04-19T03:54:58.770Z"
 last_activity: 2026-04-09 -- Phase 5 Plan 01 complete
 progress:
   total_phases: 8
-  completed_phases: 5
+  completed_phases: 6
   total_plans: 20
-  completed_plans: 16
+  completed_plans: 17
   percent: 44
 ---
 
@@ -66,6 +66,7 @@ Progress: [████▌░░░░░] 44%
 | Phase 06-import-export P02 | 14 | 2 tasks | 8 files |
 | Phase 06-import-export P02 | 14 | 3 tasks | 8 files |
 | Phase 07-app-store-readiness P01 | 15 | 2 tasks | 7 files |
+| Phase 07-app-store-readiness P02 | 6 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -125,6 +126,9 @@ Recent decisions affecting current work:
 - [Phase 06-02]: PreferencesView Import button posts .importPrompts notification — delegates to ContentView preview flow instead of direct ExportService call
 - [Phase 07-01]: ExportOptions-AppStore.plist uses destination=export (not upload) — user uploads manually via Xcode Organizer
 - [Phase 07-01]: build-release.sh runs test suite as safety gate before archive step in both --appstore and --dmg paths
+- [Phase 07-02]: ScreenshotDataSeeder uses Prompt init order: isFavorite -> isArchived -> createdAt -> updatedAt -> tags (matches actual Prompt.init signature)
+- [Phase 07-02]: Menu bar popover capture uses XCUIScreen.main.screenshot() — popover floats outside window bounds
+- [Phase 07-02]: --screenshot-mode-ai-streaming sets UserDefaults screenshot_ai_streaming_active=true; AIAssistViewModel reads this to show hardcoded mid-stream state
 
 ## Accumulated Context
 
@@ -205,7 +209,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-19T03:51:40.789Z
-Stopped at: Completed 07-01-PLAN.md tasks (awaiting human-verify checkpoint)
+Last session: 2026-04-19T03:54:58.766Z
+Stopped at: Phase 7 Plan 02 complete — awaiting human-verify checkpoint for screenshot quality
 Resume file: None
 Resume file: .planning/phases/03-storekit-2-paywall/03-02-SUMMARY.md
