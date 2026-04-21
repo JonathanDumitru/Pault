@@ -1,8 +1,25 @@
 // PaultTests/ProFeatureTests.swift
 import XCTest
+import StoreKitTest
 @testable import Pault
 
 final class ProFeatureTests: XCTestCase {
+
+    /// Reset ProStatusManager.shared before the StoreKit-sensitive test.
+    /// ProStatusManagerTests may leave the shared instance in a "pro unlocked" state
+    /// if their SKTestSession teardown doesn't propagate before this test runs.
+    @MainActor
+    override func setUp() async throws {
+        try await super.setUp()
+        // Clear any residual StoreKit transactions from prior test classes
+        if let session = try? SKTestSession(configurationFileNamed: "Pault") {
+            session.clearTransactions()
+            // Brief propagation delay
+            try await Task.sleep(nanoseconds: 200_000_000)
+        }
+        // Refresh the shared manager so it reads the now-empty entitlements
+        await ProStatusManager.shared.refreshStatus()
+    }
 
     func test_allCases_count() {
         XCTAssertEqual(ProFeature.allCases.count, 6)
@@ -32,7 +49,7 @@ final class ProFeatureTests: XCTestCase {
 
     @MainActor
     func test_isUnlocked_defaultsFalse() {
-        // Without any purchase, all features should be locked
+        // Without any purchase (StoreKit cleared in setUp), all features should be locked
         for feature in ProFeature.allCases {
             XCTAssertFalse(ProFeature.isUnlocked(feature), "\(feature) should be locked by default")
         }

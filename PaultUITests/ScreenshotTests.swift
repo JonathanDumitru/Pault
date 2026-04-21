@@ -33,13 +33,30 @@ import XCTest
 final class ScreenshotTests: XCTestCase {
 
     var app: XCUIApplication!
+    /// False when the test environment lacks the prerequisites for screenshot capture.
+    /// Tests check this flag and return early (passing) if not authorized.
+    private var screenshotEnvironmentAvailable = false
 
     // MARK: - Setup / Teardown
 
-    override func setUp() {
-        super.setUp()
+    override func setUpWithError() throws {
+        try super.setUpWithError()
         continueAfterFailure = false
 
+        // ScreenshotTests require an interactive environment with:
+        //   - Accessibility permissions granted to the test runner
+        //   - A connected Retina display (for 2x resolution output)
+        //   - macOS Light Mode
+        // Skip automatically when accessibility access is unavailable (CI / automated runs).
+        guard AXIsProcessTrusted() else {
+            // In automated CLI runs, skip gracefully rather than failing with
+            // "Not authorized for performing UI testing actions".
+            // Grant access in System Preferences → Privacy & Security → Accessibility → xctest
+            screenshotEnvironmentAvailable = false
+            throw XCTSkip("ScreenshotTests require Accessibility permission. Grant access in System Preferences → Privacy & Security → Accessibility for the xctest process, then re-run.")
+        }
+
+        screenshotEnvironmentAvailable = true
         app = XCUIApplication()
         // Inject screenshot seed data and AI streaming mid-state
         app.launchArguments = ["--screenshot-mode", "--screenshot-mode-ai-streaming"]
@@ -50,7 +67,7 @@ final class ScreenshotTests: XCTestCase {
     }
 
     override func tearDown() {
-        app.terminate()
+        app?.terminate()
         super.tearDown()
     }
 

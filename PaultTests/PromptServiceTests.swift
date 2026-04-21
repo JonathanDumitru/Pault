@@ -234,7 +234,11 @@ struct PromptServiceTests {
         let prompt = service.createPrompt(title: "Test", content: "Hello")
         service.copyToClipboard(prompt)
 
-        let descriptor = FetchDescriptor<CopyEvent>()
+        // Filter for .copy type only: createPrompt inserts a .created CopyEvent,
+        // copyToClipboard inserts a .copy CopyEvent — both use the same CopyEvent model.
+        let descriptor = FetchDescriptor<CopyEvent>(
+            predicate: #Predicate { $0.eventType == "copy" }
+        )
         let events = try context.fetch(descriptor)
         #expect(events.count == 1)
         #expect(events.first?.promptID == prompt.id)
@@ -249,7 +253,11 @@ struct PromptServiceTests {
         service.copyToClipboard(prompt)
         service.copyToClipboard(prompt)
 
-        let descriptor = FetchDescriptor<CopyEvent>()
+        // Filter for .copy type only: createPrompt inserts a .created CopyEvent,
+        // each copyToClipboard call inserts a .copy CopyEvent.
+        let descriptor = FetchDescriptor<CopyEvent>(
+            predicate: #Predicate { $0.eventType == "copy" }
+        )
         let events = try context.fetch(descriptor)
         #expect(events.count == 3)
         #expect(events.allSatisfy { $0.promptID == prompt.id })
