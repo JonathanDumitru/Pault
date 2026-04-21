@@ -20,7 +20,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 6: Import/Export** - Add data portability with JSON and Markdown import/export (completed 2026-04-09)
 - [x] **Phase 7: App Store Readiness** - Finalize metadata, screenshots, signing, and distribution (completed 2026-04-19)
 - [x] **Phase 8: Final Quality & Polish** - Comprehensive testing, accessibility audit, performance profiling, UX consistency (completed 2026-04-21)
-- [ ] **Phase 9: PrivacyInfo Xcode Wiring** - Fix critical App Store blocker: wire PrivacyInfo.xcprivacy into Xcode project (gap closure)
+- [ ] **Phase 9: PrivacyInfo Xcode Wiring** - Verify PrivacyInfo.xcprivacy bundling via PBXFileSystemSynchronizedRootGroup and close R7.1 gap (gap closure)
 - [ ] **Phase 10: Phase 04 Verification & Gap Closure** - Verify AI Assist & API Runner implementation against R2.1-R2.5, R5.1-R5.3
 - [ ] **Phase 11: Phase 06 Verification & Gap Closure** - Verify Import/Export, fix SUMMARY IDs, close R9.1-R9.3
 - [ ] **Phase 12: Phase 05 Traceability Fix** - Add SUMMARY claims for R4.1, R4.2
@@ -162,15 +162,18 @@ Plans:
 - [ ] 08-05-PLAN.md -- Gap closure: Reduce Motion compliance for 3 missed animation call sites
 
 ### Phase 9: PrivacyInfo Xcode Wiring
-**Goal**: Wire PrivacyInfo.xcprivacy into Xcode project file references and Copy Bundle Resources build phase to prevent automatic App Store rejection
+**Goal**: Verify PrivacyInfo.xcprivacy is correctly bundled via PBXFileSystemSynchronizedRootGroup and formally close the R7.1 integration gap from Phase 1 VERIFICATION
 **Depends on**: Phase 1
 **Requirements**: R7.1
-**Gap Closure:** Closes integration gap from audit — PrivacyInfo.xcprivacy exists on disk but is not in app bundle
+**Gap Closure:** Closes false-positive integration gap from audit -- Phase 1 verifier checked for PBXFileReference entries, but project uses Xcode 16 folder synchronization which auto-includes files without explicit entries
 **Success Criteria** (what must be TRUE):
-  1. PrivacyInfo.xcprivacy appears in Pault.xcodeproj/project.pbxproj file references
-  2. PrivacyInfo.xcprivacy is in the Pault target Copy Bundle Resources build phase
-  3. Built app bundle contains PrivacyInfo.xcprivacy at expected location
-**Plans**: TBD
+  1. Clean build produces Pault.app with PrivacyInfo.xcprivacy at Contents/Resources/
+  2. No PBXFileSystemSynchronizedBuildFileExceptionSet excludes the file
+  3. PrivacyInfo.xcprivacy content is valid with CA92.1 and C617.1 reason codes
+**Plans**: 1 plan
+
+Plans:
+- [ ] 09-01-PLAN.md -- Verify xcprivacy bundling via synchronized group and write VERIFICATION.md
 
 ### Phase 10: Phase 04 Verification & Gap Closure
 **Goal**: Verify that AI Assist & API Runner implementation satisfies all 8 claimed requirements, fix any gaps found, and produce VERIFICATION.md
