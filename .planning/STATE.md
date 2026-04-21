@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Phase 7 Plan 02 complete — screenshot automation system human-approved
-last_updated: "2026-04-19T04:20:26.630Z"
+stopped_at: Completed 08-01-PLAN.md — green baseline established
+last_updated: "2026-04-21T02:46:14.262Z"
 last_activity: 2026-04-09 -- Phase 5 Plan 01 complete
 progress:
   total_phases: 8
   completed_phases: 6
-  total_plans: 20
-  completed_plans: 17
+  total_plans: 24
+  completed_plans: 18
   percent: 44
 ---
 
@@ -67,6 +67,7 @@ Progress: [████▌░░░░░] 44%
 | Phase 06-import-export P02 | 14 | 3 tasks | 8 files |
 | Phase 07-app-store-readiness P01 | 15 | 2 tasks | 7 files |
 | Phase 07-app-store-readiness P02 | 6 | 2 tasks | 4 files |
+| Phase 08-final-quality-polish P01 | 15 | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -129,6 +130,9 @@ Recent decisions affecting current work:
 - [Phase 07-02]: ScreenshotDataSeeder uses Prompt init order: isFavorite -> isArchived -> createdAt -> updatedAt -> tags (matches actual Prompt.init signature)
 - [Phase 07-02]: Menu bar popover capture uses XCUIScreen.main.screenshot() — popover floats outside window bounds
 - [Phase 07-02]: --screenshot-mode-ai-streaming sets UserDefaults screenshot_ai_streaming_active=true; AIAssistViewModel reads this to show hardcoded mid-stream state
+- [Phase 08-01]: Prior-phase test stub implementations committed as part of 08-01 baseline establishment
+- [Phase 08-01]: ScreenshotTests use XCTSkip (not XCTFail) when not in screenshot-mode — tests pass gracefully
+- [Phase 08-01]: Archive verified with codesign: flags=0x10000(runtime) = hardened runtime, sandbox=true confirmed
 
 ## Accumulated Context
 
@@ -209,7 +213,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-19T03:59:11.818Z
-Stopped at: Phase 7 Plan 02 complete — screenshot automation system human-approved
+Last session: 2026-04-21T02:46:14.258Z
+Stopped at: Completed 08-01-PLAN.md — green baseline established
 Resume file: None
 Resume file: .planning/phases/03-storekit-2-paywall/03-02-SUMMARY.md
