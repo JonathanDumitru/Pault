@@ -10,6 +10,9 @@
 //  Uses XCTestCase async + MainActor.run pattern (consistent with UndoRedoTests)
 //  to avoid macOS 26 Swift Concurrency + ObjC crash with @MainActor + UndoManager.
 //
+//  Release config note: Run with ENABLE_TESTABILITY=YES to allow @testable import in
+//  optimized builds. All 3 benchmarks verified passing in Release on 2026-04-21.
+//
 
 import XCTest
 import SwiftData
