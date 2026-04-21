@@ -49,6 +49,7 @@ struct CopyToastView: View {
 struct CopyToastModifier: ViewModifier {
     @Binding var isShowing: Bool
     var message: String = "Copied!"
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     func body(content: Content) -> some View {
         content.overlay(alignment: .bottom) {
@@ -63,14 +64,14 @@ struct CopyToastModifier: ViewModifier {
                                              userInfo: [NSAccessibility.NotificationUserInfoKey.announcement: message,
                                                         NSAccessibility.NotificationUserInfoKey.priority: NSAccessibilityPriorityLevel.medium.rawValue])
                         DispatchQueue.main.asyncAfter(deadline: .now() + AppConstants.Timing.toastDuration) {
-                            withAnimation(.easeOut(duration: 0.3)) {
+                            withAnimation(reduceMotion ? nil : .easeOut(duration: 0.3)) {
                                 isShowing = false
                             }
                         }
                     }
             }
         }
-        .animation(.spring(duration: 0.3), value: isShowing)
+        .animation(reduceMotion ? nil : .spring(duration: 0.3), value: isShowing)
     }
 }
 
@@ -79,6 +80,7 @@ struct StatusToastModifier: ViewModifier {
     @Binding var isShowing: Bool
     var style: ToastStyle
     var message: String
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     func body(content: Content) -> some View {
         content.overlay(alignment: .bottom) {
@@ -88,14 +90,14 @@ struct StatusToastModifier: ViewModifier {
                     .transition(.move(edge: .bottom).combined(with: .opacity))
                     .onAppear {
                         DispatchQueue.main.asyncAfter(deadline: .now() + AppConstants.Timing.toastDuration) {
-                            withAnimation(.easeOut(duration: 0.3)) {
+                            withAnimation(reduceMotion ? nil : .easeOut(duration: 0.3)) {
                                 isShowing = false
                             }
                         }
                     }
             }
         }
-        .animation(.spring(duration: 0.3), value: isShowing)
+        .animation(reduceMotion ? nil : .spring(duration: 0.3), value: isShowing)
     }
 }
 

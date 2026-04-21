@@ -8,6 +8,7 @@ import SwiftUI
 struct OnboardingView: View {
     @Binding var isPresented: Bool
     @State private var currentPage: Int = 0
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private let pages: [OnboardingPage] = [
         OnboardingPage(
@@ -80,7 +81,7 @@ struct OnboardingView: View {
             HStack {
                 if currentPage > 0 {
                     Button("Back") {
-                        withAnimation { currentPage -= 1 }
+                        withAnimation(reduceMotion ? nil : .default) { currentPage -= 1 }
                     }
                     .buttonStyle(.plain)
                 }
@@ -89,7 +90,7 @@ struct OnboardingView: View {
 
                 if currentPage < pages.count - 1 {
                     Button("Next") {
-                        withAnimation { currentPage += 1 }
+                        withAnimation(reduceMotion ? nil : .default) { currentPage += 1 }
                     }
                     .buttonStyle(.borderedProminent)
                 } else {

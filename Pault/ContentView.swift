@@ -20,6 +20,7 @@ import AppKit
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.openWindow) private var openWindow
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Query(sort: [SortDescriptor(\Prompt.updatedAt, order: .reverse)]) private var prompts: [Prompt]
 
     @State private var selectedPrompt: Prompt?
@@ -156,7 +157,7 @@ struct ContentView: View {
             // Auto-collapse handler
             .onChange(of: autoCollapse.shouldCollapse) { _, shouldCollapse in
                 if shouldCollapse {
-                    withAnimation(.spring(response: AppConstants.Panels.Animation.slideDuration, dampingFraction: AppConstants.Panels.Animation.dampingFraction)) {
+                    withAnimation(reduceMotion ? nil : .spring(response: AppConstants.Panels.Animation.slideDuration, dampingFraction: AppConstants.Panels.Animation.dampingFraction)) {
                         showSidebar = false
                         showInspector = false
                     }
@@ -166,7 +167,7 @@ struct ContentView: View {
             // Escape key collapses all panels
             .onKeyPress(.escape) {
                 if showSidebar || showInspector {
-                    withAnimation {
+                    withAnimation(reduceMotion ? nil : .default) {
                         showSidebar = false
                         showInspector = false
                     }
@@ -227,9 +228,9 @@ struct ContentView: View {
                     .zIndex(15)
             }
         }
-        .animation(.easeInOut(duration: 0.2), value: importResult != nil)
-        .animation(.easeInOut(duration: 0.15), value: isExporting)
-        .animation(.easeInOut(duration: 0.15), value: isDropTargeted)
+        .animation(reduceMotion ? nil : .easeInOut(duration: 0.2), value: importResult != nil)
+        .animation(reduceMotion ? nil : .easeInOut(duration: 0.15), value: isExporting)
+        .animation(reduceMotion ? nil : .easeInOut(duration: 0.15), value: isDropTargeted)
     }
 
     private var mainContentLayout: some View {
@@ -252,7 +253,7 @@ struct ContentView: View {
                         onToggleArchive: { service.toggleArchive($0) },
                         onCopy: { prompt in
                             service.copyToClipboard(prompt)
-                            withAnimation { showCopyToast = true }
+                            withAnimation(reduceMotion ? nil : .default) { showCopyToast = true }
                         }
                     )
                     .frame(width: AppConstants.Panels.sidebarWidth)
@@ -278,8 +279,8 @@ struct ContentView: View {
                         .protectFromAutoCollapse(autoCollapse, panel: .inspector)
                 }
             }
-            .animation(.spring(response: AppConstants.Panels.Animation.slideDuration, dampingFraction: AppConstants.Panels.Animation.dampingFraction), value: showSidebar)
-            .animation(.spring(response: AppConstants.Panels.Animation.slideDuration, dampingFraction: AppConstants.Panels.Animation.dampingFraction), value: showInspector)
+            .animation(reduceMotion ? nil : .spring(response: AppConstants.Panels.Animation.slideDuration, dampingFraction: AppConstants.Panels.Animation.dampingFraction), value: showSidebar)
+            .animation(reduceMotion ? nil : .spring(response: AppConstants.Panels.Animation.slideDuration, dampingFraction: AppConstants.Panels.Animation.dampingFraction), value: showInspector)
         }
     }
 
@@ -289,7 +290,7 @@ struct ContentView: View {
         HStack(spacing: 12) {
             // Sidebar toggle (left)
             Button(action: {
-                withAnimation {
+                withAnimation(reduceMotion ? nil : .default) {
                     showSidebar.toggle()
                     if showSidebar { autoCollapse.userDidExpandPanel() }
                 }
@@ -357,7 +358,7 @@ struct ContentView: View {
 
             // Inspector toggle (right)
             Button(action: {
-                withAnimation {
+                withAnimation(reduceMotion ? nil : .default) {
                     showInspector.toggle()
                     if showInspector { autoCollapse.userDidExpandPanel() }
                 }
@@ -409,7 +410,7 @@ struct ContentView: View {
     private func copySelectedPrompt() {
         guard let prompt = selectedPrompt else { return }
         service.copyToClipboard(prompt)
-        withAnimation { showCopyToast = true }
+        withAnimation(reduceMotion ? nil : .default) { showCopyToast = true }
     }
 
     private func presentImportPanel() {

@@ -16,6 +16,7 @@ struct BlockLibraryView: View {
     @State private var searchQuery: String = ""
     @State private var expandedCategories: Set<ConsolidatedBlockCategory> = Set(ConsolidatedBlockCategory.allCases)
     @FocusState private var isSearchFocused: Bool
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     // MARK: - Constants
 
@@ -166,7 +167,7 @@ struct BlockLibraryView: View {
     @ViewBuilder
     private func categoryHeader(category: ConsolidatedBlockCategory, blockCount: Int) -> some View {
         Button(action: {
-            withAnimation(.easeInOut(duration: 0.2)) {
+            withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) {
                 if expandedCategories.contains(category) {
                     expandedCategories.remove(category)
                 } else {

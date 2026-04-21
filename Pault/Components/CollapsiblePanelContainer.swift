@@ -32,6 +32,7 @@ struct CollapsiblePanelContainer<Content: View>: View {
     let edge: PanelEdge
     let width: CGFloat
     let content: () -> Content
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     /// Optional callback when panel is about to collapse (for cleanup)
     var onWillCollapse: (() -> Void)?
@@ -87,8 +88,8 @@ struct CollapsiblePanelContainer<Content: View>: View {
         return edge == .leading ? -width : width
     }
 
-    private var panelAnimation: Animation {
-        .spring(
+    private var panelAnimation: Animation? {
+        reduceMotion ? nil : .spring(
             response: AppConstants.Panels.Animation.slideDuration,
             dampingFraction: AppConstants.Panels.Animation.dampingFraction
         )
@@ -103,6 +104,7 @@ struct PanelToggleButton: View {
     let edge: PanelEdge
     let shortcutKey: KeyEquivalent?
     let shortcutModifiers: EventModifiers
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     init(
         isExpanded: Binding<Bool>,
@@ -117,7 +119,7 @@ struct PanelToggleButton: View {
     }
 
     var body: some View {
-        Button(action: { withAnimation { isExpanded.toggle() } }) {
+        Button(action: { withAnimation(reduceMotion ? nil : .default) { isExpanded.toggle() } }) {
             Image(systemName: iconName)
                 .font(.body)
                 .foregroundStyle(isExpanded ? .primary : .secondary)
@@ -159,6 +161,7 @@ struct EdgeHoverIndicator: View {
     let onTap: () -> Void
 
     @State private var isHovering = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         Rectangle()
@@ -166,12 +169,12 @@ struct EdgeHoverIndicator: View {
             .frame(width: 4)
             .opacity(isVisible ? 1 : 0)
             .onHover { hovering in
-                withAnimation(.easeInOut(duration: 0.15)) {
+                withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.15)) {
                     isHovering = hovering
                 }
             }
             .onTapGesture(perform: onTap)
-            .animation(.easeInOut(duration: AppConstants.Panels.Animation.fadeDuration), value: isVisible)
+            .animation(reduceMotion ? nil : .easeInOut(duration: AppConstants.Panels.Animation.fadeDuration), value: isVisible)
     }
 }
 
@@ -205,6 +208,7 @@ struct CollapsiblePanelLayout<Leading: View, Trailing: View, Center: View>: View
     let leading: () -> Leading
     let trailing: () -> Trailing
     let center: () -> Center
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     /// Called when typing activity should trigger auto-collapse
     var autoCollapseManager: AutoCollapseManager?
@@ -253,8 +257,8 @@ struct CollapsiblePanelLayout<Leading: View, Trailing: View, Center: View>: View
         .animation(panelAnimation, value: showTrailing)
     }
 
-    private var panelAnimation: Animation {
-        .spring(
+    private var panelAnimation: Animation? {
+        reduceMotion ? nil : .spring(
             response: AppConstants.Panels.Animation.slideDuration,
             dampingFraction: AppConstants.Panels.Animation.dampingFraction
         )

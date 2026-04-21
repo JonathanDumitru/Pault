@@ -158,11 +158,12 @@ final class AutoCollapseManager: ObservableObject {
 /// A view modifier that dims content when auto-collapse warning is active
 struct AutoCollapseWarningModifier: ViewModifier {
     @ObservedObject var manager: AutoCollapseManager
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     func body(content: Content) -> some View {
         content
             .opacity(manager.isInWarningPhase ? AppConstants.Panels.AutoCollapse.warningOpacity : 1.0)
-            .animation(.easeInOut(duration: AppConstants.Panels.Animation.fadeDuration), value: manager.isInWarningPhase)
+            .animation(reduceMotion ? nil : .easeInOut(duration: AppConstants.Panels.Animation.fadeDuration), value: manager.isInWarningPhase)
     }
 }
 

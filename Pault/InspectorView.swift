@@ -11,6 +11,7 @@ import SwiftData
 
 struct InspectorView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Query(sort: [SortDescriptor(\Tag.name, order: .forward)]) private var allTags: [Tag]
 
     @Bindable var prompt: Prompt
@@ -206,7 +207,7 @@ struct InspectorView: View {
 
     private var historySection: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Button(action: { withAnimation { showHistory.toggle() } }) {
+            Button(action: { withAnimation(reduceMotion ? nil : .default) { showHistory.toggle() } }) {
                 HStack {
                     Text("Version History")
                         .font(.caption)

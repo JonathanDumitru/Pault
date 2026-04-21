@@ -106,7 +106,7 @@ struct BlockEditorView: View {
 
             // Show onboarding tip for first-time users with empty canvas
             if !hasSeenOnboarding && model.canvasBlocks.isEmpty {
-                withAnimation(.easeOut(duration: 0.3).delay(0.5)) {
+                withAnimation(reduceMotion ? nil : .easeOut(duration: 0.3).delay(0.5)) {
                     showOnboardingTip = true
                 }
             }
@@ -174,7 +174,7 @@ struct BlockEditorView: View {
         // Escape key collapses all panels
         .onKeyPress(.escape) {
             if showLibrary || showPreview {
-                withAnimation {
+                withAnimation(reduceMotion ? nil : .default) {
                     showLibrary = false
                     showPreview = false
                 }
@@ -190,7 +190,7 @@ struct BlockEditorView: View {
         HStack(spacing: 12) {
             // Library toggle (left)
             Button(action: {
-                withAnimation {
+                withAnimation(reduceMotion ? nil : .default) {
                     showLibrary.toggle()
                     if showLibrary { autoCollapse.userDidExpandPanel() }
                 }
@@ -227,7 +227,7 @@ struct BlockEditorView: View {
 
             // Preview toggle (right)
             Button(action: {
-                withAnimation {
+                withAnimation(reduceMotion ? nil : .default) {
                     showPreview.toggle()
                     if showPreview { autoCollapse.userDidExpandPanel() }
                 }

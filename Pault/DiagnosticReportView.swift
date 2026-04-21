@@ -10,6 +10,7 @@ import SwiftUI
 
 struct DiagnosticReportView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     let reportText: String
     @State private var copied = false
@@ -58,9 +59,9 @@ struct DiagnosticReportView: View {
                 Button(copied ? "Copied!" : "Copy Report") {
                     NSPasteboard.general.clearContents()
                     NSPasteboard.general.setString(reportText, forType: .string)
-                    withAnimation { copied = true }
+                    withAnimation(reduceMotion ? nil : .default) { copied = true }
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                        withAnimation { copied = false }
+                        withAnimation(reduceMotion ? nil : .default) { copied = false }
                     }
                 }
                 .buttonStyle(.bordered)

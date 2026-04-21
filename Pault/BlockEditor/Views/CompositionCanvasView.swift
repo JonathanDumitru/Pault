@@ -165,7 +165,7 @@ struct CompositionCanvasView: View {
                         showPaywall = true
                         return false
                     }
-                    withAnimation(AppConstants.StandardAnimation.spring) {
+                    withAnimation(reduceMotion ? nil : AppConstants.StandardAnimation.spring) {
                         model.addToCanvas(block)
                     }
                 }
@@ -185,7 +185,7 @@ struct CompositionCanvasView: View {
                             showPaywall = true
                             return
                         }
-                        withAnimation(AppConstants.StandardAnimation.spring) {
+                        withAnimation(reduceMotion ? nil : AppConstants.StandardAnimation.spring) {
                             model.addToCanvas(block)
                             // After insert, select, scroll, and drive focus into first input
                             if let last = model.canvasBlocks.last {
@@ -210,7 +210,7 @@ struct CompositionCanvasView: View {
             if newCount > oldCount {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                     if currentSuggestion != nil {
-                        withAnimation { showSuggestion = true }
+                        withAnimation(reduceMotion ? nil : .default) { showSuggestion = true }
                     }
                 }
                 // Post polite VoiceOver announcement for block addition
@@ -241,12 +241,12 @@ struct CompositionCanvasView: View {
         if let selectedID = model.selectedCanvasBlockID,
            let currentIndex = model.canvasBlocks.firstIndex(where: { $0.id == selectedID }) {
             let newIndex = max(0, min(model.canvasBlocks.count - 1, currentIndex + direction))
-            withAnimation(.easeInOut(duration: 0.15)) {
+            withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.15)) {
                 model.selectedCanvasBlockID = model.canvasBlocks[newIndex].id
             }
         } else {
             let block = direction > 0 ? model.canvasBlocks.first : model.canvasBlocks.last
-            withAnimation(.easeInOut(duration: 0.15)) {
+            withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.15)) {
                 model.selectedCanvasBlockID = block?.id
             }
         }
@@ -255,7 +255,7 @@ struct CompositionCanvasView: View {
 
     private func handleMoveBlock(direction: Int) -> KeyPress.Result {
         guard let selectedID = model.selectedCanvasBlockID else { return .ignored }
-        withAnimation(AppConstants.StandardAnimation.spring) {
+        withAnimation(reduceMotion ? nil : AppConstants.StandardAnimation.spring) {
             model.moveBlock(id: selectedID, direction: direction)
         }
         return .handled
@@ -267,7 +267,7 @@ struct CompositionCanvasView: View {
             return .ignored
         }
 
-        withAnimation(AppConstants.StandardAnimation.spring) {
+        withAnimation(reduceMotion ? nil : AppConstants.StandardAnimation.spring) {
             model.removeFromCanvas(at: IndexSet(integer: index))
         }
 
@@ -283,7 +283,7 @@ struct CompositionCanvasView: View {
 
     private func handleDuplicate() -> KeyPress.Result {
         guard let selectedID = model.selectedCanvasBlockID else { return .ignored }
-        withAnimation(AppConstants.StandardAnimation.spring) {
+        withAnimation(reduceMotion ? nil : AppConstants.StandardAnimation.spring) {
             model.duplicateBlock(id: selectedID)
         }
         // Select the duplicated block (inserted right after original)
@@ -312,9 +312,9 @@ struct CompositionCanvasView: View {
     private func handleCopyCompiledPrompt() -> KeyPress.Result {
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(model.compiledTemplate, forType: .string)
-        withAnimation(.easeInOut(duration: 0.2)) { showCopyToast = true }
+        withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) { showCopyToast = true }
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            withAnimation(.easeInOut(duration: 0.2)) { showCopyToast = false }
+            withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) { showCopyToast = false }
         }
         return .handled
     }
@@ -400,7 +400,7 @@ struct CompositionCanvasView: View {
                         showPaywall = true
                         return false
                     }
-                    withAnimation(AppConstants.StandardAnimation.spring) {
+                    withAnimation(reduceMotion ? nil : AppConstants.StandardAnimation.spring) {
                         model.addToCanvas(block)
                         model.selectedCanvasBlockID = model.canvasBlocks.last?.id
                     }
@@ -455,7 +455,7 @@ struct CompositionCanvasView: View {
                                 model.modifierInputs[modifierID] ?? [:]
                             },
                             onSelect: {
-                                withAnimation(.easeInOut(duration: 0.15)) {
+                                withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.15)) {
                                     model.selectedCanvasBlockID = block.id
                                 }
                             },
@@ -468,7 +468,7 @@ struct CompositionCanvasView: View {
                             onRemove: {
                                 // Focus management: select next or previous
                                 let idx = model.canvasBlocks.firstIndex(where: { $0.id == block.id }) ?? 0
-                                withAnimation(AppConstants.StandardAnimation.spring) {
+                                withAnimation(reduceMotion ? nil : AppConstants.StandardAnimation.spring) {
                                     model.removeFromCanvas(at: IndexSet(integer: idx))
                                 }
                                 if !model.canvasBlocks.isEmpty {
@@ -477,27 +477,27 @@ struct CompositionCanvasView: View {
                                 }
                             },
                             onDuplicate: {
-                                withAnimation(AppConstants.StandardAnimation.spring) {
+                                withAnimation(reduceMotion ? nil : AppConstants.StandardAnimation.spring) {
                                     model.duplicateBlock(id: block.id)
                                 }
                             },
                             onMoveUp: {
-                                withAnimation(AppConstants.StandardAnimation.spring) {
+                                withAnimation(reduceMotion ? nil : AppConstants.StandardAnimation.spring) {
                                     model.moveBlock(id: block.id, direction: -1)
                                 }
                             },
                             onMoveDown: {
-                                withAnimation(AppConstants.StandardAnimation.spring) {
+                                withAnimation(reduceMotion ? nil : AppConstants.StandardAnimation.spring) {
                                     model.moveBlock(id: block.id, direction: 1)
                                 }
                             },
                             onAddModifier: { modifier in
-                                withAnimation(.easeInOut(duration: 0.2)) {
+                                withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) {
                                     model.addModifierToBlock(blockID: block.id, modifier: modifier)
                                 }
                             },
                             onRemoveModifier: { modifierID in
-                                withAnimation(.easeInOut(duration: 0.2)) {
+                                withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) {
                                     model.removeModifierFromBlock(blockID: block.id, modifierID: modifierID)
                                 }
                             },
@@ -528,7 +528,7 @@ struct CompositionCanvasView: View {
                                     dropTargetIndex = nil
                                     return false
                                 }
-                                withAnimation(AppConstants.StandardAnimation.spring) {
+                                withAnimation(reduceMotion ? nil : AppConstants.StandardAnimation.spring) {
                                     model.insertOnCanvas(item, at: index)
                                     model.selectedCanvasBlockID = model.canvasBlocks[safe: index]?.id
                                 }
@@ -545,7 +545,7 @@ struct CompositionCanvasView: View {
                         dropIndicator(at: index + 1)
                     }
                     .onMove { from, to in
-                        withAnimation(AppConstants.StandardAnimation.spring) {
+                        withAnimation(reduceMotion ? nil : AppConstants.StandardAnimation.spring) {
                             model.moveOnCanvas(from: from, to: to)
                         }
                         draggedBlockID = nil
@@ -561,7 +561,7 @@ struct CompositionCanvasView: View {
                             },
                             onDismiss: {
                                 dismissedSuggestionHash = suggestion.message.hashValue
-                                withAnimation { showSuggestion = false }
+                                withAnimation(reduceMotion ? nil : .default) { showSuggestion = false }
                             }
                         )
                         .transition(.opacity.combined(with: .move(edge: .top)))
@@ -573,12 +573,12 @@ struct CompositionCanvasView: View {
                     addBlockHint
                         .padding(.horizontal, 16)
                 }
-                .animation(AppConstants.StandardAnimation.spring, value: model.canvasBlocks.count)
+                .animation(reduceMotion ? nil : AppConstants.StandardAnimation.spring, value: model.canvasBlocks.count)
             }
             .onChange(of: model.canvasBlocks.count) { oldCount, newCount in
                 // Auto-scroll to newly added block
                 if newCount > oldCount, let lastID = model.canvasBlocks.last?.id {
-                    withAnimation(AppConstants.StandardAnimation.standard) {
+                    withAnimation(reduceMotion ? nil : AppConstants.StandardAnimation.standard) {
                         proxy.scrollTo(lastID, anchor: .bottom)
                     }
                 }
@@ -586,7 +586,7 @@ struct CompositionCanvasView: View {
             .onChange(of: model.selectedCanvasBlockID) { _, newID in
                 // Auto-scroll to selected block
                 if let id = newID {
-                    withAnimation(AppConstants.StandardAnimation.standard) {
+                    withAnimation(reduceMotion ? nil : AppConstants.StandardAnimation.standard) {
                         proxy.scrollTo(id, anchor: .center)
                     }
                 }
@@ -604,7 +604,7 @@ struct CompositionCanvasView: View {
                 .frame(height: 2)
                 .padding(.horizontal, 16)
                 .transition(.opacity)
-                .animation(.easeInOut(duration: 0.1), value: dropTargetIndex)
+                .animation(reduceMotion ? nil : .easeInOut(duration: 0.1), value: dropTargetIndex)
         }
     }
 

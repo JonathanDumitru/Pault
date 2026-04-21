@@ -26,6 +26,7 @@ enum DetailTab: String, CaseIterable {
 
 struct PromptDetailView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Bindable var prompt: Prompt
 
     @Binding var showInspector: Bool
@@ -92,8 +93,8 @@ struct PromptDetailView: View {
         .overlay {
             parsingOverlay
         }
-        .animation(.easeInOut(duration: 0.2), value: prompt.editingMode)
-        .animation(.easeInOut(duration: 0.3), value: isParsingTextToBlocks)
+        .animation(reduceMotion ? nil : .easeInOut(duration: 0.2), value: prompt.editingMode)
+        .animation(reduceMotion ? nil : .easeInOut(duration: 0.3), value: isParsingTextToBlocks)
         .onChange(of: prompt.isFavorite) { _, _ in
             debouncedSave()
         }
@@ -259,7 +260,7 @@ struct PromptDetailView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .animation(.easeInOut(duration: 0.2), value: showAIPanel)
+        .animation(reduceMotion ? nil : .easeInOut(duration: 0.2), value: showAIPanel)
         .overlay(alignment: .bottomTrailing) {
             textEditorToolbarOverlay
         }
@@ -552,7 +553,7 @@ struct PromptDetailView: View {
     }
 
     private func dismissCurrentTip() {
-        withAnimation {
+        withAnimation(reduceMotion ? nil : .default) {
             if prompt.content.isEmpty || prompt.templateVariables.isEmpty {
                 coachingDismissedVariables = true
             } else if prompt.tags.isEmpty {

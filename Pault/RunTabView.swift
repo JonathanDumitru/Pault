@@ -3,6 +3,7 @@ import SwiftData
 
 struct RunTabView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Bindable var prompt: Prompt
     let config: AIConfig
 
@@ -166,7 +167,7 @@ struct RunTabView: View {
                 .padding()
                 .onChange(of: streamingText) { _, _ in
                     if isRunning {
-                        withAnimation {
+                        withAnimation(reduceMotion ? nil : .default) {
                             proxy.scrollTo("bottom", anchor: .bottom)
                         }
                     }

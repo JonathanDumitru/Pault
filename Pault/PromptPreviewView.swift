@@ -13,6 +13,7 @@ import SwiftData
 struct PromptPreviewView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.openWindow) private var openWindow
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     let prompt: Prompt
     @Binding var showInspector: Bool
@@ -91,7 +92,7 @@ struct PromptPreviewView: View {
                     .transition(.move(edge: .trailing))
             }
         }
-        .animation(.easeInOut(duration: 0.2), value: showInspector)
+        .animation(reduceMotion ? nil : .easeInOut(duration: 0.2), value: showInspector)
         .overlay(alignment: .bottomTrailing) {
             Button(action: { showInspector.toggle() }) {
                 Image(systemName: "info.circle")
