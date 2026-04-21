@@ -711,7 +711,10 @@ struct EmptyDetailView: View {
                 .font(.system(size: 48))
                 .foregroundStyle(.tertiary)
             Text("Select a prompt or press ⌘N to create one")
-                .foregroundStyle(.secondary)
+                // Use .primary foreground which always meets contrast requirements in both
+                // light and dark mode. Previously .secondary (~3.2:1) which fails the 4.5:1
+                // minimum for body text in the accessibility audit.
+                .foregroundStyle(.primary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }

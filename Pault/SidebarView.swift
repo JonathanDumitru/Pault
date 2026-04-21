@@ -124,6 +124,7 @@ struct SidebarView: View {
                     .foregroundStyle(.secondary)
                 TextField("Search", text: $searchText)
                     .textFieldStyle(.plain)
+                    .accessibilityLabel("Search prompts")
                 if !searchText.isEmpty {
                     Button(action: { searchText = "" }) {
                         Image(systemName: "xmark.circle.fill")
@@ -270,6 +271,10 @@ struct SidebarView: View {
                         ))
                         .help("Double-click to edit")
                         .accessibilityLabel(prompt.title.isEmpty ? "Untitled prompt" : prompt.title)
+                        .accessibilityAction(.default) {
+                            // Default action: select the prompt (VoiceOver "Press" gesture)
+                            selectedPrompt = prompt
+                        }
                         .onTapGesture(count: 2) {
                             openWindow(value: prompt.id)
                         }
