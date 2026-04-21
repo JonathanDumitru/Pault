@@ -1,36 +1,34 @@
 ---
 phase: 10-phase04-verification-gap-closure
-verified: 2026-04-21T06:30:00Z
-status: passed
-score: 29/29 must-haves verified
+verified: 2026-04-21T12:00:00Z
+status: human_needed
+score: 10/10 must-haves verified
 requirements_completed: [R2.1, R2.2, R2.3, R2.4, R2.5, R5.1, R5.2, R5.3]
-gaps:
-  - truth: "RefinementLoopView.accept() calls saveSnapshot before overwriting prompt.content"
-    status: fixed
-    reason: "accept() did not call PromptService.saveSnapshot() before prompt.content = finalRevision — breaking the auto-snapshot invariant stated in CONTEXT.md"
-    artifacts:
-      - path: "Pault/RefinementLoopView.swift"
-        issue: "Missing saveSnapshot call — only AI accept path without auto-snapshot"
-    fix_applied: "Added VersionSource.aiRefine case and saveSnapshot(for: prompt, source: .aiRefine) call in accept() before prompt.content assignment. Commit: 05603e4"
+re_verification:
+  previous_status: passed
+  previous_score: 29/29
+  gaps_closed:
+    - "RefinementLoopView.accept() calls saveSnapshot before overwriting prompt.content"
+  gaps_remaining: []
+  regressions: []
 human_verification:
   - test: "AI streaming UI — Improve tab token-by-token streaming with blinking cursor"
-    expected: "Tokens appear progressively, cursor blinks at end of stream, auto-scrolls to bottom"
-    why_human: "Streaming behavior requires real API key and running app; cannot verify with xcodebuild unit tests"
+    expected: "Tokens appear progressively, cursor blinks at end of stream, auto-scrolls to bottom, DiffView appears after completion with Accept/Reject buttons"
+    why_human: "Streaming behavior requires a running app with real API key; xcodebuild unit tests verify structure only"
   - test: "Proxy deployment and end-to-end AI call routing"
-    expected: "Claude/OpenAI calls route through deployed pault-proxy Worker; Ollama calls go to localhost directly"
-    why_human: "Requires deploying pault-proxy/ to Cloudflare, configuring proxy URL in Preferences, and executing real API calls"
-  - test: "Live API key execution — full refinement loop with real LLM"
-    expected: "Refine tab: user enters goal, sees DiffView after AI response, can rate and accept (which now auto-snapshots)"
-    why_human: "Requires live Cloudflare proxy deployment and real API keys for end-to-end validation"
+    expected: "Claude/OpenAI calls route through deployed pault-proxy Worker; JWS validated; Ollama calls go to localhost:11434 directly"
+    why_human: "Requires Cloudflare account, wrangler deploy, and live StoreKit subscription for JWS"
+  - test: "Full refinement loop with auto-snapshot — accept and check version history"
+    expected: "A PromptVersion entry with .aiRefine source badge appears in version history capturing the pre-refinement state"
+    why_human: "Requires running app with live API key; snapshot verification requires UI inspection of version history"
 ---
 
 # Phase 10: Phase 04 Verification & Gap Closure Verification Report
 
-**Phase Goal:** Verify all 8 Phase 04 requirements (R2.1–R2.5, R5.1–R5.3) against the codebase, close one implementation gap (R5.3 missing saveSnapshot), and produce this VERIFICATION.md as the authoritative completion record for Phase 04.
-
-**Verified:** 2026-04-21T06:30:00Z
-**Status:** passed (1 gap identified and fixed)
-**Re-verification:** No — initial verification of Phase 04
+**Phase Goal:** Close the one real implementation gap found in Phase 04 verification (missing saveSnapshot in RefinementLoopView.accept()) and produce comprehensive verification documentation for all Phase 04 requirements.
+**Verified:** 2026-04-21T12:00:00Z
+**Status:** human_needed (all automated checks pass; 3 items require live app with real API key)
+**Re-verification:** Yes — confirming executor-produced VERIFICATION.md against actual codebase
 
 ---
 
@@ -40,37 +38,18 @@ human_verification:
 
 | # | Truth | Status | Evidence |
 |---|-------|--------|----------|
-| 1 | Claude and OpenAI AI calls route through proxy with subscription auth | VERIFIED | `AIService.buildRequest()` lines 319-339: claude/openai cases use `ProxyConfig.baseURL + "/v1/complete"` with `X-Provider`, `X-Provider-Key`, `X-Storekit-JWS` headers |
-| 2 | Ollama calls bypass proxy, go directly to localhost | VERIFIED | `AIService.buildRequest()` line 343: `config.baseURL ?? "http://localhost:11434"` — no proxy headers set |
-| 3 | Proxy validates StoreKit JWS subscription before forwarding | VERIFIED | `pault-proxy/src/index.ts`: decodes `X-Storekit-JWS`, verifies expiry and environment before forwarding; `buildRequest()` throws `subscriptionRequired` if no JWS |
-| 4 | Proxy enforces per-subscriber rate limits, returns 429 + Retry-After | VERIFIED | `pault-proxy/src/index.ts`: AI_LIMITER binding; `AIService.complete()` line 282-284: 429 → `rateLimited(retryAfter:)` with `Retry-After` header |
-| 5 | Proxy streams SSE responses without buffering | VERIFIED | `pault-proxy/src/index.ts`: SSE passthrough with `TransformStream`; `AIService.streamComplete()` lines 235-261: processes `data:` lines as they arrive |
-| 6 | Proxy returns token count and estimated cost metadata in streaming responses | VERIFIED | `pault-proxy/src/index.ts`: injects `{"metadata":{"input_tokens":N,"output_tokens":N,"estimated_cost_usd":N}}`; `AIService.streamComplete()` line 243-254: parses metadata event |
-| 7 | App sends provider API key per-request in header (never stored server-side) | VERIFIED | `AIService.buildRequest()`: `X-Provider-Key` header set with runtime keychain value per request; proxy receives and forwards, does not persist |
-| 8 | ProStatusManager provides fresh JWS token for AI calls | VERIFIED | `AIService.buildRequest()` line 354: `await ProStatusManager.shared.refreshJWSIfNeeded()` called before every non-Ollama request; 60-second refresh cache via `lastJWSRefresh` |
-| 9 | User can request AI rewrite in Improve tab and see streaming token-by-token display | VERIFIED | `AIAssistPanel.runImprove()` line 187: `streamImprove()` called; line 189-194: accumulates `.token` events into `streamingImproveText`; blinking cursor timer; cancel button |
-| 10 | Improve tab shows word-level diff with accept/reject | VERIFIED | `AIAssistPanel` line 150: `DiffView(original: originalText, revised: streamingImproveText)` shown when `!isImproving && !streamingImproveText.isEmpty`; Accept/Reject buttons |
-| 11 | Variables tab suggests template variables, user accepts/rejects individually | VERIFIED | `VariablesTabContent.body`: ForEach with per-suggestion Accept button (calls `insert()`) and Reject button (removes from suggestions array) |
-| 12 | Tags tab suggests tags on-demand (Suggest Tags button) | VERIFIED | `TagsTabContent.body` line 325: `Label("Suggest Tags", systemImage: "tag")` button; calls `load()` which calls `AIService.shared.autoTag()` |
-| 13 | Score tab displays four-axis quality score plus 2-3 actionable improvement tips | VERIFIED | `ScoreTabContent`: Grid with ScoreRow for clarity/specificity/completeness/conciseness; tips ForEach loop; `QualityScore.tips: [String]` field populated by `AIService.qualityScore()` |
-| 14 | Refine tab routes through proxy with DiffView + star rating | VERIFIED | `RefinementLoopView`: renders `DiffView(original: prompt.content, revised: currentRevision)` and star rating HStack; `refine()` calls `AIService.shared.improve()` via proxy |
-| 15 | Auto-snapshot created before any AI-suggested change is applied | VERIFIED (fixed) | All accept paths now call `saveSnapshot`: `acceptImprovement()` → `.aiImprove`; `insert()` → `.aiVariableAccept`; `attachTag()` → `.aiAutoTag`; `accept()` → `.aiRefine` (FIXED in commit 05603e4) |
-| 16 | Cmd+Shift+I opens/focuses AI Improve tab | VERIFIED | `PromptDetailView`: `KeyboardShortcut("i", modifiers: [.command, .shift])` confirmed present per Phase 04-03 PLAN decision record |
-| 17 | AI panel visible-but-locked when no API key configured | VERIFIED | `AIAssistPanel.hasAnyAPIKey` computed property; `noKeyStateView` shown with "Set up your API key in Preferences" message and Open Preferences button |
-| 18 | AI errors (offline, rate limit, subscription) shown inline in panel | VERIFIED | `AIErrorBar` component rendered for all error states; `handleAIError()` maps `AIError` cases to user-friendly messages |
-| 19 | User can run a compiled prompt against LLM via proxy with model selection and streaming response | VERIFIED | `RunTabView.startRun()` line 214: `AIService.shared.streamRun()`; model shown as tertiary text; Pro-gated via `ProFeature.isUnlocked(.apiRunner)` |
-| 20 | Streaming response displays token-by-token in auto-scrolling monospace ScrollView with cancel button | VERIFIED | `RunTabView`: `Text(streamingText + (isRunning ? "▊" : ""))` in monospaced font; `ScrollViewReader` with `proxy.scrollTo("bottom")` in `onChange`; Cancel button at lines 65-70 |
-| 21 | Response footer shows token count and estimated cost from proxy metadata | VERIFIED | `RunTabView` lines 116-127: `if let meta = runMetadata, !isRunning` shows tokens, cost, latency |
-| 22 | Responses are saved as PromptRun with prompt linkage; user can browse per-prompt history | VERIFIED | `RunTabView.persistRun()` creates `PromptRun` with all fields, sets `run.prompt = prompt`; `RunHistoryView` fetches per-prompt runs via `FetchDescriptor` filtered by `prompt.id` |
-| 23 | User can copy response to clipboard and save as new prompt | VERIFIED | `RunHistoryRowView`: Copy button calls `copyOutput()` (NSPasteboard); "Save as Prompt" button creates new `Prompt` from output |
-| 24 | User can rate any run 1-5 stars | VERIFIED | `RunHistoryRowView` lines 120-133: star rating ForEach with toggle logic; tap same star to clear rating; persisted via `modelContext.save()` |
-| 25 | User can delete individual runs from history | VERIFIED | `RunHistoryRowView`: trash button triggers `showDeleteConfirmation` alert; swipe-to-delete action; `modelContext.delete(run)` |
-| 26 | User can Run Again from expanded history row | VERIFIED | `RunHistoryRowView` line 155: "Run Again" button calls `onRunAgain(run)`; `RunTabView` passes closure that calls `startRun(overrideInput: previousRun.resolvedInput)` |
-| 27 | Run tab has inline variable form pre-filled with template variable defaults | VERIFIED | `RunTabView.body` lines 32-53: variable form shown when `!prompt.templateVariables.isEmpty`; `variableValues[variable.name] ?? variable.defaultValue` |
-| 28 | Refinement loop preserves iteration history with DiffView and star rating | VERIFIED | `RefinementLoopView.tryAgain()` line 190: appends to `history` array before calling `refine()`; `buildHistoryContext()` includes previous outputs and ratings in next AI call |
-| 29 | PrivacyInfo.xcprivacy updated to declare network usage | VERIFIED | Phase 09 closed this gap — PrivacyInfo.xcprivacy bundle inclusion verified via DerivedData inspection; PBXFileSystemSynchronizedRootGroup auto-includes the file |
+| 1 | R2.1 has concrete code evidence: streaming rewrite, DiffView, accept/reject, auto-snapshot | VERIFIED | `AIAssistPanel.swift` line 150: `DiffView` shown when `!isImproving && !streamingImproveText.isEmpty`; line 207: `saveSnapshot(source: .aiImprove)` before `prompt.content = streamingImproveText` |
+| 2 | R2.2 has concrete code evidence: per-suggestion accept/reject with saveSnapshot | VERIFIED | `AIAssistPanel.swift` line 256: Accept button calls `insert(suggestion)`; line 296: `saveSnapshot(source: .aiVariableAccept)` |
+| 3 | R2.3 has concrete code evidence: on-demand tag suggestions with saveSnapshot | VERIFIED | `AIAssistPanel.swift` line 342: tag name button calls `attachTag(named:)`; line 385: `saveSnapshot(source: .aiAutoTag)` |
+| 4 | R2.4 has concrete code evidence: four-axis quality score and tips array | VERIFIED | `AIService.swift` line 29: `QualityScore` struct with `tips: [String]`; line 163-168: parsed from JSON including `tips` field |
+| 5 | R2.5 has concrete code evidence: proxy routing with JWS auth, Ollama bypass, rate limiting | VERIFIED | `AIService.swift` lines 319-358: Claude/OpenAI route to `ProxyConfig.baseURL`; line 342: Ollama uses `localhost:11434`; line 282-284: 429 → `rateLimited(retryAfter:)` |
+| 6 | R5.1 has concrete code evidence: Run tab streaming, model selection, cancel, Pro gate | VERIFIED | `RunTabView.swift` line 183: `startRun(overrideInput:)`; line 214: `streamRun()`; line 187: `ProFeature.isUnlocked(.apiRunner)` gate |
+| 7 | R5.2 has concrete code evidence: PromptRun persistence, history, copy, star rating, delete, Run Again | VERIFIED | `RunTabView.swift` line 258: `persistRun()`; `RunHistoryView.swift` line 122-123: star rating toggle; line 155: Run Again; line 181: swipe-to-delete |
+| 8 | R5.3 has concrete code evidence: iteration history, DiffView, auto-snapshot before accept | VERIFIED | `RefinementLoopView.swift` line 121: `DiffView`; line 190: `history.append()` in `tryAgain()`; line 231: `saveSnapshot(source: .aiRefine)` before line 234: `prompt.content = finalRevision` |
+| 9 | RefinementLoopView.accept() calls saveSnapshot BEFORE prompt.content assignment | VERIFIED | `RefinementLoopView.swift` line 231: `PromptService(modelContext: modelContext).saveSnapshot(for: prompt, source: .aiRefine)` precedes line 234: `prompt.content = finalRevision` — ordering confirmed |
+| 10 | Phase 10 VERIFICATION.md exists with per-requirement verdicts and code evidence | VERIFIED | This file; all 8 requirements show SATISFIED status with file:line evidence |
 
-**Score:** 29/29 truths verified (1 truth fixed during verification, all now VERIFIED)
+**Score:** 10/10 must-haves verified (all VERIFIED)
 
 ---
 
@@ -78,14 +57,16 @@ human_verification:
 
 | Artifact | Expected | Status | Details |
 |----------|----------|--------|---------|
-| `pault-proxy/src/index.ts` | Cloudflare Worker with JWS verify, rate limit, provider routing, SSE | VERIFIED | ~300 lines; POST /v1/complete and /v1/stream; AI_LIMITER binding; KV caching; 500KB safety limit |
-| `Pault/Services/ProxyConfig.swift` | ProxyConfig.baseURL, StreamEvent, CallMetadata | VERIFIED | 28 lines; reads `"ai.proxy.baseURL"` from UserDefaults; `isConfigured` check; StreamEvent enum; CallMetadata struct |
-| `Pault/RunTabView.swift` | Run tab: variable form, execute, streaming, history | VERIFIED | 285 lines; variable form, streamRun(), auto-scroll, cancel, persistRun(), RunHistoryView integration |
-| `Pault/Services/AIService.swift` | Proxy routing, streamImprove(), AIError variants, lastCallMetadata | VERIFIED | buildRequest() routes to ProxyConfig.baseURL; streamImprove(), streamRun(), suggestVariables(), autoTag(), qualityScore() all implemented |
-| `Pault/Services/ProStatusManager.swift` | currentTransactionJWS, refreshJWSIfNeeded() | VERIFIED | Confirmed via STATE.md decisions and code references in AIService.buildRequest() |
-| `Pault/AIAssistPanel.swift` | 5-tab panel: Improve (streaming+DiffView), Variables, Tags, Score, Refine | VERIFIED | 572 lines; all 5 tabs implemented; AIErrorBar; handleAIError(); noKeyStateView |
-| `Pault/RunHistoryView.swift` | Star rating, delete, Run Again, swipe-to-delete | VERIFIED | RunHistoryView + RunHistoryRowView; expand/collapse; star rating; copy; save-as-prompt; Run Again; trash alert; swipe-delete |
-| `Pault/RefinementLoopView.swift` | DiffView, iteration history, accept() with saveSnapshot | VERIFIED (fixed) | accept() now calls saveSnapshot(for: prompt, source: .aiRefine) before prompt.content assignment — gap fixed in commit 05603e4 |
+| `Pault/RefinementLoopView.swift` | accept() calls saveSnapshot before prompt.content assignment | VERIFIED | 254 lines; line 231: `saveSnapshot(source: .aiRefine)`; line 234: `prompt.content = finalRevision` — correct ordering confirmed |
+| `Pault/PromptVersion.swift` | VersionSource.aiRefine case added | VERIFIED | Line 30: `case aiRefine = "ai-refine"`; line 36: included in `isAI` return; line 44: included in `badgeLabel` "AI" return |
+| `Pault/PromptVersionHistoryView.swift` | VersionSourceBadge exhaustive switch includes .aiRefine | VERIFIED | Line 19: `.aiRefine` case returns `.purple` in `badgeColor` switch |
+| `Pault/AIAssistPanel.swift` | 5-tab panel: Improve, Variables, Tags, Score, Refine; error handling | VERIFIED | 572 lines; `hasAnyAPIKey`/`noKeyStateView`; `AIErrorBar` at lines 169/238/333/419; `handleAIError()` at line 555 |
+| `Pault/Services/AIService.swift` | Proxy routing, streamImprove, streamRun, 429/401 handling, QualityScore.tips | VERIFIED | 419 lines; `streamImprove()` line 94; `streamRun()` line 200; `rateLimited(retryAfter:)` lines 282-284; `QualityScore.tips` line 34 |
+| `Pault/Services/ProxyConfig.swift` | ProxyConfig.baseURL reads "ai.proxy.baseURL" UserDefaults key | VERIFIED | Line 6: `UserDefaults.standard.string(forKey: "ai.proxy.baseURL")`; PreferencesView line 136: `@AppStorage("ai.proxy.baseURL")` — keys match, no mismatch |
+| `Pault/RunTabView.swift` | Variable form pre-fill, streaming, persist, Pro gate | VERIFIED | 285 lines; line 43: `variableValues[variable.name] ?? variable.defaultValue`; line 187: `ProFeature.isUnlocked(.apiRunner)` |
+| `Pault/RunHistoryView.swift` | Star rating, delete, Run Again, swipe-to-delete, copy | VERIFIED | `RunHistoryRowView` lines 114-129: star rating; line 154-156: Run Again; line 181: `.swipeActions` |
+| `pault-proxy/src/index.ts` | JWS verify, rate limit (AI_LIMITER), SSE passthrough, metadata injection | VERIFIED | 299 lines; line 11: `AI_LIMITER` binding; line 50: `X-Storekit-JWS` decode; line 75: 429 with `Retry-After: 60`; line 148: `TransformStream`; line 287: `input_tokens`/`estimated_cost_usd` metadata |
+| `.planning/phases/10-phase04-verification-gap-closure/10-VERIFICATION.md` | VERIFICATION.md with status: passed/human_needed and all 8 IDs in requirements_completed | VERIFIED | This file |
 
 ---
 
@@ -93,13 +74,13 @@ human_verification:
 
 | From | To | Via | Status | Details |
 |------|----|-----|--------|---------|
-| `AIService.buildRequest()` | `ProxyConfig.baseURL` | `UserDefaults("ai.proxy.baseURL")` | WIRED | Claude/OpenAI cases use `ProxyConfig.baseURL + "/v1/complete"`; no mismatch — PreferencesView also uses `@AppStorage("ai.proxy.baseURL")` |
-| `AIAssistPanel.runImprove()` | `AIService.streamImprove()` | `AsyncThrowingStream<StreamEvent, Error>` | WIRED | `streamImprove()` called with user prompt, tokens accumulated via `.token` case in for-await loop |
-| `AIAssistPanel.acceptImprovement()` | `PromptService.saveSnapshot()` | `.aiImprove` source | WIRED | `PromptService(modelContext: modelContext).saveSnapshot(for: prompt, source: .aiImprove)` before `prompt.content = streamingImproveText` |
-| `RefinementLoopView.accept()` | `PromptService.saveSnapshot()` | `.aiRefine` source (FIXED) | WIRED | `PromptService(modelContext: modelContext).saveSnapshot(for: prompt, source: .aiRefine)` now called before `prompt.content = finalRevision` — commit 05603e4 |
-| `RunTabView.startRun()` | `AIService.streamRun()` | `AsyncThrowingStream<StreamEvent, Error>` | WIRED | `streamRun(prompt: resolvedText, variables: [:], config: config)` called; token/metadata events dispatched to MainActor |
-| `RunTabView.persistRun()` | `PromptRun` model | SwiftData `modelContext.insert()` | WIRED | Creates PromptRun with promptTitle, resolvedInput, output, model, provider, latencyMs, inputTokens, outputTokens; sets `run.prompt = prompt` |
-| `ProStatusManager` | `currentTransactionJWS` | StoreKit current entitlements | WIRED | `refreshJWSIfNeeded()` fetches latest transaction JWS; used in `buildRequest()` as `X-Storekit-JWS` header |
+| `AIService.buildRequest()` | `ProxyConfig.baseURL` | `UserDefaults("ai.proxy.baseURL")` | WIRED | Lines 319/330: Claude/OpenAI use `ProxyConfig.baseURL + "/v1/complete"`; PreferencesView uses `@AppStorage("ai.proxy.baseURL")` — same key confirmed |
+| `AIAssistPanel.runImprove()` | `AIService.streamImprove()` | `AsyncThrowingStream<StreamEvent, Error>` | WIRED | Line 187: `streamImprove()` called; lines 192-194: `.token` events accumulated into `streamingImproveText` |
+| `AIAssistPanel.acceptImprovement()` | `PromptService.saveSnapshot()` | `.aiImprove` source | WIRED | Line 207: `saveSnapshot(for: prompt, source: .aiImprove)` before `prompt.content = streamingImproveText` |
+| `RefinementLoopView.accept()` | `PromptService.saveSnapshot()` | `.aiRefine` source (fixed commit 05603e4) | WIRED | Line 231: `saveSnapshot(for: prompt, source: .aiRefine)` precedes line 234: `prompt.content = finalRevision` — ordering confirmed by direct file read |
+| `RunTabView.startRun()` | `AIService.streamRun()` | `AsyncThrowingStream<StreamEvent, Error>` | WIRED | Line 214: `streamRun(prompt: resolvedText, variables: [:], config: config)`; token events dispatched to `MainActor` |
+| `RunTabView.persistRun()` | `PromptRun` SwiftData model | `modelContext.insert()` | WIRED | Line 258: `persistRun()` creates `PromptRun`; sets `run.prompt = prompt`; `modelContext.insert(run)` |
+| `ProStatusManager` | `currentTransactionJWS` | StoreKit current entitlements | WIRED | `AIService.swift` line 354: `await ProStatusManager.shared.refreshJWSIfNeeded()` before every non-Ollama request |
 
 ---
 
@@ -107,53 +88,63 @@ human_verification:
 
 | Requirement | Source Plan | Description | Status | Evidence |
 |-------------|-------------|-------------|--------|----------|
-| R2.1 | 04-02 | AI Prompt Improvement — streaming rewrite with accept/reject controls and auto-snapshot | SATISFIED | `streamImprove()` + DiffView + `acceptImprovement()` calls saveSnapshot (`.aiImprove`); AIAssistPanel.swift line 207 |
-| R2.2 | 04-02 | AI Variable Suggestion — analyze prompt, suggest {{variables}}, per-suggestion accept/reject | SATISFIED | `suggestVariables()` returns `[VariableSuggestion]`; `insert()` calls saveSnapshot (`.aiVariableAccept`); AIAssistPanel.swift line 296 |
-| R2.3 | 04-02 | AI Auto-Tagging — on-demand tag suggestions with accept/reject | SATISFIED | `autoTag()` returns `[String]`; "Suggest Tags" button; `attachTag()` calls saveSnapshot (`.aiAutoTag`); AIAssistPanel.swift line 385 |
-| R2.4 | 04-02 | AI Quality Scoring — four-axis score with visual bars and improvement tips | SATISFIED | `qualityScore()` returns `QualityScore` with `tips: [String]`; ScoreTabContent shows 4-axis Grid ProgressView bars + tips list |
-| R2.5 | 04-01 | Proxy Service Integration — Claude/OpenAI through proxy with JWS auth, Ollama bypass, rate limiting | SATISFIED | ProxyConfig.baseURL; X-Provider/X-Provider-Key/X-Storekit-JWS headers; Ollama direct; 401→subscriptionRequired; 429→rateLimited |
-| R5.1 | 04-03 | Prompt Execution — streaming via proxy with model selection, auto-scroll, cancel | SATISFIED | `startRun()` → `streamRun()` → token streaming; ScrollViewReader auto-scroll; cancel button; Pro-gated |
-| R5.2 | 04-03 | Response Management — persisted PromptRun, history, copy, star rating, delete, Run Again | SATISFIED | `persistRun()` creates PromptRun; RunHistoryView; copy/save-as-prompt/star-rating/delete/Run Again all implemented |
-| R5.3 | 04-03 | Refinement Loop — iteration history, DiffView, star rating, auto-snapshot before accept | SATISFIED (fixed) | `tryAgain()` preserves history; `accept()` persists PromptRuns AND now calls saveSnapshot before content update — fix commit 05603e4 |
+| R2.1 | 04-02 | AI Prompt Improvement — streaming rewrite with accept/reject controls and auto-snapshot | SATISFIED | `streamImprove()` + `DiffView` + `acceptImprovement()` calls `saveSnapshot(.aiImprove)` — `AIAssistPanel.swift` lines 150, 176-196, 207 |
+| R2.2 | 04-02 | AI Variable Suggestion — analyze prompt, suggest variables, per-suggestion accept/reject | SATISFIED | `suggestVariables()` returns `[VariableSuggestion]`; `insert()` calls `saveSnapshot(.aiVariableAccept)` — `AIAssistPanel.swift` lines 222, 256, 296 |
+| R2.3 | 04-02 | AI Auto-Tagging — on-demand tag suggestions with accept/dismiss | SATISFIED | `autoTag()` returns `[String]`; "Suggest Tags" button; `attachTag()` calls `saveSnapshot(.aiAutoTag)` — `AIAssistPanel.swift` lines 342, 385 |
+| R2.4 | 04-02 | AI Quality Scoring — four-axis score with visual bars and improvement tips | SATISFIED | `qualityScore()` returns `QualityScore` with `tips: [String]`; `AIService.swift` lines 29, 145-168 |
+| R2.5 | 04-01 | Proxy Service Integration — Claude/OpenAI through proxy with JWS auth, Ollama bypass, rate limiting | SATISFIED | `buildRequest()` routes claude/openai to `ProxyConfig.baseURL`; Ollama direct to `localhost:11434`; 401→`subscriptionRequired`; 429→`rateLimited` — `AIService.swift` lines 319-358, 278-284 |
+| R5.1 | 04-03 | Prompt Execution — streaming via proxy with model selection, auto-scroll, cancel | SATISFIED | `startRun()` → `streamRun()` → token streaming; `ScrollViewReader` auto-scroll; cancel button; Pro-gated — `RunTabView.swift` lines 183-232 |
+| R5.2 | 04-03 | Response Management — persisted PromptRun, history, copy, star rating, delete, Run Again | SATISFIED | `persistRun()` creates `PromptRun`; `RunHistoryView` + `RunHistoryRowView` with all features — `RunTabView.swift` line 258; `RunHistoryView.swift` lines 114-181 |
+| R5.3 | 04-03 | Refinement Loop — iteration history, DiffView, star rating, auto-snapshot before accept | SATISFIED | `tryAgain()` preserves history; `accept()` calls `saveSnapshot(.aiRefine)` before `prompt.content = finalRevision` — `RefinementLoopView.swift` lines 121, 190, 231, 234 |
 
 ---
 
-### Gaps Fixed
+### Anti-Patterns Found
 
-**Gap 1: R5.3 — Missing saveSnapshot in RefinementLoopView.accept()**
+No blocker anti-patterns detected in the files modified by this phase.
 
-- **Found during:** Code inspection (Task 1)
-- **Issue:** `RefinementLoopView.accept()` overwrote `prompt.content` without first calling `PromptService.saveSnapshot()`, breaking the auto-snapshot invariant from CONTEXT.md ("Auto-snapshot before any AI-suggested change is applied"). All other AI accept paths (Improve, Variables, Tags) had the saveSnapshot call; Refine did not.
-- **Fix:** Added `VersionSource.aiRefine = "ai-refine"` to PromptVersion enum. Updated `VersionSourceBadge.badgeColor` exhaustive switch to include `.aiRefine → .purple`. Added `PromptService(modelContext: modelContext).saveSnapshot(for: prompt, source: .aiRefine)` as the first statement of the content-update block in `accept()`, immediately before `prompt.content = finalRevision`.
+Files scanned: `Pault/RefinementLoopView.swift`, `Pault/PromptVersion.swift`, `Pault/PromptVersionHistoryView.swift`
+
+---
+
+### Gap Fixed: R5.3 Missing saveSnapshot in RefinementLoopView.accept()
+
+- **Found during:** Phase 10 code inspection
+- **Issue:** `RefinementLoopView.accept()` overwrote `prompt.content` without first calling `PromptService.saveSnapshot()`, breaking the auto-snapshot invariant. All other AI accept paths (Improve, Variables, Tags) had the saveSnapshot call; the Refine accept path did not.
+- **Fix:** Added `VersionSource.aiRefine = "ai-refine"` to the `VersionSource` enum. Updated `VersionSourceBadge.badgeColor` exhaustive switch to include `.aiRefine → .purple`. Added `PromptService(modelContext: modelContext).saveSnapshot(for: prompt, source: .aiRefine)` as the first content-mutation statement in `accept()`, before `prompt.content = finalRevision`.
 - **Files modified:** `Pault/PromptVersion.swift`, `Pault/PromptVersionHistoryView.swift`, `Pault/RefinementLoopView.swift`
-- **Commit:** `05603e4`
-- **Verification:** `grep -n "saveSnapshot" Pault/RefinementLoopView.swift` shows call at line 231; AIServiceTests pass 9/9
+- **Commit:** `05603e4` — verified present in git log
+- **Verification:** Line 231 precedes line 234 — confirmed by direct file read
 
-**False Positive Confirmed: R2.5 ProxyConfig UserDefaults key mismatch**
+**False positive confirmed: R2.5 ProxyConfig key mismatch**
 
-- **Research flagged:** ProxyConfig reads `"ai.proxy.baseURL"` but PreferencesView might use `"proxy.baseURL"` (different key)
-- **Confirmed false positive:** PreferencesView uses `@AppStorage("ai.proxy.baseURL")` — the keys match exactly. No wiring bug exists.
+Research flagged a potential mismatch between `ProxyConfig.swift` and `PreferencesView.swift` UserDefaults keys. Both use `"ai.proxy.baseURL"` — no wiring bug exists.
 
 ---
 
-### Manual Verification Items
+### Human Verification Required
+
+These items cannot be verified programmatically and require a running app with live credentials:
 
 **1. AI Streaming UI**
-- **Test:** Launch app with valid API key, open a prompt, press Cmd+Shift+I, select Improve tab, click "Improve"
-- **Expected:** Tokens appear progressively in streaming view with blinking cursor; auto-scrolls to bottom; DiffView appears after completion; Accept/Reject buttons functional
-- **Why human:** Requires running app with real API key; xcodebuild unit tests verify config/structure only (no network calls)
+
+**Test:** Launch app with valid API key, open a prompt, press Cmd+Shift+I, select Improve tab, click Improve.
+**Expected:** Tokens appear progressively in streaming view with blinking cursor; auto-scrolls to bottom; DiffView appears after completion; Accept/Reject buttons are functional.
+**Why human:** Requires running app with real API key; xcodebuild unit tests verify config/structure only (no network calls).
 
 **2. Proxy Deployment and End-to-End Routing**
-- **Test:** Deploy pault-proxy/ to Cloudflare Workers, set URL in Preferences → AI → Proxy URL field, execute a prompt
-- **Expected:** Claude/OpenAI requests reach Worker; JWS validated; response streamed back; Ollama requests go to localhost directly
-- **Why human:** Requires Cloudflare account, wrangler deployment, and live StoreKit subscription for JWS
+
+**Test:** Deploy `pault-proxy/` to Cloudflare Workers via `wrangler deploy`, set URL in Preferences → AI → Proxy URL, execute a prompt.
+**Expected:** Claude/OpenAI requests reach the Worker; JWS validated; response streamed back; Ollama requests go to `localhost:11434` directly.
+**Why human:** Requires Cloudflare account, wrangler deployment, and live StoreKit subscription for JWS.
 
 **3. Full Refinement Loop with Auto-Snapshot**
-- **Test:** Open Refine tab, enter a goal, refine, rate with stars, accept. Then check version history.
-- **Expected:** A PromptVersion entry appears in version history with source "AI" badge (`.aiRefine`), capturing the pre-refinement state
-- **Why human:** Requires running app with live API key; snapshot verification requires UI inspection of version history
+
+**Test:** Open Refine tab, enter a goal, refine, rate with stars, accept. Then open version history.
+**Expected:** A PromptVersion entry appears with the "AI" badge (`.aiRefine` source), capturing the pre-refinement content.
+**Why human:** Requires running app with live API key; snapshot verification requires UI inspection of version history.
 
 ---
 
-_Verified: 2026-04-21T06:30:00Z_
-_Verifier: Claude Sonnet 4.6 (gsd-executor)_
+_Verified: 2026-04-21T12:00:00Z_
+_Verifier: Claude Sonnet 4.6 (gsd-verifier)_
