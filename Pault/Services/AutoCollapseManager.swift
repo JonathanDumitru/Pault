@@ -122,9 +122,7 @@ final class AutoCollapseManager: ObservableObject {
     private func enterWarningPhase() {
         guard protectedPanels.isEmpty else { return }
 
-        withAnimation(.easeInOut(duration: 0.3)) {
-            isInWarningPhase = true
-        }
+        isInWarningPhase = true
 
         // Start collapse timer
         collapseTimer = Timer.publish(every: warningDuration, on: .main, in: .common)

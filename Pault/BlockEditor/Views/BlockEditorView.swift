@@ -246,7 +246,7 @@ struct BlockEditorView: View {
     }
 
     private func dismissOnboarding() {
-        withAnimation(.easeIn(duration: 0.2)) {
+        withAnimation(reduceMotion ? nil : .easeIn(duration: 0.2)) {
             showOnboardingTip = false
         }
         hasSeenOnboarding = true

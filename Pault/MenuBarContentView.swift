@@ -24,6 +24,8 @@ struct MenuBarContentView: View {
     @State private var promptToDelete: Prompt?
     @State private var showCopyToast: Bool = false
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     private var service: PromptService { PromptService(modelContext: modelContext) }
 
     private var filteredPrompts: [Prompt] {
@@ -96,13 +98,13 @@ struct MenuBarContentView: View {
                                 prompt: prompt,
                                 isExpanded: expandedPromptID == prompt.id,
                                 onTap: {
-                                    withAnimation(.easeInOut(duration: 0.2)) {
+                                    withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) {
                                         expandedPromptID = expandedPromptID == prompt.id ? nil : prompt.id
                                     }
                                 },
                                 onCopy: {
                                     service.copyToClipboard(prompt)
-                                    withAnimation { showCopyToast = true }
+                                    withAnimation(reduceMotion ? nil : .default) { showCopyToast = true }
                                 },
                                 onToggleFavorite: { service.toggleFavorite(prompt) },
                                 onArchive: { service.toggleArchive(prompt) },
