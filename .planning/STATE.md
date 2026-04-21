@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 08-05-PLAN.md — Reduce Motion gap closure, R8.4 fully satisfied, Phase 08 all 5 plans done
-last_updated: "2026-04-21T05:30:24.232Z"
+stopped_at: Completed 09-01-PLAN.md — PrivacyInfo.xcprivacy bundling verified via clean build, R7.1 gap closed, Phase 09 complete
+last_updated: "2026-04-21T06:03:10.245Z"
 last_activity: 2026-04-09 -- Phase 5 Plan 01 complete
 progress:
-  total_phases: 8
-  completed_phases: 7
-  total_plans: 25
-  completed_plans: 22
+  total_phases: 12
+  completed_phases: 8
+  total_plans: 26
+  completed_plans: 23
   percent: 44
 ---
 
@@ -74,6 +74,7 @@ Progress: [████▌░░░░░] 44%
 | Phase 08-final-quality-polish P04 | 30 | 1 tasks | 14 files |
 | Phase 08-final-quality-polish P04 | 35 | 2 tasks | 14 files |
 | Phase 08-final-quality-polish P05 | 8 | 2 tasks | 3 files |
+| Phase 09-privacyinfo-xcode-wiring P01 | 8 | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -151,6 +152,9 @@ Recent decisions affecting current work:
 - [Phase 08-04]: Visual polish checkpoint human-approved — typography, spacing, animations, empty states, error states, and Reduce Motion all confirmed at 5-star quality
 - [Phase 08-05]: [Phase 08-05]: AutoCollapseManager.enterWarningPhase() removes withAnimation wrapper — ObservableObject classes cannot access @Environment; view-layer AutoCollapseWarningModifier handles animation+guard via .animation(reduceMotion ? nil : ..., value:)
 - [Phase 08-05]: [Phase 08-05]: MenuBarContentView adds @Environment(\.accessibilityReduceMotion) after @State properties — guards both expand/collapse row and copy toast animations
+- [Phase 09]: [Phase 09]: PrivacyInfo.xcprivacy Phase 1 gap was a false positive — PBXFileSystemSynchronizedRootGroup auto-includes all folder files without explicit project.pbxproj entries
+- [Phase 09]: [Phase 09]: Do NOT add explicit PBXFileReference/PBXBuildFile entries for PrivacyInfo.xcprivacy — would cause 'Multiple commands produce' build error
+- [Phase 09]: [Phase 09]: Ground truth for xcprivacy inclusion is the built bundle (DerivedData inspection), not project.pbxproj reference count
 
 ## Accumulated Context
 
@@ -231,7 +235,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-21T05:23:41.461Z
-Stopped at: Completed 08-05-PLAN.md — Reduce Motion gap closure, R8.4 fully satisfied, Phase 08 all 5 plans done
+Last session: 2026-04-21T06:03:10.241Z
+Stopped at: Completed 09-01-PLAN.md — PrivacyInfo.xcprivacy bundling verified via clean build, R7.1 gap closed, Phase 09 complete
 Resume file: None
 Resume file: .planning/phases/03-storekit-2-paywall/03-02-SUMMARY.md
