@@ -20,6 +20,10 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 6: Import/Export** - Add data portability with JSON and Markdown import/export (completed 2026-04-09)
 - [x] **Phase 7: App Store Readiness** - Finalize metadata, screenshots, signing, and distribution (completed 2026-04-19)
 - [x] **Phase 8: Final Quality & Polish** - Comprehensive testing, accessibility audit, performance profiling, UX consistency (completed 2026-04-21)
+- [ ] **Phase 9: PrivacyInfo Xcode Wiring** - Fix critical App Store blocker: wire PrivacyInfo.xcprivacy into Xcode project (gap closure)
+- [ ] **Phase 10: Phase 04 Verification & Gap Closure** - Verify AI Assist & API Runner implementation against R2.1-R2.5, R5.1-R5.3
+- [ ] **Phase 11: Phase 06 Verification & Gap Closure** - Verify Import/Export, fix SUMMARY IDs, close R9.1-R9.3
+- [ ] **Phase 12: Phase 05 Traceability Fix** - Add SUMMARY claims for R4.1, R4.2
 
 ## Phase Details
 
@@ -113,7 +117,7 @@ Plans:
 ### Phase 6: Import/Export
 **Goal**: Users can easily move their data in and out of Pault with standard formats
 **Depends on**: Phase 2
-**Requirements**: R8.1, R8.2
+**Requirements**: R9.1, R9.2, R9.3
 **Success Criteria** (what must be TRUE):
   1. User can export the entire library or individual collections to a standard JSON format
   2. User can export prompts to Markdown files, including metadata as frontmatter
@@ -156,3 +160,47 @@ Plans:
 - [ ] 08-03-PLAN.md -- Comprehensive accessibility audit and fixes
 - [ ] 08-04-PLAN.md -- Visual polish and micro-interactions
 - [ ] 08-05-PLAN.md -- Gap closure: Reduce Motion compliance for 3 missed animation call sites
+
+### Phase 9: PrivacyInfo Xcode Wiring
+**Goal**: Wire PrivacyInfo.xcprivacy into Xcode project file references and Copy Bundle Resources build phase to prevent automatic App Store rejection
+**Depends on**: Phase 1
+**Requirements**: R7.1
+**Gap Closure:** Closes integration gap from audit — PrivacyInfo.xcprivacy exists on disk but is not in app bundle
+**Success Criteria** (what must be TRUE):
+  1. PrivacyInfo.xcprivacy appears in Pault.xcodeproj/project.pbxproj file references
+  2. PrivacyInfo.xcprivacy is in the Pault target Copy Bundle Resources build phase
+  3. Built app bundle contains PrivacyInfo.xcprivacy at expected location
+**Plans**: TBD
+
+### Phase 10: Phase 04 Verification & Gap Closure
+**Goal**: Verify that AI Assist & API Runner implementation satisfies all 8 claimed requirements, fix any gaps found, and produce VERIFICATION.md
+**Depends on**: Phase 4
+**Requirements**: R2.1, R2.2, R2.3, R2.4, R2.5, R5.1, R5.2, R5.3
+**Gap Closure:** Closes 8 unsatisfied requirements from audit — Phase 04 has no VERIFICATION.md
+**Success Criteria** (what must be TRUE):
+  1. Each of R2.1-R2.5 and R5.1-R5.3 has concrete code evidence confirming implementation
+  2. Any implementation gaps found during verification are fixed
+  3. Phase 04 VERIFICATION.md exists with per-requirement verdicts
+  4. SUMMARY frontmatter lists all requirements-completed
+**Plans**: TBD
+
+### Phase 11: Phase 06 Verification & Gap Closure
+**Goal**: Fix wrong SUMMARY requirement IDs, verify Import/Export implementation, and produce VERIFICATION.md
+**Depends on**: Phase 6
+**Requirements**: R9.1, R9.2, R9.3
+**Gap Closure:** Closes 3 orphaned requirements from audit — SUMMARY files claim R8.x instead of R9.x
+**Success Criteria** (what must be TRUE):
+  1. 06-01-SUMMARY claims R9.1 (not R8.1); 06-02-SUMMARY claims R9.2 (not R8.2)
+  2. R9.3 (Interoperability) is verified with code evidence
+  3. Phase 06 VERIFICATION.md exists with per-requirement verdicts
+**Plans**: TBD
+
+### Phase 12: Phase 05 Traceability Fix
+**Goal**: Add missing SUMMARY frontmatter claims for R4.1 and R4.2, confirming verification alignment
+**Depends on**: Phase 5
+**Requirements**: R4.1, R4.2
+**Gap Closure:** Closes 2 partial requirements from audit — verified but not claimed in SUMMARY
+**Success Criteria** (what must be TRUE):
+  1. Phase 05 SUMMARY frontmatter includes R4.1 and R4.2 in requirements-completed
+  2. 05-VERIFICATION.md verdicts for R4.1, R4.2 confirmed as SATISFIED
+**Plans**: TBD

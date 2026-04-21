@@ -277,20 +277,20 @@
 | R1.2: Block Editor Testing | Phase 1 | Pending |
 | R1.3: Block Editor Accessibility | Phase 2 | Pending |
 | R1.4: Block Editor Performance | Phase 2 | Pending |
-| R2.1: AI Prompt Improvement | Phase 4 | Pending |
-| R2.2: AI Variable Suggestion | Phase 4 | Pending |
-| R2.3: AI Auto-Tagging | Phase 4 | Pending |
-| R2.4: AI Quality Scoring | Phase 4 | Pending |
-| R2.5: Proxy Service Integration | Phase 4 | Pending |
+| R2.1: AI Prompt Improvement | Phase 4 → Phase 10 | Pending |
+| R2.2: AI Variable Suggestion | Phase 4 → Phase 10 | Pending |
+| R2.3: AI Auto-Tagging | Phase 4 → Phase 10 | Pending |
+| R2.4: AI Quality Scoring | Phase 4 → Phase 10 | Pending |
+| R2.5: Proxy Service Integration | Phase 4 → Phase 10 | Pending |
 | R3.1: Version History | Phase 5 | Pending |
 | R3.2: Version Restore | Phase 5 | Pending |
 | R3.3: Version Diff | Phase 5 | Pending |
-| R4.1: Analytics Dashboard | Phase 5 | Pending |
-| R4.2: Analytics Data Collection | Phase 5 | Pending |
+| R4.1: Analytics Dashboard | Phase 5 → Phase 12 | Pending |
+| R4.2: Analytics Data Collection | Phase 5 → Phase 12 | Pending |
 | R4.3: Smart Collections | Phase 5 | Pending |
-| R5.1: Prompt Execution | Phase 4 | Pending |
-| R5.2: Response Management | Phase 4 | Pending |
-| R5.3: Refinement Loop | Phase 4 | Pending |
+| R5.1: Prompt Execution | Phase 4 → Phase 10 | Pending |
+| R5.2: Response Management | Phase 4 → Phase 10 | Pending |
+| R5.3: Refinement Loop | Phase 4 → Phase 10 | Pending |
 | R6.1: Subscription Management | Phase 3 | Pending |
 | R6.2: Paywall UI | Phase 3 | Pending |
 | R6.3: Feature Gating | Phase 3 | Pending |
@@ -303,6 +303,6 @@
 | R8.2: Accessibility Audit | Phase 8 | Pending |
 | R8.3: Performance Profiling | Phase 8 | Pending |
 | R8.4: UX Consistency Pass | Phase 8 | Pending |
-| R9.1: Export | Phase 6 | Pending |
-| R9.2: Import | Phase 6 | Pending |
-| R9.3: Interoperability | Phase 6 | Pending |
+| R9.1: Export | Phase 6 → Phase 11 | Pending |
+| R9.2: Import | Phase 6 → Phase 11 | Pending |
+| R9.3: Interoperability | Phase 6 → Phase 11 | Pending |
