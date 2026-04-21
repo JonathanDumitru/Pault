@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 08-03-PLAN.md — accessibility audits and VoiceOver walkthrough approved
-last_updated: "2026-04-21T03:48:10.153Z"
+stopped_at: "Completed 08-04 Task 1 — awaiting human visual verification (checkpoint:human-verify)"
+last_updated: "2026-04-21T04:11:38.105Z"
 last_activity: 2026-04-09 -- Phase 5 Plan 01 complete
 progress:
   total_phases: 8
-  completed_phases: 6
+  completed_phases: 7
   total_plans: 24
-  completed_plans: 20
+  completed_plans: 21
   percent: 44
 ---
 
@@ -71,6 +71,7 @@ Progress: [████▌░░░░░] 44%
 | Phase 08 P02 | 10 | 1 tasks | 1 files |
 | Phase 08-final-quality-polish P02 | 25 | 2 tasks | 1 files |
 | Phase 08-final-quality-polish P03 | 10 | 2 tasks | 4 files |
+| Phase 08-final-quality-polish P04 | 30 | 1 tasks | 14 files |
 
 ## Accumulated Context
 
@@ -142,6 +143,9 @@ Recent decisions affecting current work:
 - [Phase 08-03]: [Phase 08-03]: performAccessibilityAudit() handler suppresses documented platform exceptions (structural SwiftUI groups, Touch Bar, system window chrome, macOS secondary label contrast)
 - [Phase 08-03]: [Phase 08-03]: TagPillView uses .primary text on reduced-opacity colored background — preserves visual identity while meeting WCAG AA 4.5:1 contrast ratio
 - [Phase 08-03]: [Phase 08-03]: Manual VoiceOver walkthrough human-approved for all 3 surfaces (main window, block editor, menu bar) — no unlabelled controls, logical navigation flow
+- [Phase 08-04]: All animated views add @Environment(\.accessibilityReduceMotion) -- every withAnimation and .animation() guarded with reduceMotion ? nil : animation
+- [Phase 08-04]: ViewModifier structs (CopyToastModifier, StatusToastModifier, AutoCollapseWarningModifier, PanelToggleButton, EdgeHoverIndicator) add @Environment directly -- they are View-conformant
+- [Phase 08-04]: panelAnimation computed properties changed from Animation to Animation? to support nil passthrough when Reduce Motion is on
 
 ## Accumulated Context
 
@@ -222,7 +226,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-21T03:48:10.150Z
-Stopped at: Completed 08-03-PLAN.md — accessibility audits and VoiceOver walkthrough approved
+Last session: 2026-04-21T04:11:38.102Z
+Stopped at: Completed 08-04 Task 1 — awaiting human visual verification (checkpoint:human-verify)
 Resume file: None
 Resume file: .planning/phases/03-storekit-2-paywall/03-02-SUMMARY.md
