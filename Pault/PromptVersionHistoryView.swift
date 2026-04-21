@@ -16,7 +16,7 @@ struct VersionSourceBadge: View {
 
     private var badgeColor: Color {
         switch source {
-        case .aiImprove, .aiVariableAccept, .aiAutoTag: return .purple
+        case .aiImprove, .aiVariableAccept, .aiAutoTag, .aiRefine: return .purple
         case .manual: return .blue
         case .restore: return .orange
         }

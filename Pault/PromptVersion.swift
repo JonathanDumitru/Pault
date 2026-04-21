@@ -27,12 +27,13 @@ enum VersionSource: String {
     case aiImprove          = "ai-improve"
     case aiVariableAccept   = "ai-variable-accept"
     case aiAutoTag          = "ai-auto-tag"
+    case aiRefine           = "ai-refine"
     case restore            = "restore"
 
     /// Returns true for any AI-originated source.
     var isAI: Bool {
         switch self {
-        case .aiImprove, .aiVariableAccept, .aiAutoTag: return true
+        case .aiImprove, .aiVariableAccept, .aiAutoTag, .aiRefine: return true
         case .manual, .restore: return false
         }
     }
@@ -40,7 +41,7 @@ enum VersionSource: String {
     /// Human-readable badge label.
     var badgeLabel: String {
         switch self {
-        case .aiImprove, .aiVariableAccept, .aiAutoTag: return "AI"
+        case .aiImprove, .aiVariableAccept, .aiAutoTag, .aiRefine: return "AI"
         case .manual: return "Manual"
         case .restore: return "Restore"
         }

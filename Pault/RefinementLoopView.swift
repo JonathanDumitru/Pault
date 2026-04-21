@@ -227,6 +227,9 @@ struct RefinementLoopView: View {
         modelContext.insert(finalRun)
         try? modelContext.save()
 
+        // Snapshot before overwriting — matches auto-snapshot pattern used on all other AI accept paths
+        PromptService(modelContext: modelContext).saveSnapshot(for: prompt, source: .aiRefine)
+
         // Update prompt content
         prompt.content = finalRevision
         reset()
