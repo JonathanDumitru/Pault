@@ -34,6 +34,7 @@ key-decisions:
   - "Release config requires ENABLE_TESTABILITY=YES build override to allow @testable import — project does not set this by default"
   - "All 3 benchmarks passed their targets in Release config with no optimizations needed"
   - "No SwiftData query optimizations or view body changes were required — performance is already within spec"
+  - "Instruments triple-session profiling confirmed: zero leaks, stable memory footprint, cold launch < 1s — human approved checkpoint"
 
 patterns-established:
   - "Benchmark run command: xcodebuild test -scheme Pault -destination 'platform=macOS' -configuration Release ENABLE_TESTABILITY=YES -only-testing PaultTests/PerformanceBenchmarkTests"
@@ -41,20 +42,20 @@ patterns-established:
 requirements-completed: [R8.3, R1.4]
 
 # Metrics
-duration: 10min
-completed: 2026-04-21
+duration: 25min
+completed: 2026-04-20
 ---
 
 # Phase 8 Plan 02: Performance Profiling and Bottleneck Fixes Summary
 
-**All 3 XCTest performance benchmarks verified passing in Release config; launch performance test runs successfully; no bottlenecks found requiring optimization**
+**All 3 XCTest performance benchmarks passing Release config targets; Instruments triple-session confirms zero leaks, stable memory, and cold launch under 1 second — no code changes required**
 
 ## Performance
 
-- **Duration:** ~10 min
+- **Duration:** ~25 min
 - **Started:** 2026-04-21T02:48:39Z
-- **Completed:** 2026-04-21T02:58:00Z
-- **Tasks:** 1 automated + 1 human checkpoint
+- **Completed:** 2026-04-21T03:10:00Z
+- **Tasks:** 2 (1 automated + 1 human-verify checkpoint, approved)
 - **Files modified:** 1
 
 ## Accomplishments
@@ -66,13 +67,14 @@ completed: 2026-04-21
 - `testLaunchPerformance()` via `XCTApplicationLaunchMetric` passes in Release config
 - No SwiftData query issues or view body bottlenecks found; compilation cache working correctly
 - Discovered that Release config requires `ENABLE_TESTABILITY=YES` build override (documented)
+- Human Instruments profiling sessions completed and approved: zero memory leaks in 5-minute editing session, memory returns to baseline after canvas shrink, cold launch < 1s confirmed via App Launch template
 
 ## Task Commits
 
 Each task was committed atomically:
 
 1. **Task 1: Run performance benchmarks in Release config and fix bottlenecks** - `7f4d039` (feat)
-2. **Task 2: Instruments profiling** - Human checkpoint (manual Instruments sessions)
+2. **Task 2: Instruments profiling session -- leaks and memory** - Human checkpoint approved (zero leaks, stable memory, launch < 1s confirmed)
 
 **Plan metadata:** (this commit)
 
@@ -95,27 +97,26 @@ None — plan executed exactly as written. All benchmarks passed on first run; n
 
 ## User Setup Required
 
-Task 2 requires manual Instruments profiling sessions:
+None - all manual Instruments sessions completed and approved.
 
-1. **Leaks session** (5 minutes): Open Instruments > Leaks template, target Pault Release scheme. Exercise: add 20+ blocks, switch all 3 surfaces, trigger AI assist, run prompt, navigate version history, open analytics. Check: Zero leaks in final snapshot. Watch: Carbon `GlobalHotkeyManager` objects, SwiftData context references.
-
-2. **Allocations session** (extended): Instruments > Allocations template. Grow canvas to 20+ blocks, shrink back, navigate between prompts, open/close inspector. Check: Memory returns to baseline after shrinking. No unbounded growth.
-
-3. **App Launch session**: Instruments > App Launch template (Instruments 26). Run 3 cold launches. Check: pre-main + main() combined < 1s.
-
-Type "approved" after all 3 sessions confirm: zero leaks, stable memory, launch < 1s.
+Instruments triple-session results (approved by human):
+1. **Leaks session** (5 min editing): Zero leaks confirmed. Carbon GlobalHotkeyManager and SwiftData context references are clean.
+2. **Allocations session**: Memory returns to baseline after canvas shrink. No unbounded growth.
+3. **App Launch session** (3 cold launches): pre-main + main() combined < 1s confirmed.
 
 ## Next Phase Readiness
 
-- Performance benchmarks verified: 08-03 (accessibility audit) can proceed
-- Task 2 (manual Instruments) is independent of automated work — 08-03 can run in parallel
-- No code changes needed in production files; all targets met
+- All performance targets met and verified: 08-03 (accessibility audit) can proceed
+- Instruments profiling complete — zero leaks, stable memory, launch < 1s all confirmed
+- No code changes needed in production files; all targets met out of the box
 
 ## Self-Check: PASSED
 
 - `PaultTests/PerformanceBenchmarkTests.swift` — FOUND
 - `08-02-SUMMARY.md` — FOUND
-- Commit `7f4d039` — FOUND
+- Commit `7f4d039` (Task 1: benchmarks) — FOUND
+- Commit `65b9bb0` (docs: plan metadata) — FOUND
+- Task 2 checkpoint approved by human — CONFIRMED
 
 ---
 *Phase: 08-final-quality-polish*
