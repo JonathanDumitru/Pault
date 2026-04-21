@@ -148,10 +148,11 @@ Plans:
   2. Performance benchmarks meet or exceed targets (launch < 1s, canvas sync < 100ms)
   3. Accessibility audit passes with 100% keyboard/VoiceOver coverage
   4. UI polish: consistent spacing, typography, and "delightful" micro-interactions throughout
-**Plans**: 4 plans
+**Plans**: 5 plans
 
 Plans:
 - [ ] 08-01-PLAN.md -- Final bug scrub and stability pass
 - [ ] 08-02-PLAN.md -- Performance profiling and optimization
 - [ ] 08-03-PLAN.md -- Comprehensive accessibility audit and fixes
 - [ ] 08-04-PLAN.md -- Visual polish and micro-interactions
+- [ ] 08-05-PLAN.md -- Gap closure: Reduce Motion compliance for 3 missed animation call sites
