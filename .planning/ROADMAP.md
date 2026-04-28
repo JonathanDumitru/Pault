@@ -54,7 +54,9 @@ Plans:
   1. A prompt with attachments exported to JSON and re-imported has the same attachmentFileNames as the original (no silent data loss)
   2. Copying a prompt to clipboard calls the current CopyEvent initializer (no deprecation warnings, no legacy path)
   3. SidebarView.filteredPrompts delegates to SmartCollectionFilter rather than re-implementing its logic
-**Plans**: TBD
+**Plans:** 1 plan
+Plans:
+- [ ] 14-01-PLAN.md — Fix attachment import round-trip, CopyEvent init, and SidebarView filter delegation
 
 ### Phase 15: UX Polish
 **Goal**: Users are guided correctly when no proxy URL is set, can refresh AI-curated collections, and screenshots can capture Pro UI states
@@ -93,7 +95,7 @@ Plans:
 | 11. Phase 06 Verification | v1.0 | 1/1 | Complete | 2026-04-28 |
 | 12. Phase 05 Traceability Fix | v1.0 | 1/1 | Complete | 2026-04-28 |
 | 13. Documentation & Legal | 1/1 | Complete    | 2026-04-28 | — |
-| 14. Data Integrity & Code Quality | v1.1 | 0/? | Not started | — |
+| 14. Data Integrity & Code Quality | v1.1 | 0/1 | Not started | — |
 | 15. UX Polish | v1.1 | 0/? | Not started | — |
 | 16. Testing & Verification | v1.1 | 0/? | Not started | — |
 
