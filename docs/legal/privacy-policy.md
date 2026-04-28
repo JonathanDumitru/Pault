@@ -1,6 +1,6 @@
 # Privacy Policy for Pault
 
-Last updated: [Launch Date]
+Last updated: 2026-04-27
 
 ## Overview
 

@@ -1,6 +1,6 @@
 # Terms of Service for Pault
 
-Effective date: [Launch Date]
+Effective date: 2026-04-27
 
 ## 1. Acceptance of Terms
 
