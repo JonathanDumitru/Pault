@@ -53,7 +53,7 @@ patterns-established:
   - "YAML block sequence for variables with name: + default: sub-keys"
   - "ISO8601 with .withInternetDateTime for date serialization (includes timezone)"
 
-requirements-completed: [R8.1, R8.2]
+requirements-completed: [R9.1]
 
 # Metrics
 duration: 6min

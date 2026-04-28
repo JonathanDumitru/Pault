@@ -55,7 +55,7 @@ patterns-established:
   - "Import preview: prepare() builds ImportSession, applyImport() executes resolutions — two-phase pattern"
   - "In-memory cache [String: Tag] in import loop for tag dedup without repeated FetchDescriptor queries"
 
-requirements-completed: [R8.1, R8.2]
+requirements-completed: [R9.2, R9.3]
 
 duration: 14min
 completed: 2026-04-09
