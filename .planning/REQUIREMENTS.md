@@ -9,9 +9,9 @@ Requirements for tech debt cleanup. Each maps to roadmap phases.
 
 ### Documentation
 
-- [ ] **DOC-01**: REQUIREMENTS.md traceability updated — all 33 v1.0 entries reflect actual completion status
-- [ ] **DOC-02**: Phase 04 SUMMARY files have requirements-completed fields populated
-- [ ] **DOC-03**: Legal docs [Launch Date] placeholder replaced with actual launch date
+- [x] **DOC-01**: REQUIREMENTS.md traceability updated — all 33 v1.0 entries reflect actual completion status
+- [x] **DOC-02**: Phase 04 SUMMARY files have requirements-completed fields populated
+- [x] **DOC-03**: Legal docs [Launch Date] placeholder replaced with actual launch date
 
 ### Data Integrity
 
@@ -51,9 +51,9 @@ None — v1.1 is a focused cleanup milestone.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DOC-01 | Phase 13 | Pending |
-| DOC-02 | Phase 13 | Pending |
-| DOC-03 | Phase 13 | Pending |
+| DOC-01 | Phase 13 | Complete |
+| DOC-02 | Phase 13 | Complete |
+| DOC-03 | Phase 13 | Complete |
 | DATA-01 | Phase 14 | Pending |
 | DATA-02 | Phase 14 | Pending |
 | CODE-01 | Phase 14 | Pending |

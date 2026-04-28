@@ -27,7 +27,7 @@
 
 **v1.1 Tech Debt Cleanup**
 
-- [ ] **Phase 13: Documentation & Legal** — Fix traceability docs, Phase 04 SUMMARY fields, and legal date placeholder
+- [x] **Phase 13: Documentation & Legal** — Fix traceability docs, Phase 04 SUMMARY fields, and legal date placeholder (completed 2026-04-28)
 - [ ] **Phase 14: Data Integrity & Code Quality** — Fix silent data loss on import, legacy CopyEvent init, and filter duplication
 - [ ] **Phase 15: UX Polish** — Fix proxy URL onboarding UI, add AI collection refresh button, enable Pro feature screenshots
 - [ ] **Phase 16: Testing & Verification** — Fix screenshot test identifiers and complete human verification from Phases 02 and 08
@@ -42,7 +42,7 @@
   1. REQUIREMENTS.md traceability table shows all 33 v1.0 requirements as Complete with correct phase assignments
   2. Phase 04 SUMMARY files have requirements-completed fields populated (not empty)
   3. Legal documents show an actual launch date, not the string "[Launch Date]"
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 Plans:
 - [ ] 13-01-PLAN.md — Fix traceability table, Phase 04 SUMMARY fields, and legal date placeholders
 
@@ -92,7 +92,7 @@ Plans:
 | 10. Phase 04 Verification | v1.0 | 1/1 | Complete | 2026-04-21 |
 | 11. Phase 06 Verification | v1.0 | 1/1 | Complete | 2026-04-28 |
 | 12. Phase 05 Traceability Fix | v1.0 | 1/1 | Complete | 2026-04-28 |
-| 13. Documentation & Legal | v1.1 | 0/1 | Not started | — |
+| 13. Documentation & Legal | 1/1 | Complete   | 2026-04-28 | — |
 | 14. Data Integrity & Code Quality | v1.1 | 0/? | Not started | — |
 | 15. UX Polish | v1.1 | 0/? | Not started | — |
 | 16. Testing & Verification | v1.1 | 0/? | Not started | — |
