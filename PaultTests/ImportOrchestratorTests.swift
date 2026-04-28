@@ -36,7 +36,8 @@ struct ImportOrchestratorTests {
         title: String = "Test Prompt",
         content: String = "Hello {{name}}",
         tags: [String] = [],
-        variables: [VariableExportRecord] = []
+        variables: [VariableExportRecord] = [],
+        attachmentFileNames: [String]? = nil
     ) -> PromptExportRecord {
         PromptExportRecord(
             id: id,
@@ -47,7 +48,8 @@ struct ImportOrchestratorTests {
             createdAt: Date().timeIntervalSince1970,
             updatedAt: Date().timeIntervalSince1970,
             tags: tags,
-            templateVariables: variables
+            templateVariables: variables,
+            attachmentFileNames: attachmentFileNames
         )
     }
 
@@ -396,5 +398,97 @@ Hello {{defined_var}} and also {{auto_var}}.
 
         let definedVar = vars.first(where: { $0.name == "defined_var" })
         #expect(definedVar?.defaultValue == "default_value", "Frontmatter variable should have correct default value")
+    }
+
+    // MARK: - Attachment round-trip (DATA-01)
+
+    @Test func applyImport_restoresAttachmentFileNames() throws {
+        let context = try makeContext()
+        let service = makeService(context: context)
+
+        let record = makeRecord(
+            title: "Prompt With Attachments",
+            content: "Some content",
+            attachmentFileNames: ["image.png", "doc.pdf"]
+        )
+        let data = try bundleData(records: [record])
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("test-attachments-\(UUID()).json")
+        try data.write(to: url)
+        defer { try? FileManager.default.removeItem(at: url) }
+
+        let session = ImportOrchestrator.prepare(jsonURLs: [url], markdownURLs: [], context: context)!
+        let result = ImportOrchestrator.applyImport(session: session, context: context, promptService: service)
+
+        #expect(result.imported == 1)
+
+        let allPrompts = try context.fetch(FetchDescriptor<Prompt>())
+        let imported = allPrompts.first
+        #expect(imported != nil)
+        #expect(imported!.attachments.count == 2, "Should have 2 attachment stubs")
+
+        let filenames = imported!.attachments.sorted { $0.sortOrder < $1.sortOrder }.map(\.filename)
+        #expect(filenames == ["image.png", "doc.pdf"], "Attachment filenames should match export record")
+
+        let sortOrders = imported!.attachments.sorted { $0.sortOrder < $1.sortOrder }.map(\.sortOrder)
+        #expect(sortOrders == [0, 1], "Sort orders should be 0 and 1")
+    }
+
+    @Test func applyImport_nilAttachmentFileNames_producesNoAttachments() throws {
+        let context = try makeContext()
+        let service = makeService(context: context)
+
+        let record = makeRecord(title: "No Attachments", content: "Plain content", attachmentFileNames: nil)
+        let data = try bundleData(records: [record])
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("test-no-attachments-\(UUID()).json")
+        try data.write(to: url)
+        defer { try? FileManager.default.removeItem(at: url) }
+
+        let session = ImportOrchestrator.prepare(jsonURLs: [url], markdownURLs: [], context: context)!
+        let result = ImportOrchestrator.applyImport(session: session, context: context, promptService: service)
+
+        #expect(result.imported == 1)
+
+        let allPrompts = try context.fetch(FetchDescriptor<Prompt>())
+        let imported = allPrompts.first
+        #expect(imported != nil)
+        #expect(imported!.attachments.isEmpty, "Prompt with nil attachmentFileNames should have no attachments")
+    }
+
+    @Test func applyImport_overwrite_restoresAttachmentFileNames() throws {
+        let context = try makeContext()
+        let service = makeService(context: context)
+
+        let existingID = UUID()
+        let existing = Prompt(id: existingID, title: "Existing", content: "Old content")
+        context.insert(existing)
+        try context.save()
+
+        let record = makeRecord(
+            id: existingID.uuidString,
+            title: "Overwritten",
+            content: "New content",
+            attachmentFileNames: ["video.mp4"]
+        )
+        let data = try bundleData(records: [record])
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("test-overwrite-attach-\(UUID()).json")
+        try data.write(to: url)
+        defer { try? FileManager.default.removeItem(at: url) }
+
+        var session = ImportOrchestrator.prepare(jsonURLs: [url], markdownURLs: [], context: context)!
+        for i in session.records.indices {
+            if session.records[i].existing != nil {
+                session.records[i].resolution = .overwrite
+            }
+        }
+
+        let result = ImportOrchestrator.applyImport(session: session, context: context, promptService: service)
+
+        #expect(result.overwritten == 1)
+
+        let allPrompts = try context.fetch(FetchDescriptor<Prompt>())
+        let overwritten = allPrompts.first(where: { $0.id == existingID })
+        #expect(overwritten != nil)
+        #expect(overwritten!.attachments.count == 1, "Overwritten prompt should have 1 attachment stub")
+        #expect(overwritten!.attachments.first?.filename == "video.mp4")
     }
 }
