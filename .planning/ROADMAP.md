@@ -98,7 +98,7 @@ Plans:
 | 12. Phase 05 Traceability Fix | v1.0 | 1/1 | Complete | 2026-04-28 |
 | 13. Documentation & Legal | 1/1 | Complete    | 2026-04-28 | — |
 | 14. Data Integrity & Code Quality | 1/1 | Complete    | 2026-04-28 | — |
-| 15. UX Polish | 1/1 | Complete   | 2026-04-28 | — |
+| 15. UX Polish | 1/1 | Complete    | 2026-04-28 | — |
 | 16. Testing & Verification | v1.1 | 0/? | Not started | — |
 
 _Full v1.0 details archived in `milestones/v1.0-ROADMAP.md`_
