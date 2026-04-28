@@ -62,6 +62,12 @@ final class ProStatusManager {
     }
 
     func refreshStatus() async {
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("--screenshot-mode") {
+            isProUnlocked = true
+            return
+        }
+        #endif
         var hasPro = false
         var latestJWS: String?
         for await result in Transaction.currentEntitlements {
