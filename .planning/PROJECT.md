@@ -48,7 +48,27 @@ Local-first macOS prompt library with premium Pro tier — ship polished to App 
 
 ### Active
 
-(None yet — define in next milestone)
+<!-- v1.1 Tech Debt Cleanup -->
+
+- [ ] Fix all 15 tracked tech debt items from v1.0
+- [ ] Fix all 3 advisory integration issues from v1.0
+- [ ] Ensure no regressions in existing functionality
+
+## Current Milestone: v1.1 Tech Debt Cleanup
+
+**Goal:** Clean sweep of all tracked tech debt and advisory integration issues from v1.0 — no new features, just quality and correctness.
+
+**Target fixes:**
+- REQUIREMENTS.md traceability documentation debt
+- Human verification items from Phases 02 and 08
+- ProxyConfig.baseURL placeholder UX
+- Phase 04 empty SUMMARY fields
+- AI-curated collection refresh button
+- Legacy CopyEvent init in PromptService
+- attachmentFileNames silent data loss on import
+- Legal docs [Launch Date] placeholder
+- Screenshot accessibility identifiers and Pro feature visibility
+- SidebarView filter duplication with SmartCollectionFilter
 
 ### Out of Scope
 
@@ -106,4 +126,4 @@ Architecture: `PaultApp.swift` → SwiftData ModelContainer, `PromptStudioModel`
 - **Research:** Yes — domain research before implementation where it helps
 
 ---
-*Last updated: 2026-04-27 after v1.0 milestone*
+*Last updated: 2026-04-27 after v1.1 milestone start*
