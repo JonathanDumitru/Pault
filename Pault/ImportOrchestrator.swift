@@ -297,6 +297,22 @@ enum ImportOrchestrator {
 
         context.insert(prompt)
 
+        // Restore attachment stubs from attachmentFileNames (DATA-01)
+        if let fileNames = record.attachmentFileNames {
+            for (index, name) in fileNames.enumerated() {
+                let attachment = Attachment(
+                    filename: name,
+                    mediaType: "application/octet-stream",
+                    fileSize: 0,
+                    storageMode: "stub",
+                    sortOrder: index
+                )
+                attachment.prompt = prompt
+                prompt.attachments.append(attachment)
+                context.insert(attachment)
+            }
+        }
+
         // Resolve tags
         for tagName in record.tags {
             let tag = resolveTagCached(named: tagName, context: context, cache: &tagCache)
@@ -370,6 +386,26 @@ enum ImportOrchestrator {
         for tagName in record.tags {
             let tag = resolveTagCached(named: tagName, context: context, cache: &tagCache)
             prompt.tags.append(tag)
+        }
+
+        // Clear and re-set attachments (DATA-01)
+        for attachment in prompt.attachments {
+            context.delete(attachment)
+        }
+        prompt.attachments.removeAll()
+        if let fileNames = record.attachmentFileNames {
+            for (index, name) in fileNames.enumerated() {
+                let attachment = Attachment(
+                    filename: name,
+                    mediaType: "application/octet-stream",
+                    fileSize: 0,
+                    storageMode: "stub",
+                    sortOrder: index
+                )
+                attachment.prompt = prompt
+                prompt.attachments.append(attachment)
+                context.insert(attachment)
+            }
         }
 
         // Clear and re-set template variables
