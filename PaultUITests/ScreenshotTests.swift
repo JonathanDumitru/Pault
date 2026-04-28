@@ -24,9 +24,11 @@
 //    - macOS Light Mode only
 //    - No personal data in the app (seed data is injected via --screenshot-mode)
 //
-//  NOTE: Navigation queries (e.g. app.buttons["AI Assist"]) depend on the actual
-//  accessibility tree. Use Accessibility Inspector or `po app.debugDescription` during
-//  test development to discover correct element identifiers and adjust queries below.
+//  NOTE: Navigation queries use .accessibilityIdentifier values defined in production SwiftUI views.
+//  If a query fails, verify the identifier exists in the corresponding view file.
+//  Identifiers: sidebar-toggle (ContentView), ai-assist-panel (AIAssistPanel),
+//  block-canvas (CompositionCanvasView), analytics-view (AnalyticsView),
+//  menu-bar-content (MenuBarContentView).
 
 import XCTest
 
@@ -133,8 +135,6 @@ final class ScreenshotTests: XCTestCase {
     ///   4. The --screenshot-mode-ai-streaming flag seeds a mid-stream state via UserDefaults
     ///      "screenshot_ai_streaming_active" — AIAssistViewModel reads this to show partial output
     ///
-    /// NOTE: Accessibility identifiers used below are best-guess estimates. Adjust based on
-    /// actual accessibility tree (use Accessibility Inspector or `po app.debugDescription`).
     @MainActor
     func testShot01_AIAssist() throws {
         // Navigate to Code Review Assistant
@@ -153,9 +153,7 @@ final class ScreenshotTests: XCTestCase {
         app.typeKey("i", modifierFlags: [.command, .shift])
 
         // Wait for AI Assist panel to appear
-        // Try common identifiers — adjust to match actual accessibility tree
         let aiAssistPanel = app.groups["ai-assist-panel"]
-            .exists ? app.groups["ai-assist-panel"] : app.scrollViews.firstMatch
         _ = aiAssistPanel.waitForExistence(timeout: 5)
 
         // Navigate to Improve tab if not already active
@@ -191,12 +189,8 @@ final class ScreenshotTests: XCTestCase {
         }
 
         // Wait for block editor canvas to render (5 blocks from seed data)
-        // Try to detect canvas via known accessibility identifiers or view types
         let blockCanvas = app.scrollViews["block-canvas"]
-        if !blockCanvas.waitForExistence(timeout: 5) {
-            // Fallback: wait for any scroll view that contains block content
-            Thread.sleep(forTimeInterval: 2.0)
-        }
+        XCTAssertTrue(blockCanvas.waitForExistence(timeout: 5), "Block canvas must be visible")
 
         captureScreenshot(name: "02-block-editor")
     }
@@ -247,11 +241,10 @@ final class ScreenshotTests: XCTestCase {
     ///   3. The seeded library (10 prompts, 8 tags) provides a rich list
     @MainActor
     func testShot04_LibrarySplitView() throws {
-        // Ensure sidebar is visible — toggle via View menu or keyboard shortcut if needed
-        // Common shortcut: Cmd+Option+S or toolbar toggle button
+        // Ensure sidebar is visible — toggle via toolbar button if needed
         let sidebarToggle = app.buttons["sidebar-toggle"]
-        if sidebarToggle.waitForExistence(timeout: 2) && !sidebarToggle.isSelected {
-            sidebarToggle.click()
+        if sidebarToggle.waitForExistence(timeout: 2) {
+            // Sidebar should already be visible in screenshot mode, but ensure toggle is available
         }
 
         // Select "Email Draft: Client Follow-up" to show a populated detail pane
@@ -282,8 +275,6 @@ final class ScreenshotTests: XCTestCase {
     ///   2. Wait for popover to appear and populate with recent prompts
     ///   3. Capture full screen (popover is outside the main window bounds)
     ///
-    /// NOTE: The status bar item may have accessibility identifier "pault-menu-bar-item"
-    /// or appear as a button in app.menuBars. Adjust to match actual implementation.
     @MainActor
     func testShot05_MenuBarPopover() throws {
         // Click the Pault menu bar icon to open the popover
@@ -291,12 +282,6 @@ final class ScreenshotTests: XCTestCase {
         let menuBarItem = app.menuBars.buttons["Pault"]
         if menuBarItem.waitForExistence(timeout: 5) {
             menuBarItem.click()
-        } else {
-            // Fallback: try status bar item with accessibility identifier
-            let statusItem = app.statusItems["pault-menu-bar-item"]
-            if statusItem.waitForExistence(timeout: 3) {
-                statusItem.click()
-            }
         }
 
         // Wait for popover content to render
@@ -313,12 +298,9 @@ final class ScreenshotTests: XCTestCase {
     /// Navigation path:
     ///   1. Click Analytics in the sidebar navigation
     ///   2. Wait for charts to render with the 18 seeded copy events
-    ///
-    /// NOTE: Analytics may be accessible via sidebar item "Analytics" or keyboard shortcut.
-    /// Adjust navigation based on actual sidebar structure.
     @MainActor
     func testShot06_AnalyticsDashboard() throws {
-        // Navigate to Analytics via sidebar
+        // Navigate to Analytics via toolbar button or sidebar
         let analyticsButton = app.buttons["Analytics"]
         if analyticsButton.waitForExistence(timeout: 5) {
             analyticsButton.click()
@@ -329,6 +311,10 @@ final class ScreenshotTests: XCTestCase {
                 analyticsCell.click()
             }
         }
+
+        // Verify analytics view loaded
+        let analyticsView = app.groups["analytics-view"]
+        XCTAssertTrue(analyticsView.waitForExistence(timeout: 5), "Analytics view must be visible")
 
         // Allow charts to render with copy event data
         Thread.sleep(forTimeInterval: 2.5)
