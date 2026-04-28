@@ -66,7 +66,9 @@ Plans:
   1. Launching Pault with no proxy URL configured and triggering an AI call shows an onboarding or error UI instead of a silent failure
   2. The sidebar shows a refresh button for AI-curated collections that triggers a new curation request
   3. Running the app in screenshot mode with ProStatusManager override shows Pro features visible in the UI
-**Plans**: TBD
+**Plans:** 1 plan
+Plans:
+- [ ] 15-01-PLAN.md — Proxy error UI, AI collection refresh button, and Pro screenshot override
 
 ### Phase 16: Testing & Verification
 **Goal**: Screenshot tests use real accessibility identifiers and all human verification items from v1.0 are signed off
@@ -96,7 +98,7 @@ Plans:
 | 12. Phase 05 Traceability Fix | v1.0 | 1/1 | Complete | 2026-04-28 |
 | 13. Documentation & Legal | 1/1 | Complete    | 2026-04-28 | — |
 | 14. Data Integrity & Code Quality | 1/1 | Complete    | 2026-04-28 | — |
-| 15. UX Polish | v1.1 | 0/? | Not started | — |
+| 15. UX Polish | v1.1 | 0/1 | Not started | — |
 | 16. Testing & Verification | v1.1 | 0/? | Not started | — |
 
 _Full v1.0 details archived in `milestones/v1.0-ROADMAP.md`_
