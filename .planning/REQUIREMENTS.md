@@ -285,8 +285,8 @@
 | R3.1: Version History | Phase 5 | Pending |
 | R3.2: Version Restore | Phase 5 | Pending |
 | R3.3: Version Diff | Phase 5 | Pending |
-| R4.1: Analytics Dashboard | Phase 5 → Phase 12 | Pending |
-| R4.2: Analytics Data Collection | Phase 5 → Phase 12 | Pending |
+| R4.1: Analytics Dashboard | Phase 5 → Phase 12 | Complete |
+| R4.2: Analytics Data Collection | Phase 5 → Phase 12 | Complete |
 | R4.3: Smart Collections | Phase 5 | Pending |
 | R5.1: Prompt Execution | Phase 4 → Phase 10 | Pending |
 | R5.2: Response Management | Phase 4 → Phase 10 | Pending |
