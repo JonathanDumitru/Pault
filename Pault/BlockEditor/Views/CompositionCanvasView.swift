@@ -591,6 +591,7 @@ struct CompositionCanvasView: View {
                     }
                 }
             }
+            .accessibilityIdentifier("block-canvas")
         }
     }
 

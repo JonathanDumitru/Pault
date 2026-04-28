@@ -144,6 +144,7 @@ struct MenuBarContentView: View {
         .copyToast(isShowing: $showCopyToast)
         .frame(width: AppConstants.Windows.menuBarDefault.width,
                height: AppConstants.Windows.menuBarDefault.height)
+        .accessibilityIdentifier("menu-bar-content")
         .sheet(isPresented: $isCreatingNew) {
             NewPromptSheet(isPresented: $isCreatingNew)
         }

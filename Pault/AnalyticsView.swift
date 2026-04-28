@@ -71,6 +71,7 @@ struct AnalyticsView: View {
             }
         }
         .frame(width: 480, height: 560)
+        .accessibilityIdentifier("analytics-view")
     }
 
     // MARK: - Analytics Content

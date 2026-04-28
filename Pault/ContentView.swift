@@ -302,6 +302,7 @@ struct ContentView: View {
             .buttonStyle(.plain)
             .keyboardShortcut("1", modifiers: .command)
             .help("Toggle Sidebar (⌘1)")
+            .accessibilityIdentifier("sidebar-toggle")
 
             Divider()
                 .frame(height: 16)

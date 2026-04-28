@@ -87,6 +87,7 @@ struct AIAssistPanel: View {
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .padding(.horizontal, 16)
         .padding(.bottom, 8)
+        .accessibilityIdentifier("ai-assist-panel")
     }
 
     private var noProxyStateView: some View {
