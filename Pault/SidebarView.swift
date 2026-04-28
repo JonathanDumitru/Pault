@@ -52,23 +52,8 @@ struct SidebarView: View {
         case .tag(let tag):
             prompts = prompts.filter { $0.tags.contains(where: { $0.id == tag.id }) && !$0.isArchived }
         case .smartCollection(let collection):
-            switch collection.ruleType {
-            case .aiCurated:
-                let ids = Set(collection.promptIDs)
-                prompts = prompts.filter { ids.contains($0.id) }
-            case .savedFilter:
-                guard let filter = collection.filter else { prompts = []; break }
-                prompts = prompts.filter { !$0.isArchived }
-                if filter.onlyFavorites { prompts = prompts.filter(\.isFavorite) }
-                if let days = filter.recentDays {
-                    let cutoff = Calendar.current.date(byAdding: .day, value: -days, to: Date()) ?? Date()
-                    prompts = prompts.filter { ($0.lastUsedAt ?? .distantPast) >= cutoff }
-                }
-                if !filter.tagIDs.isEmpty {
-                    let ids = Set(filter.tagIDs)
-                    prompts = prompts.filter { $0.tags.contains(where: { ids.contains($0.id) }) }
-                }
-            }
+            let service = PromptService(modelContext: modelContext)
+            prompts = service.filterPrompts(prompts, collection: collection)
         }
 
         // Apply search
