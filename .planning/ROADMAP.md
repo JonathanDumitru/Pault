@@ -78,7 +78,7 @@ Plans:
   1. ScreenshotTests reference accessibility identifiers that match identifiers defined in the production SwiftUI views
   2. All 7 Phase 02 human verification items are checked: drag-drop visual feedback, VoiceOver announcements for block operations, and animation correctness
   3. All 3 Phase 08 human verification items are checked: Instruments memory profile shows no leaks, VoiceOver reads all Pro feature labels, visual polish targets confirmed
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 Plans:
 - [ ] 16-01-PLAN.md — Add accessibility identifiers to production views and update ScreenshotTests
 - [ ] 16-02-PLAN.md — Human verification sign-off for Phase 02 and Phase 08 deferred items
@@ -102,6 +102,6 @@ Plans:
 | 13. Documentation & Legal | 1/1 | Complete    | 2026-04-28 | — |
 | 14. Data Integrity & Code Quality | 1/1 | Complete    | 2026-04-28 | — |
 | 15. UX Polish | 1/1 | Complete    | 2026-04-28 | — |
-| 16. Testing & Verification | v1.1 | 0/2 | Not started | — |
+| 16. Testing & Verification | 1/2 | In Progress|  | — |
 
 _Full v1.0 details archived in `milestones/v1.0-ROADMAP.md`_

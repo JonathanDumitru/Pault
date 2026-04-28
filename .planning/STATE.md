@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 15-01-PLAN.md
-last_updated: "2026-04-28T03:19:49.370Z"
-last_activity: 2026-04-27 — Phase 15 Plan 01 executed (UX-01, UX-02, UX-03 complete)
+stopped_at: Completed 16-01-PLAN.md
+last_updated: "2026-04-28T03:47:44.220Z"
+last_activity: 2026-04-28 — Phase 16 Plan 01 executed (TEST-01 complete)
 progress:
   total_phases: 4
   completed_phases: 3
-  total_plans: 3
-  completed_plans: 3
+  total_plans: 5
+  completed_plans: 4
 ---
 
 # Project State
@@ -24,16 +24,16 @@ See: .planning/PROJECT.md (updated 2026-04-27)
 
 ## Current Position
 
-Phase: 15 (UX Polish) — Complete
-Plan: 01 of 01 complete
-Status: Phase 15 complete, ready for Phase 16
-Last activity: 2026-04-27 — Phase 15 Plan 01 executed (UX-01, UX-02, UX-03 complete)
+Phase: 16 (Testing Verification) — In Progress
+Plan: 01 of 02 complete
+Status: Phase 16 Plan 01 complete (TEST-01), Plans 02 are human verification sign-offs
+Last activity: 2026-04-28 — Phase 16 Plan 01 executed (TEST-01 complete)
 
 ```
 Phase 13 [██████████] 100%
 Phase 14 [██████████] 100%
 Phase 15 [██████████] 100%
-Phase 16 ░░░░░░░░░░░░░░░░░░░░ 0%
+Phase 16 [████░░░░░░] 50%
 ```
 
 ## Performance Metrics
@@ -47,6 +47,7 @@ Phase 16 ░░░░░░░░░░░░░░░░░░░░ 0%
 | Phase 13 P01 | 2min | 3 tasks | 7 files |
 | Phase 14 P01 | 9min | 3 tasks | 4 files |
 | Phase 15-ux-polish P01 | 8min | 3 tasks | 4 files |
+| Phase 16-testing-verification P01 | 3min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -68,9 +69,12 @@ Phase 16 ░░░░░░░░░░░░░░░░░░░░ 0%
 | 6 | SidebarView delegates to PromptService for smart collection filtering | PromptService has extended filter fields (qualityScore, model, contentContains) not in SidebarView's inline version |
 | 7 | noProxyStateView ordered before noKeyStateView | Proxy misconfiguration is a more fundamental issue than missing API key; surfaced first in AI error chain |
 | 8 | Screenshot-mode Pro override wrapped in #if DEBUG | Defensive approach prevents release-build exposure even though App Store builds cannot inject launch arguments |
+| 9 | Inline accessibility identifier strings rather than constants file | Identifiers appear in exactly two places (production view + test); constants file would be unnecessary coupling |
+| 10 | block-canvas identifier on ScrollView inside ScrollViewReader | ScrollView maps to app.scrollViews in XCUI; placing on outer ZStack would require app.groups query which is less specific |
+| 11 | Removed app.statusItems fallback from testShot05 | This XCUI API does not exist for NSStatusItem-based menu bar extras; app.menuBars.buttons is the correct query |
 
 ## Session Continuity
 
-Last session: 2026-04-28T03:16:34.972Z
-Stopped at: Completed 15-01-PLAN.md
+Last session: 2026-04-28T03:47:44.215Z
+Stopped at: Completed 16-01-PLAN.md
 Resume file: None
