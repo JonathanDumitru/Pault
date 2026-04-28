@@ -202,7 +202,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 11-01-PLAN.md — Fix SUMMARY IDs, verify R9.1-R9.3, write 06-VERIFICATION.md
+- [ ] 12-01-PLAN.md — Add requirements-completed field to 05-02-SUMMARY.md for R4.1, R4.2
 
 ### Phase 12: Phase 05 Traceability Fix
 **Goal**: Add missing SUMMARY frontmatter claims for R4.1 and R4.2, confirming verification alignment
@@ -215,4 +215,4 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 11-01-PLAN.md — Fix SUMMARY IDs, verify R9.1-R9.3, write 06-VERIFICATION.md
+- [ ] 12-01-PLAN.md — Add requirements-completed field to 05-02-SUMMARY.md for R4.1, R4.2
