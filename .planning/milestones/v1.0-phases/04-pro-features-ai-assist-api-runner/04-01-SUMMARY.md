@@ -25,6 +25,7 @@ decisions:
   - "AIService Claude/OpenAI calls route through proxy with X-Provider/X-Storekit-JWS headers; Ollama stays direct"
   - "ProStatusManager auto-refreshes JWS token every 60s for AI call auth"
   - "ProxyConfig baseURL/enableCaching use direct UserDefaults for thread-safe access from AIService actor"
+requirements-completed: [R2.5, R5.1]
 metrics:
   duration: 20min
   completed_date: "2026-04-02T23:13:09Z"

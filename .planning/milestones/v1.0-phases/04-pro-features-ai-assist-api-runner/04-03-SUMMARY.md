@@ -18,6 +18,7 @@ key-files:
     - Pault/PrivacyInfo.xcprivacy
 decisions:
   - "Cmd+Return shortcut added for Run tab alongside Cmd+Shift+I for AI Assist"
+requirements-completed: [R5.2, R5.3]
 metrics:
   duration: 15min
   completed_date: "2026-04-02T23:17:19Z"

@@ -19,6 +19,7 @@ key-files:
 decisions:
   - "PromptDetailView body extracted to sub-views/modifiers to avoid Swift compiler 'reasonable time' type-checking timeout"
   - "ProxyConfig baseURL/enableCaching use direct UserDefaults for thread-safe access from AIService actor"
+requirements-completed: [R2.1, R2.2, R2.3, R2.4]
 metrics:
   duration: 15min
   completed_date: "2026-04-02T23:29:02Z"
