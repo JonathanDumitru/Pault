@@ -25,6 +25,7 @@ struct SidebarView: View {
     @AppStorage("useCompactMode") private var useCompactMode: Bool = true  // Default to compact for collapsible
     @Query(sort: [SortDescriptor(\SmartCollection.sortOrder)]) private var collections: [SmartCollection]
     @State private var showingNewCollection = false
+    @State private var refreshingCollectionIDs: Set<UUID> = []
 
     @Binding var selectedPrompt: Prompt?
     @Binding var selectedFilter: SidebarFilter
@@ -34,6 +35,33 @@ struct SidebarView: View {
     var onToggleFavorite: ((Prompt) -> Void)?
     var onToggleArchive: ((Prompt) -> Void)?
     var onCopy: ((Prompt) -> Void)?
+
+    private func refreshAICuratedCollection(_ collection: SmartCollection) {
+        refreshingCollectionIDs.insert(collection.id)
+        let config = AIConfig.defaults[.claude] ?? AIConfig(provider: .claude, model: "claude-opus-4-6")
+        let titles = Array(allPrompts.prefix(100).map(\.title))
+        let collectionName = collection.name
+        Task {
+            do {
+                let suggestions = try await AIService.shared.clusterPrompts(titles: titles, config: config)
+                await MainActor.run {
+                    if let match = suggestions.first(where: { $0.name.lowercased() == collectionName.lowercased() }) {
+                        let ids = allPrompts
+                            .filter { match.promptTitles.contains($0.title) }
+                            .map(\.id)
+                        collection.promptIDs = ids
+                    }
+                    collection.lastRefreshed = Date()
+                    try? modelContext.save()
+                    refreshingCollectionIDs.remove(collection.id)
+                }
+            } catch {
+                await MainActor.run {
+                    refreshingCollectionIDs.remove(collection.id)
+                }
+            }
+        }
+    }
 
     private var filteredPrompts: [Prompt] {
         var prompts = allPrompts
@@ -164,12 +192,31 @@ struct SidebarView: View {
                             ) {
                                 selectedFilter = .smartCollection(collection)
                             }
-                            // Show lastRefreshed for AI-curated collections
-                            if collection.ruleType == .aiCurated, let refreshed = collection.lastRefreshed {
-                                Text("Refreshed \(refreshed, style: .relative) ago")
-                                    .font(.caption2)
-                                    .foregroundStyle(.tertiary)
-                                    .padding(.leading, 36)
+                            // Show lastRefreshed + refresh button for AI-curated collections
+                            if collection.ruleType == .aiCurated {
+                                HStack(spacing: 4) {
+                                    if let refreshed = collection.lastRefreshed {
+                                        Text("Refreshed \(refreshed, style: .relative) ago")
+                                            .font(.caption2)
+                                            .foregroundStyle(.tertiary)
+                                    }
+                                    Spacer()
+                                    Button {
+                                        refreshAICuratedCollection(collection)
+                                    } label: {
+                                        if refreshingCollectionIDs.contains(collection.id) {
+                                            ProgressView().controlSize(.mini)
+                                        } else {
+                                            Image(systemName: "arrow.clockwise")
+                                                .font(.caption2)
+                                        }
+                                    }
+                                    .buttonStyle(.plain)
+                                    .disabled(refreshingCollectionIDs.contains(collection.id) || !ProxyConfig.isConfigured)
+                                    .help("Refresh AI-curated collection")
+                                }
+                                .padding(.leading, 36)
+                                .padding(.trailing, 8)
                             }
                         }
                         .contextMenu {
