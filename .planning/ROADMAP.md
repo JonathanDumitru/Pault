@@ -42,7 +42,9 @@
   1. REQUIREMENTS.md traceability table shows all 33 v1.0 requirements as Complete with correct phase assignments
   2. Phase 04 SUMMARY files have requirements-completed fields populated (not empty)
   3. Legal documents show an actual launch date, not the string "[Launch Date]"
-**Plans**: TBD
+**Plans:** 1 plan
+Plans:
+- [ ] 13-01-PLAN.md — Fix traceability table, Phase 04 SUMMARY fields, and legal date placeholders
 
 ### Phase 14: Data Integrity & Code Quality
 **Goal**: Import/export round-trips preserve all data, clipboard events use current APIs, and filter logic is not duplicated
@@ -90,7 +92,7 @@
 | 10. Phase 04 Verification | v1.0 | 1/1 | Complete | 2026-04-21 |
 | 11. Phase 06 Verification | v1.0 | 1/1 | Complete | 2026-04-28 |
 | 12. Phase 05 Traceability Fix | v1.0 | 1/1 | Complete | 2026-04-28 |
-| 13. Documentation & Legal | v1.1 | 0/? | Not started | — |
+| 13. Documentation & Legal | v1.1 | 0/1 | Not started | — |
 | 14. Data Integrity & Code Quality | v1.1 | 0/? | Not started | — |
 | 15. UX Polish | v1.1 | 0/? | Not started | — |
 | 16. Testing & Verification | v1.1 | 0/? | Not started | — |
