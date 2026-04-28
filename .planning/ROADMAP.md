@@ -3,6 +3,7 @@
 ## Milestones
 
 - ✅ **v1.0 App Store Launch** — Phases 1-12 (shipped 2026-04-27)
+- **v1.1 Tech Debt Cleanup** — Phases 13-16 (active)
 
 ## Phases
 
@@ -24,6 +25,55 @@
 
 </details>
 
+**v1.1 Tech Debt Cleanup**
+
+- [ ] **Phase 13: Documentation & Legal** — Fix traceability docs, Phase 04 SUMMARY fields, and legal date placeholder
+- [ ] **Phase 14: Data Integrity & Code Quality** — Fix silent data loss on import, legacy CopyEvent init, and filter duplication
+- [ ] **Phase 15: UX Polish** — Fix proxy URL onboarding UI, add AI collection refresh button, enable Pro feature screenshots
+- [ ] **Phase 16: Testing & Verification** — Fix screenshot test identifiers and complete human verification from Phases 02 and 08
+
+## Phase Details
+
+### Phase 13: Documentation & Legal
+**Goal**: All documentation accurately reflects v1.0 completion state and contains no placeholder values
+**Depends on**: Nothing (documentation-only, no code dependencies)
+**Requirements**: DOC-01, DOC-02, DOC-03
+**Success Criteria** (what must be TRUE):
+  1. REQUIREMENTS.md traceability table shows all 33 v1.0 requirements as Complete with correct phase assignments
+  2. Phase 04 SUMMARY files have requirements-completed fields populated (not empty)
+  3. Legal documents show an actual launch date, not the string "[Launch Date]"
+**Plans**: TBD
+
+### Phase 14: Data Integrity & Code Quality
+**Goal**: Import/export round-trips preserve all data, clipboard events use current APIs, and filter logic is not duplicated
+**Depends on**: Phase 13 (documentation complete before code work begins)
+**Requirements**: DATA-01, DATA-02, CODE-01
+**Success Criteria** (what must be TRUE):
+  1. A prompt with attachments exported to JSON and re-imported has the same attachmentFileNames as the original (no silent data loss)
+  2. Copying a prompt to clipboard calls the current CopyEvent initializer (no deprecation warnings, no legacy path)
+  3. SidebarView.filteredPrompts delegates to SmartCollectionFilter rather than re-implementing its logic
+**Plans**: TBD
+
+### Phase 15: UX Polish
+**Goal**: Users are guided correctly when no proxy URL is set, can refresh AI-curated collections, and screenshots can capture Pro UI states
+**Depends on**: Phase 13
+**Requirements**: UX-01, UX-02, UX-03
+**Success Criteria** (what must be TRUE):
+  1. Launching Pault with no proxy URL configured and triggering an AI call shows an onboarding or error UI instead of a silent failure
+  2. The sidebar shows a refresh button for AI-curated collections that triggers a new curation request
+  3. Running the app in screenshot mode with ProStatusManager override shows Pro features visible in the UI
+**Plans**: TBD
+
+### Phase 16: Testing & Verification
+**Goal**: Screenshot tests use real accessibility identifiers and all human verification items from v1.0 are signed off
+**Depends on**: Phase 15 (UX changes must be in place before verifying screenshots and accessibility)
+**Requirements**: TEST-01, TEST-02, TEST-03
+**Success Criteria** (what must be TRUE):
+  1. ScreenshotTests reference accessibility identifiers that match identifiers defined in the production SwiftUI views
+  2. All 7 Phase 02 human verification items are checked: drag-drop visual feedback, VoiceOver announcements for block operations, and animation correctness
+  3. All 3 Phase 08 human verification items are checked: Instruments memory profile shows no leaks, VoiceOver reads all Pro feature labels, visual polish targets confirmed
+**Plans**: TBD
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -40,5 +90,9 @@
 | 10. Phase 04 Verification | v1.0 | 1/1 | Complete | 2026-04-21 |
 | 11. Phase 06 Verification | v1.0 | 1/1 | Complete | 2026-04-28 |
 | 12. Phase 05 Traceability Fix | v1.0 | 1/1 | Complete | 2026-04-28 |
+| 13. Documentation & Legal | v1.1 | 0/? | Not started | — |
+| 14. Data Integrity & Code Quality | v1.1 | 0/? | Not started | — |
+| 15. UX Polish | v1.1 | 0/? | Not started | — |
+| 16. Testing & Verification | v1.1 | 0/? | Not started | — |
 
 _Full v1.0 details archived in `milestones/v1.0-ROADMAP.md`_

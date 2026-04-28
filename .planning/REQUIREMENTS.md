@@ -51,24 +51,24 @@ None — v1.1 is a focused cleanup milestone.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DOC-01 | — | Pending |
-| DOC-02 | — | Pending |
-| DOC-03 | — | Pending |
-| DATA-01 | — | Pending |
-| DATA-02 | — | Pending |
-| UX-01 | — | Pending |
-| UX-02 | — | Pending |
-| UX-03 | — | Pending |
-| TEST-01 | — | Pending |
-| TEST-02 | — | Pending |
-| TEST-03 | — | Pending |
-| CODE-01 | — | Pending |
+| DOC-01 | Phase 13 | Pending |
+| DOC-02 | Phase 13 | Pending |
+| DOC-03 | Phase 13 | Pending |
+| DATA-01 | Phase 14 | Pending |
+| DATA-02 | Phase 14 | Pending |
+| CODE-01 | Phase 14 | Pending |
+| UX-01 | Phase 15 | Pending |
+| UX-02 | Phase 15 | Pending |
+| UX-03 | Phase 15 | Pending |
+| TEST-01 | Phase 16 | Pending |
+| TEST-02 | Phase 16 | Pending |
+| TEST-03 | Phase 16 | Pending |
 
 **Coverage:**
 - v1.1 requirements: 12 total
-- Mapped to phases: 0
-- Unmapped: 12 ⚠️
+- Mapped to phases: 12
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-04-27*
-*Last updated: 2026-04-27 after initial definition*
+*Last updated: 2026-04-27 after roadmap creation (all 12 requirements mapped to phases 13-16)*
