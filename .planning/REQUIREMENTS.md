@@ -303,6 +303,6 @@
 | R8.2: Accessibility Audit | Phase 8 | Pending |
 | R8.3: Performance Profiling | Phase 8 | Pending |
 | R8.4: UX Consistency Pass | Phase 8 | Pending |
-| R9.1: Export | Phase 6 → Phase 11 | Pending |
-| R9.2: Import | Phase 6 → Phase 11 | Pending |
-| R9.3: Interoperability | Phase 6 → Phase 11 | Pending |
+| R9.1: Export | Phase 6 → Phase 11 | Complete |
+| R9.2: Import | Phase 6 → Phase 11 | Complete |
+| R9.3: Interoperability | Phase 6 → Phase 11 | Complete |
