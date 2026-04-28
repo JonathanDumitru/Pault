@@ -199,7 +199,10 @@ Plans:
   1. 06-01-SUMMARY claims R9.1 (not R8.1); 06-02-SUMMARY claims R9.2 (not R8.2)
   2. R9.3 (Interoperability) is verified with code evidence
   3. Phase 06 VERIFICATION.md exists with per-requirement verdicts
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 11-01-PLAN.md — Fix SUMMARY IDs, verify R9.1-R9.3, write 06-VERIFICATION.md
 
 ### Phase 12: Phase 05 Traceability Fix
 **Goal**: Add missing SUMMARY frontmatter claims for R4.1 and R4.2, confirming verification alignment
@@ -209,4 +212,7 @@ Plans:
 **Success Criteria** (what must be TRUE):
   1. Phase 05 SUMMARY frontmatter includes R4.1 and R4.2 in requirements-completed
   2. 05-VERIFICATION.md verdicts for R4.1, R4.2 confirmed as SATISFIED
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 11-01-PLAN.md — Fix SUMMARY IDs, verify R9.1-R9.3, write 06-VERIFICATION.md
