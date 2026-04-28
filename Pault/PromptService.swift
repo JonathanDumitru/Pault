@@ -92,7 +92,7 @@ final class PromptService {
         }
 
         prompt.markAsUsed()
-        let copyEvent = CopyEvent(promptID: prompt.id)
+        let copyEvent = CopyEvent(promptID: prompt.id, type: .copy)
         modelContext.insert(copyEvent)
         save("copyToClipboard")
     }
