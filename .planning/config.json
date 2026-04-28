@@ -1,0 +1,19 @@
+{
+  "project": "Pault",
+  "version": "1.0",
+  "milestone": "App Store Launch",
+  "created": "2026-03-14",
+  "workflow": {
+    "mode": "thorough",
+    "granularity": "medium",
+    "research": true,
+    "testing_phases": true,
+    "polish_phases": true,
+    "_auto_chain_active": false
+  },
+  "agents": {
+    "profile": "quality",
+    "research": true,
+    "verification": true
+  }
+}
