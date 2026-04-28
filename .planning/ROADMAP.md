@@ -23,7 +23,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 9: PrivacyInfo Xcode Wiring** - Verify PrivacyInfo.xcprivacy bundling via PBXFileSystemSynchronizedRootGroup and close R7.1 gap (gap closure)
 - [x] **Phase 10: Phase 04 Verification & Gap Closure** - Verify AI Assist & API Runner implementation against R2.1-R2.5, R5.1-R5.3 (completed 2026-04-21)
 - [x] **Phase 11: Phase 06 Verification & Gap Closure** - Verify Import/Export, fix SUMMARY IDs, close R9.1-R9.3 (completed 2026-04-28)
-- [ ] **Phase 12: Phase 05 Traceability Fix** - Add SUMMARY claims for R4.1, R4.2
+- [x] **Phase 12: Phase 05 Traceability Fix** - Add SUMMARY claims for R4.1, R4.2 (completed 2026-04-28)
 
 ## Phase Details
 
