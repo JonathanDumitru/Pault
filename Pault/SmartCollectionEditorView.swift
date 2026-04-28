@@ -93,7 +93,8 @@ struct SmartCollectionEditorView: View {
                             Label("Generate with AI", systemImage: "sparkles")
                         }
                     }
-                    .disabled(isGenerating || allPrompts.isEmpty)
+                    .disabled(isGenerating || allPrompts.isEmpty || !ProxyConfig.isConfigured)
+                    .help(ProxyConfig.isConfigured ? "" : "Configure proxy URL in Preferences first")
                 }
 
                 if let error = generationError {

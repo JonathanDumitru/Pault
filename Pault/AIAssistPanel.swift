@@ -35,6 +35,10 @@ struct AIAssistPanel: View {
         return false
     }
 
+    var isProxyConfigured: Bool {
+        ProxyConfig.isConfigured
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             // Tab bar
@@ -57,7 +61,9 @@ struct AIAssistPanel: View {
 
             // Tab content
             Group {
-                if !hasAnyAPIKey {
+                if !isProxyConfigured {
+                    noProxyStateView
+                } else if !hasAnyAPIKey {
                     noKeyStateView
                 } else {
                     switch selectedTab {
@@ -81,6 +87,26 @@ struct AIAssistPanel: View {
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .padding(.horizontal, 16)
         .padding(.bottom, 8)
+    }
+
+    private var noProxyStateView: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "network.slash")
+                .font(.title2)
+                .foregroundStyle(.secondary)
+            Text("Proxy URL not configured")
+                .font(.subheadline.weight(.medium))
+            Text("Add your proxy URL in Preferences > AI > Proxy Infrastructure before using AI features.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+            Button("Open Preferences") {
+                NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+            }
+            .buttonStyle(.bordered)
+        }
+        .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     private var noKeyStateView: some View {
