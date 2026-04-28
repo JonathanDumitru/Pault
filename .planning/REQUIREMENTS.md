@@ -15,8 +15,8 @@ Requirements for tech debt cleanup. Each maps to roadmap phases.
 
 ### Data Integrity
 
-- [ ] **DATA-01**: ImportOrchestrator restores attachmentFileNames from export records (no silent data loss)
-- [ ] **DATA-02**: PromptService.copyToClipboard uses current CopyEvent init (not legacy)
+- [x] **DATA-01**: ImportOrchestrator restores attachmentFileNames from export records (no silent data loss)
+- [x] **DATA-02**: PromptService.copyToClipboard uses current CopyEvent init (not legacy)
 
 ### UX Polish
 
@@ -32,7 +32,7 @@ Requirements for tech debt cleanup. Each maps to roadmap phases.
 
 ### Code Quality
 
-- [ ] **CODE-01**: SidebarView.filteredPrompts refactored to reuse SmartCollectionFilter
+- [x] **CODE-01**: SidebarView.filteredPrompts refactored to reuse SmartCollectionFilter
 
 ## Future Requirements
 
@@ -54,9 +54,9 @@ None — v1.1 is a focused cleanup milestone.
 | DOC-01 | Phase 13 | Complete |
 | DOC-02 | Phase 13 | Complete |
 | DOC-03 | Phase 13 | Complete |
-| DATA-01 | Phase 14 | Pending |
-| DATA-02 | Phase 14 | Pending |
-| CODE-01 | Phase 14 | Pending |
+| DATA-01 | Phase 14 | Complete |
+| DATA-02 | Phase 14 | Complete |
+| CODE-01 | Phase 14 | Complete |
 | UX-01 | Phase 15 | Pending |
 | UX-02 | Phase 15 | Pending |
 | UX-03 | Phase 15 | Pending |

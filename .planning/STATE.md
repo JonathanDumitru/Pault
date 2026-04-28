@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 13-01-PLAN.md
-last_updated: "2026-04-28T02:32:31.006Z"
-last_activity: 2026-04-28 — Phase 13 Plan 01 executed (all 3 DOC requirements complete)
+stopped_at: Completed 14-01-PLAN.md
+last_updated: "2026-04-28T02:51:15Z"
+last_activity: 2026-04-27 — Phase 14 Plan 01 executed (DATA-01, DATA-02, CODE-01 complete)
 progress:
   total_phases: 4
-  completed_phases: 1
-  total_plans: 1
-  completed_plans: 1
+  completed_phases: 2
+  total_plans: 2
+  completed_plans: 2
 ---
 
 # Project State
@@ -24,14 +24,14 @@ See: .planning/PROJECT.md (updated 2026-04-27)
 
 ## Current Position
 
-Phase: 13 (Documentation & Legal) — Complete
+Phase: 14 (Data Integrity & Code Quality) — Complete
 Plan: 01 of 01 complete
-Status: Phase 13 complete, ready for Phase 14
-Last activity: 2026-04-28 — Phase 13 Plan 01 executed (all 3 DOC requirements complete)
+Status: Phase 14 complete, ready for Phase 15
+Last activity: 2026-04-27 — Phase 14 Plan 01 executed (DATA-01, DATA-02, CODE-01 complete)
 
 ```
 Phase 13 [██████████] 100%
-Phase 14 ░░░░░░░░░░░░░░░░░░░░ 0%
+Phase 14 [██████████] 100%
 Phase 15 ░░░░░░░░░░░░░░░░░░░░ 0%
 Phase 16 ░░░░░░░░░░░░░░░░░░░░ 0%
 ```
@@ -45,6 +45,7 @@ Phase 16 ░░░░░░░░░░░░░░░░░░░░ 0%
 | v1.1 plans | TBD |
 | Requirements covered | 12/12 |
 | Phase 13 P01 | 2min | 3 tasks | 7 files |
+| Phase 14 P01 | 9min | 3 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -62,9 +63,11 @@ Phase 16 ░░░░░░░░░░░░░░░░░░░░ 0%
 | 2 | DATA and CODE fixes together in Phase 14 | All three touch Swift source files in the same layer (service/view); natural bundle |
 | 3 | Verification last (Phase 16) | Must run after UX changes land so screenshot identifiers and Pro-feature visibility are testable |
 | 4 | 4 phases for 12 requirements | Medium granularity + cleanup nature of work; no feature boundaries needed |
+| 5 | Import attachment stubs use storageMode=stub | Preserves filename metadata without implying file data is present; enables round-trip fidelity |
+| 6 | SidebarView delegates to PromptService for smart collection filtering | PromptService has extended filter fields (qualityScore, model, contentContains) not in SidebarView's inline version |
 
 ## Session Continuity
 
-Last session: 2026-04-28T02:29:57.161Z
-Stopped at: Completed 13-01-PLAN.md
+Last session: 2026-04-28T02:51:15Z
+Stopped at: Completed 14-01-PLAN.md
 Resume file: None
