@@ -22,11 +22,11 @@ Requirements for tech debt cleanup. Each maps to roadmap phases.
 
 - [x] **UX-01**: ProxyConfig.baseURL shows proper onboarding/error UI when no proxy URL configured before first AI call
 - [x] **UX-02**: AI-curated collection refresh button present in sidebar
-- [x] **UX-03**: Screenshot capture can show Pro features via ProStatusManager override
+- [ ] **UX-03**: Screenshot capture can show Pro features via ProStatusManager override
 
 ### Testing
 
-- [x] **TEST-01**: ScreenshotTests use correct accessibility identifiers (not best-guess)
+- [ ] **TEST-01**: ScreenshotTests use correct accessibility identifiers (not best-guess)
 - [x] **TEST-02**: Phase 02 human verification completed (7 items: drag-drop visual, VoiceOver, animations)
 - [x] **TEST-03**: Phase 08 human verification completed (3 items: Instruments, VoiceOver, visual polish)
 
@@ -59,8 +59,8 @@ None — v1.1 is a focused cleanup milestone.
 | CODE-01 | Phase 14 | Complete |
 | UX-01 | Phase 15 | Complete |
 | UX-02 | Phase 15 | Complete |
-| UX-03 | Phase 15 | Complete |
-| TEST-01 | Phase 16 | Complete |
+| UX-03 | Phase 17 | Pending |
+| TEST-01 | Phase 17 | Pending |
 | TEST-02 | Phase 16 | Complete |
 | TEST-03 | Phase 16 | Complete |
 
@@ -71,4 +71,4 @@ None — v1.1 is a focused cleanup milestone.
 
 ---
 *Requirements defined: 2026-04-27*
-*Last updated: 2026-04-27 after roadmap creation (all 12 requirements mapped to phases 13-16)*
+*Last updated: 2026-04-29 — milestone audit found TEST-01 and UX-03 partially satisfied; reassigned to Phase 17 (gap closure)*

@@ -31,6 +31,7 @@
 - [x] **Phase 14: Data Integrity & Code Quality** — Fix silent data loss on import, legacy CopyEvent init, and filter duplication (completed 2026-04-28)
 - [x] **Phase 15: UX Polish** — Fix proxy URL onboarding UI, add AI collection refresh button, enable Pro feature screenshots (completed 2026-04-28)
 - [x] **Phase 16: Testing & Verification** — Fix screenshot test identifiers and complete human verification from Phases 02 and 08 (completed 2026-04-29)
+- [ ] **Phase 17: Screenshot Test Reachability** — Close v1.1 audit gaps: make Analytics toolbar XCUI-reachable and harden ProStatusManager screenshot-mode override
 
 ## Phase Details
 
@@ -70,6 +71,19 @@ Plans:
 Plans:
 - [ ] 15-01-PLAN.md — Proxy error UI, AI collection refresh button, and Pro screenshot override
 
+### Phase 17: Screenshot Test Reachability
+**Goal**: testShot06_AnalyticsDashboard reaches the Analytics view and produces screenshot 06; ProStatusManager applies the screenshot-mode override on the first synchronous render
+**Depends on**: Phase 16 (this closes integration gaps surfaced by the v1.1 audit)
+**Requirements**: TEST-01 (gap closure), UX-03 (gap closure)
+**Gap Closure**: Closes 2 partial requirements + 2 integration gaps + 1 broken flow from `.planning/v1.1-MILESTONE-AUDIT.md`
+**Success Criteria** (what must be TRUE):
+  1. The Analytics toolbar button in `Pault/ContentView.swift` exposes an accessibility label/identifier that XCUI can match (so `app.buttons["Analytics"]` resolves)
+  2. `ProStatusManager.init()` synchronously sets `isProUnlocked = true` when `--screenshot-mode` is present, before scheduling the async refresh Task
+  3. `testShot06_AnalyticsDashboard` runs to completion and produces screenshot 06 with the Analytics view visible
+**Plans:** 0/1 plans complete
+Plans:
+- [ ] 17-01-PLAN.md — Analytics toolbar accessibility label + ProStatusManager sync screenshot-mode override
+
 ### Phase 16: Testing & Verification
 **Goal**: Screenshot tests use real accessibility identifiers and all human verification items from v1.0 are signed off
 **Depends on**: Phase 15 (UX changes must be in place before verifying screenshots and accessibility)
@@ -103,5 +117,6 @@ Plans:
 | 14. Data Integrity & Code Quality | 1/1 | Complete    | 2026-04-28 | — |
 | 15. UX Polish | 1/1 | Complete    | 2026-04-28 | — |
 | 16. Testing & Verification | 2/2 | Complete    | 2026-04-29 | — |
+| 17. Screenshot Test Reachability | v1.1 | 0/1 | Pending | — |
 
 _Full v1.0 details archived in `milestones/v1.0-ROADMAP.md`_
