@@ -351,6 +351,7 @@ struct ContentView: View {
                     Image(systemName: "chart.bar")
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel("Analytics")
                 .help("Analytics")
             }
 
