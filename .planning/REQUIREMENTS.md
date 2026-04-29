@@ -27,8 +27,8 @@ Requirements for tech debt cleanup. Each maps to roadmap phases.
 ### Testing
 
 - [x] **TEST-01**: ScreenshotTests use correct accessibility identifiers (not best-guess)
-- [ ] **TEST-02**: Phase 02 human verification completed (7 items: drag-drop visual, VoiceOver, animations)
-- [ ] **TEST-03**: Phase 08 human verification completed (3 items: Instruments, VoiceOver, visual polish)
+- [x] **TEST-02**: Phase 02 human verification completed (7 items: drag-drop visual, VoiceOver, animations)
+- [x] **TEST-03**: Phase 08 human verification completed (3 items: Instruments, VoiceOver, visual polish)
 
 ### Code Quality
 
@@ -61,8 +61,8 @@ None — v1.1 is a focused cleanup milestone.
 | UX-02 | Phase 15 | Complete |
 | UX-03 | Phase 15 | Complete |
 | TEST-01 | Phase 16 | Complete |
-| TEST-02 | Phase 16 | Pending |
-| TEST-03 | Phase 16 | Pending |
+| TEST-02 | Phase 16 | Complete |
+| TEST-03 | Phase 16 | Complete |
 
 **Coverage:**
 - v1.1 requirements: 12 total

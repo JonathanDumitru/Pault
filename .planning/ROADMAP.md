@@ -30,7 +30,7 @@
 - [x] **Phase 13: Documentation & Legal** — Fix traceability docs, Phase 04 SUMMARY fields, and legal date placeholder (completed 2026-04-28)
 - [x] **Phase 14: Data Integrity & Code Quality** — Fix silent data loss on import, legacy CopyEvent init, and filter duplication (completed 2026-04-28)
 - [x] **Phase 15: UX Polish** — Fix proxy URL onboarding UI, add AI collection refresh button, enable Pro feature screenshots (completed 2026-04-28)
-- [ ] **Phase 16: Testing & Verification** — Fix screenshot test identifiers and complete human verification from Phases 02 and 08
+- [x] **Phase 16: Testing & Verification** — Fix screenshot test identifiers and complete human verification from Phases 02 and 08 (completed 2026-04-29)
 
 ## Phase Details
 
@@ -78,7 +78,7 @@ Plans:
   1. ScreenshotTests reference accessibility identifiers that match identifiers defined in the production SwiftUI views
   2. All 7 Phase 02 human verification items are checked: drag-drop visual feedback, VoiceOver announcements for block operations, and animation correctness
   3. All 3 Phase 08 human verification items are checked: Instruments memory profile shows no leaks, VoiceOver reads all Pro feature labels, visual polish targets confirmed
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 Plans:
 - [ ] 16-01-PLAN.md — Add accessibility identifiers to production views and update ScreenshotTests
 - [ ] 16-02-PLAN.md — Human verification sign-off for Phase 02 and Phase 08 deferred items
@@ -102,6 +102,6 @@ Plans:
 | 13. Documentation & Legal | 1/1 | Complete    | 2026-04-28 | — |
 | 14. Data Integrity & Code Quality | 1/1 | Complete    | 2026-04-28 | — |
 | 15. UX Polish | 1/1 | Complete    | 2026-04-28 | — |
-| 16. Testing & Verification | 1/2 | In Progress|  | — |
+| 16. Testing & Verification | 2/2 | Complete   | 2026-04-29 | — |
 
 _Full v1.0 details archived in `milestones/v1.0-ROADMAP.md`_
