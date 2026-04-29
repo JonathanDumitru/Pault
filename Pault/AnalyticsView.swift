@@ -61,6 +61,7 @@ struct AnalyticsView: View {
                     upgradePrompt
                 }
             }
+            .accessibilityIdentifier("analytics-view")
             .navigationTitle("Analytics")
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
@@ -71,7 +72,6 @@ struct AnalyticsView: View {
             }
         }
         .frame(width: 480, height: 560)
-        .accessibilityIdentifier("analytics-view")
     }
 
     // MARK: - Analytics Content
