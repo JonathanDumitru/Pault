@@ -31,7 +31,7 @@
 - [x] **Phase 14: Data Integrity & Code Quality** — Fix silent data loss on import, legacy CopyEvent init, and filter duplication (completed 2026-04-28)
 - [x] **Phase 15: UX Polish** — Fix proxy URL onboarding UI, add AI collection refresh button, enable Pro feature screenshots (completed 2026-04-28)
 - [x] **Phase 16: Testing & Verification** — Fix screenshot test identifiers and complete human verification from Phases 02 and 08 (completed 2026-04-29)
-- [ ] **Phase 17: Screenshot Test Reachability** — Close v1.1 audit gaps: make Analytics toolbar XCUI-reachable and harden ProStatusManager screenshot-mode override
+- [x] **Phase 17: Screenshot Test Reachability** — Close v1.1 audit gaps: make Analytics toolbar XCUI-reachable and harden ProStatusManager screenshot-mode override (completed 2026-04-29)
 
 ## Phase Details
 
@@ -80,7 +80,7 @@ Plans:
   1. The Analytics toolbar button in `Pault/ContentView.swift` exposes an accessibility label/identifier that XCUI can match (so `app.buttons["Analytics"]` resolves)
   2. `ProStatusManager.init()` synchronously sets `isProUnlocked = true` when `--screenshot-mode` is present, before scheduling the async refresh Task
   3. `testShot06_AnalyticsDashboard` runs to completion and produces screenshot 06 with the Analytics view visible
-**Plans:** 0/1 plans complete
+**Plans:** 1/1 plans complete
 Plans:
 - [ ] 17-01-PLAN.md — Analytics toolbar accessibility label + ProStatusManager sync screenshot-mode override
 
@@ -117,6 +117,6 @@ Plans:
 | 14. Data Integrity & Code Quality | 1/1 | Complete    | 2026-04-28 | — |
 | 15. UX Polish | 1/1 | Complete    | 2026-04-28 | — |
 | 16. Testing & Verification | 2/2 | Complete    | 2026-04-29 | — |
-| 17. Screenshot Test Reachability | v1.1 | 0/1 | Pending | — |
+| 17. Screenshot Test Reachability | 1/1 | Complete   | 2026-04-29 | — |
 
 _Full v1.0 details archived in `milestones/v1.0-ROADMAP.md`_
