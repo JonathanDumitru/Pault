@@ -117,6 +117,6 @@ Plans:
 | 14. Data Integrity & Code Quality | 1/1 | Complete    | 2026-04-28 | — |
 | 15. UX Polish | 1/1 | Complete    | 2026-04-28 | — |
 | 16. Testing & Verification | 2/2 | Complete    | 2026-04-29 | — |
-| 17. Screenshot Test Reachability | 1/1 | Complete   | 2026-04-29 | — |
+| 17. Screenshot Test Reachability | 1/1 | Complete    | 2026-04-29 | — |
 
 _Full v1.0 details archived in `milestones/v1.0-ROADMAP.md`_
