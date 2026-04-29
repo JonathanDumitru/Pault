@@ -1,5 +1,36 @@
 # Milestones
 
+## v1.1 Tech Debt Cleanup (Shipped: 2026-04-29)
+
+**Phases:** 5 (13-17) | **Plans:** 6 | **Commits:** 42
+**Timeline:** 2 days (2026-04-27 to 2026-04-29)
+**Files changed:** 46 | **Lines:** +4,050 / -105
+**Git range:** `99b8317` (docs: start milestone v1.1) to `3c9a426` (docs(phase-17): complete phase execution)
+
+**Key accomplishments:**
+1. Documentation accuracy — v1.0 traceability table fully populated, Phase 04 SUMMARY frontmatter restored, legal launch date placeholder fixed (DOC-01/02/03)
+2. Data integrity — JSON import restores attachment stubs (DATA-01); CopyEvent uses current two-arg init (DATA-02); SidebarView delegates filtering to PromptService canonical path (CODE-01)
+3. UX polish — proxy-not-configured guard before API key check, AI-curated collection refresh button with spinner, DEBUG-guarded ProStatusManager screenshot-mode override (UX-01/02/03)
+4. Test reachability — accessibility identifiers added to 5 production SwiftUI views, ScreenshotTests rewritten to use real identifiers (TEST-01)
+5. Human verification sign-off — all 7 Phase 02 + 3 Phase 08 deferred items signed off (TEST-02/03)
+6. Audit-driven Phase 17 closure — Analytics toolbar XCUI-reachable via `.accessibilityLabel("Analytics")`, sync `--screenshot-mode` override eliminates first-paint race in `ProStatusManager.init()`, `analytics-view` identifier moved into NavigationStack render tree; `testShot06_AnalyticsDashboard` runs end-to-end
+
+**Delivered:** All 15 tracked tech debt items and 3 advisory integration issues from v1.0 closed. 12/12 requirements fully satisfied across 3 audit sources (VERIFICATION.md, SUMMARY frontmatter, REQUIREMENTS.md traceability). Cross-phase integration check verified 6 of 6 milestone flows end-to-end.
+
+### Known Gaps
+
+**Minor tech debt (deferred, not blocking):**
+- Legacy single-arg `CopyEvent` init still exists in `CopyEvent.swift:32` with zero production callers — could be removed in a future cleanup
+- `ScreenshotTests.swift` contains 5 fixed-duration `Thread.sleep` calls between navigation steps (standard UI-test pacing, not substitutes for `waitForExistence`) — replace with explicit waits in a future iteration
+- `menu-bar-content` accessibility identifier exists in production (`MenuBarContentView:147`) but is not queried by any test — `testShot05` navigates via `app.menuBars.buttons['Pault']` instead
+
+**Operational constraint (not code):**
+- macOS 25.4 Stage Manager interferes with XCUITest window discovery — must be disabled during screenshot test runs. Documented in `17-01-SUMMARY.md`. Future CI configuration should disable Stage Manager before invoking screenshot test suites.
+
+**Nyquist:** PARTIAL — explicitly out of scope for v1.1 per `REQUIREMENTS.md:48` (would require re-running all 12 v1.0 validations as separate effort). Phase 13 compliant; Phase 15 partial; Phases 14, 16, 17 missing.
+
+---
+
 ## v1.0 App Store Launch (Shipped: 2026-04-28)
 
 **Phases:** 12 | **Plans:** 29 | **Commits:** 285

@@ -45,30 +45,28 @@ Local-first macOS prompt library with premium Pro tier — ship polished to App 
 - ✓ R9.1: Export — v1.0
 - ✓ R9.2: Import — v1.0
 - ✓ R9.3: Interoperability — v1.0
+- ✓ DOC-01: REQUIREMENTS.md traceability accuracy — v1.1
+- ✓ DOC-02: Phase 04 SUMMARY requirements-completed fields — v1.1
+- ✓ DOC-03: Legal docs launch date placeholder — v1.1
+- ✓ DATA-01: ImportOrchestrator restores attachmentFileNames — v1.1
+- ✓ DATA-02: PromptService.copyToClipboard uses current CopyEvent init — v1.1
+- ✓ CODE-01: SidebarView delegates to PromptService.filterPrompts — v1.1
+- ✓ UX-01: Proxy-not-configured guard before AI calls — v1.1
+- ✓ UX-02: AI-curated collection refresh button in sidebar — v1.1
+- ✓ UX-03: ProStatusManager screenshot-mode override (sync init + async refresh) — v1.1 (Phase 17 closure)
+- ✓ TEST-01: ScreenshotTests use real accessibility identifiers — v1.1 (Phase 17 closure)
+- ✓ TEST-02: Phase 02 human verification (7 items) — v1.1
+- ✓ TEST-03: Phase 08 human verification (3 items) — v1.1
 
 ### Active
 
-<!-- v1.1 Tech Debt Cleanup -->
+<!-- v1.2 — TBD via /gsd:new-milestone -->
 
-- [ ] Fix all 15 tracked tech debt items from v1.0
-- [ ] Fix all 3 advisory integration issues from v1.0
-- [ ] Ensure no regressions in existing functionality
+- [ ] Define v1.2 scope (run `/gsd:new-milestone`)
 
-## Current Milestone: v1.1 Tech Debt Cleanup
+## Current Milestone: v1.2 (Planning)
 
-**Goal:** Clean sweep of all tracked tech debt and advisory integration issues from v1.0 — no new features, just quality and correctness.
-
-**Target fixes:**
-- REQUIREMENTS.md traceability documentation debt
-- Human verification items from Phases 02 and 08
-- ProxyConfig.baseURL placeholder UX
-- Phase 04 empty SUMMARY fields
-- AI-curated collection refresh button
-- Legacy CopyEvent init in PromptService
-- attachmentFileNames silent data loss on import
-- Legal docs [Launch Date] placeholder
-- Screenshot accessibility identifiers and Pro feature visibility
-- SidebarView filter duplication with SmartCollectionFilter
+**Status:** Not yet defined — run `/gsd:new-milestone` to scope.
 
 ### Out of Scope
 
@@ -82,11 +80,13 @@ Local-first macOS prompt library with premium Pro tier — ship polished to App 
 
 ## Context
 
-Shipped v1.0 with 45,970 LOC Swift across 458 files.
+Shipped v1.0 (33/33 requirements) and v1.1 (12/12 requirements) — 17 phases total over 46 days, 327 commits.
 Tech stack: SwiftUI (macOS 15+), SwiftData, StoreKit 2, Carbon (global hotkeys), XCTest + Swift Testing.
 Architecture: `PaultApp.swift` → SwiftData ModelContainer, `PromptStudioModel` (main state machine), actor-based `AIService` with Cloudflare Worker proxy (`pault-proxy/`).
-12 phases completed over 44 days, 285 commits.
-33/33 requirements satisfied. 15 tech debt items tracked (see MILESTONES.md).
+v1.1 closed all 15 tracked tech debt items and 3 advisory integration issues from v1.0. Audit-found gaps (TEST-01, UX-03) closed via inserted Phase 17.
+
+Known operational constraint: macOS Stage Manager interferes with XCUITest window discovery — must be disabled during screenshot test runs (no code workaround in macOS 25.4).
+Minor remaining tech debt: legacy single-arg CopyEvent init unused but not removed; 5 Thread.sleep calls in ScreenshotTests for pacing; Nyquist compliance retrofit deferred (out of scope per v1.1 REQUIREMENTS).
 
 ## Key Decisions
 
@@ -102,6 +102,14 @@ Architecture: `PaultApp.swift` → SwiftData ModelContainer, `PromptStudioModel`
 | 8 | VersionSource enum for version tracking | Distinguishes manual, AI, import, restore sources | ✓ Good — clean history attribution |
 | 9 | Pault-proxy in monorepo subdirectory | Development pragmatism over separate repo | ✓ Good — simpler development workflow |
 | 10 | paymentMode default: (not @unknown default:) | Swift exhaustiveness for non-open StoreKit enum | ✓ Good — compiler-verified |
+| 11 | Import attachment stubs use storageMode=stub | Preserves filename metadata without implying file data is present; enables round-trip fidelity | ✓ Good — DATA-01 satisfied |
+| 12 | SidebarView delegates to PromptService.filterPrompts | PromptService has extended filter fields (qualityScore, model, contentContains) not in SidebarView's inline version | ✓ Good — eliminates duplication |
+| 13 | noProxyStateView ordered before noKeyStateView | Proxy misconfiguration is more fundamental than missing API key; surfaced first in AI error chain | ✓ Good — clearer onboarding |
+| 14 | Screenshot-mode Pro override wrapped in #if DEBUG | Defensive — prevents release-build exposure even though App Store builds cannot inject launch arguments | ✓ Good — defense-in-depth |
+| 15 | .accessibilityLabel on Analytics toolbar Button (not .accessibilityIdentifier) | Matches existing test query `app.buttons["Analytics"]` string-for-string with zero test-side change | ✓ Good — closed TEST-01 with minimal blast radius |
+| 16 | .accessibilityIdentifier inside NavigationStack render tree (not outer container) | Outer-view placement is structurally invisible to XCUITest; identifiers must live in the rendered subtree | ✓ Good — surfaced as v1.1 audit lesson |
+| 17 | Sync `--screenshot-mode` override in ProStatusManager.init() before async Task | Eliminates first-render race for @Observable state — Pro UI visible on first SwiftUI paint | ✓ Good — closed UX-03 race |
+| 18 | Stage Manager incompatibility documented as operational constraint (not code) | macOS 25.4 XCUITest cannot reliably discover windows under Stage Manager; no code workaround available | — Pending — needs CI documentation |
 
 ## Constraints
 
@@ -126,4 +134,4 @@ Architecture: `PaultApp.swift` → SwiftData ModelContainer, `PromptStudioModel`
 - **Research:** Yes — domain research before implementation where it helps
 
 ---
-*Last updated: 2026-04-27 after v1.1 milestone start*
+*Last updated: 2026-04-29 after v1.1 milestone completion*
