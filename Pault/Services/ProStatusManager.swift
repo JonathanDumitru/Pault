@@ -25,6 +25,11 @@ final class ProStatusManager {
         transactionListener = Task {
             await listenForTransactions()
         }
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("--screenshot-mode") {
+            isProUnlocked = true
+        }
+        #endif
         Task { await refreshStatus() }
     }
 
